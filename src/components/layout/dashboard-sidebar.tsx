@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   X,
+  Sparkles,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
@@ -86,9 +87,19 @@ export function DashboardSidebar() {
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center border-b px-6">
+          <div className="flex h-16 items-center justify-center border-b px-6">
             <Link href="/dashboard" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-primary">GYDI</span>
+              <div className="relative flex flex-col items-start space-y-0.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-2xl font-extrabold leading-none text-transparent">
+                    GYDI
+                  </span>
+                  <Sparkles className="h-4 w-4 text-primary opacity-0 transition-all duration-300 group-hover:animate-pulse-glow group-hover:opacity-100" />
+                </div>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/80 transition-colors group-hover:text-primary/80">
+                  Properties
+                </span>
+              </div>
             </Link>
           </div>
 

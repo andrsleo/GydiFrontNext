@@ -1,4 +1,4 @@
-import type { SubscriptionPlan } from '@/lib/constants/plans';
+import type { SubscriptionPlan } from '@/types/user';
 
 /**
  * Subscription status
@@ -7,13 +7,18 @@ export type SubscriptionStatus = 'ACTIVE' | 'CANCELLED' | 'PAST_DUE' | 'TRIALING
 
 /**
  * User subscription
+ *
+ * Represents a user's current subscription with commission rates:
+ * - FREE: 2% commission (0.02)
+ * - PRO: 5% commission (0.05)
+ * - ELITE: 10% commission (0.10)
  */
 export interface Subscription {
   id: string;
   userId: string;
   plan: SubscriptionPlan;
   status: SubscriptionStatus;
-  commissionRate: number; // 0.02, 0.05, or 0.15
+  commissionRate: number; // 0.02, 0.05, or 0.10 (updated from 0.15)
   currentPeriodStart: Date | string;
   currentPeriodEnd: Date | string;
   autoRenew: boolean;

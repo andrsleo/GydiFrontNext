@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   // Optimizaciones
-  swcMinify: true,
   compress: true,
 
   // Experimental features

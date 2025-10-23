@@ -21,9 +21,6 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
-      role: 'AFFILIATE',
-    },
   });
 
   const onSubmit = async (data: RegisterFormData) => {
@@ -119,35 +116,39 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <Label htmlFor="role">Tipo de Cuenta</Label>
-              <select
-                id="role"
-                {...register('role')}
-                className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                <option value="AFFILIATE">Afiliado (Gana comisiones)</option>
-                <option value="HOST">Anfitrión (Publica propiedades)</option>
-              </select>
-              {errors.role && (
-                <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+              <Label htmlFor="phoneNumber">
+                Teléfono <span className="text-gray-400">(opcional)</span>
+              </Label>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                autoComplete="tel"
+                placeholder="+1234567890"
+                {...register('phoneNumber')}
+                className="mt-1"
+              />
+              {errors.phoneNumber && (
+                <p className="mt-1 text-sm text-red-600">{errors.phoneNumber.message}</p>
               )}
             </div>
           </div>
 
           <div className="flex items-center">
             <input
-              id="terms"
-              name="terms"
+              id="acceptTerms"
               type="checkbox"
-              required
+              {...register('acceptTerms')}
               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
             />
-            <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
+            <label htmlFor="acceptTerms" className="ml-2 block text-sm text-gray-900">
               Acepto los{' '}
               <Link href="/terms" className="font-medium text-primary hover:text-primary/90">
                 Términos y Condiciones
               </Link>
             </label>
+            {errors.acceptTerms && (
+              <p className="mt-1 text-sm text-red-600">{errors.acceptTerms.message}</p>
+            )}
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>

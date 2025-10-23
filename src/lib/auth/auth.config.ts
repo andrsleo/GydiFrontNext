@@ -1,7 +1,10 @@
 import NextAuth, { type DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { loginSchema } from '@/features/auth/schemas/auth.schema';
+import type { UserRole, SubscriptionPlan, UserCapabilities } from '@/types/user';
 import axios from 'axios';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 // Extend the built-in session type
 declare module 'next-auth' {
@@ -10,17 +13,67 @@ declare module 'next-auth' {
       id: string;
       email: string;
       name: string;
-      role: 'ADMIN' | 'AFFILIATE' | 'HOST';
+      role: UserRole;
+      activePlan: SubscriptionPlan;
+      capabilities: UserCapabilities;
+      accountVerified: boolean;
     } & DefaultSession['user'];
     accessToken: string;
+    error?: string;
   }
 
   interface User {
     id: string;
     email: string;
     name: string;
-    role: 'ADMIN' | 'AFFILIATE' | 'HOST';
+    role: UserRole;
+    activePlan: SubscriptionPlan;
+    capabilities: UserCapabilities;
+    accountVerified: boolean;
     accessToken: string;
+    refreshToken: string;
+  }
+}
+
+// Extend JWT token type
+interface ExtendedJWT {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  activePlan: SubscriptionPlan;
+  capabilities: UserCapabilities;
+  accountVerified: boolean;
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpires: number;
+  error?: string;
+}
+
+/**
+ * Refresh access token using refresh token
+ */
+async function refreshAccessToken(token: ExtendedJWT): Promise<ExtendedJWT> {
+  try {
+    const response = await axios.post(`${API_URL}/api/v1/auth/refresh`, {
+      refreshToken: token.refreshToken,
+    });
+
+    const data = response.data;
+
+    return {
+      ...token,
+      accessToken: data.token,
+      refreshToken: data.refreshToken ?? token.refreshToken,
+      accessTokenExpires: Date.now() + 24 * 60 * 60 * 1000, // 24h
+      error: undefined,
+    };
+  } catch (error) {
+    console.error('Error refreshing access token:', error);
+    return {
+      ...token,
+      error: 'RefreshAccessTokenError',
+    };
   }
 }
 
@@ -42,21 +95,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           const { email, password } = validatedFields.data;
 
-          // Llamar al backend para autenticar
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-            { email, password }
-          );
+          // Llamar al backend - cookies se setean automáticamente
+          const response = await axios.post(`${API_URL}/api/v1/auth/login`, {
+            email,
+            password,
+          }, {
+            withCredentials: true,
+          });
 
-          const user = response.data;
+          const data = response.data;
 
-          if (response.status === 200 && user) {
+          if (response.status === 200 && data) {
             return {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              role: user.role,
-              accessToken: user.accessToken,
+              id: data.user.id.toString(),
+              email: data.user.email,
+              name: data.user.name,
+              role: data.user.roleNames?.[0] || 'USER',
+              activePlan: 'FREE', // Backend devuelve esto en user claims
+              capabilities: {
+                canPublish: true,
+                canRefer: true,
+                canRent: true,
+              },
+              accountVerified: false,
+              accessToken: data.token,
+              refreshToken: data.refreshToken,
             };
           }
 
@@ -70,23 +133,43 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
+      const extToken = token as unknown as ExtendedJWT;
+
+      // Initial login
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
-        token.role = user.role;
-        token.accessToken = user.accessToken;
+        extToken.id = user.id;
+        extToken.email = user.email;
+        extToken.name = user.name;
+        extToken.role = user.role;
+        extToken.activePlan = user.activePlan;
+        extToken.capabilities = user.capabilities;
+        extToken.accountVerified = user.accountVerified;
+        extToken.accessToken = user.accessToken;
+        extToken.refreshToken = user.refreshToken;
+        extToken.accessTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+        return extToken;
       }
-      return token;
+
+      // Token still valid
+      if (Date.now() < extToken.accessTokenExpires) {
+        return extToken;
+      }
+
+      // Token expired, refresh it
+      return refreshAccessToken(extToken);
     },
+
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        session.user.role = token.role as 'ADMIN' | 'AFFILIATE' | 'HOST';
-        session.accessToken = token.accessToken as string;
-      }
+      const extToken = token as unknown as ExtendedJWT;
+      session.user.id = extToken.id;
+      session.user.email = extToken.email || '';
+      session.user.name = extToken.name || '';
+      session.user.role = extToken.role;
+      session.user.activePlan = extToken.activePlan;
+      session.user.capabilities = extToken.capabilities;
+      session.user.accountVerified = extToken.accountVerified;
+      // NO exponer accessToken en session (seguridad)
+      session.error = extToken.error;
       return session;
     },
   },
@@ -96,7 +179,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 días
+    maxAge: 7 * 24 * 60 * 60, // 7 días (reducido de 30)
+    updateAge: 24 * 60 * 60, // Actualizar cada 24h
+  },
+  cookies: {
+    sessionToken: {
+      name: 'gydi.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
