@@ -1,35 +1,59 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  CreditCard,
-  Bell,
-  Shield,
-  Save,
-  Camera,
-} from 'lucide-react';
+import { User, CreditCard, Bell, Shield, Camera, Save } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ProfileSettingsFormNew } from '@/features/auth/components/profile-settings-form-new';
+import { useProfileByUserId, useUpdateProfile } from '@/features/auth/hooks/use-profile';
+import { useUploadProfileImage } from '@/features/auth/hooks/use-image-upload';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { toast } from 'sonner';
 
 export default function ConfiguracionPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState<'profile' | 'payment' | 'notifications' | 'security'>('profile');
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [pendingTab, setPendingTab] = useState<typeof activeTab | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Mock form state
-  const [profileData, setProfileData] = useState({
-    name: session?.user?.name || '',
-    email: session?.user?.email || '',
-    phone: '+52 555 123 4567',
-    address: 'Ciudad de México, México',
-    bio: 'Afiliado apasionado por las propiedades vacacionales',
+  const userId = session?.user?.id ? Number(session.user.id) : null;
+  const { data: profile } = useProfileByUserId(userId!, {
+    enabled: !!userId,
   });
+
+  // Hooks for profile update and image upload
+  const { mutate: updateProfile } = useUpdateProfile();
+  const { mutate: uploadImage } = useUploadProfileImage();
+
+  const handleTabChange = (newTab: typeof activeTab) => {
+    if (activeTab === 'profile' && hasUnsavedChanges) {
+      setPendingTab(newTab);
+      setShowDialog(true);
+    } else {
+      setActiveTab(newTab);
+    }
+  };
+
+  const handleConfirmNavigation = () => {
+    if (pendingTab) {
+      setActiveTab(pendingTab);
+      setPendingTab(null);
+      setHasUnsavedChanges(false); // Reset unsaved changes flag
+    }
+    setShowDialog(false);
+  };
+
+  const handleDirtyChange = (isDirty: boolean) => {
+    setHasUnsavedChanges(isDirty);
+  };
 
   const [paymentData, setPaymentData] = useState({
     bankName: 'BBVA México',
@@ -38,6 +62,7 @@ export default function ConfiguracionPage() {
     paypalEmail: 'usuario@ejemplo.com',
   });
 
+  // Mock notifications state
   const [notifications, setNotifications] = useState({
     emailBookings: true,
     emailCommissions: true,
@@ -45,14 +70,6 @@ export default function ConfiguracionPage() {
     pushBookings: true,
     pushCommissions: true,
   });
-
-  const handleSaveProfile = async () => {
-    setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSaving(false);
-    alert('Perfil actualizado correctamente');
-  };
 
   const handleSavePayment = async () => {
     setIsSaving(true);
@@ -70,12 +87,103 @@ export default function ConfiguracionPage() {
     alert('Preferencias de notificaciones actualizadas');
   };
 
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor selecciona una imagen válida (JPG, PNG, GIF, WebP)');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('La imagen debe ser menor a 10MB');
+      return;
+    }
+
+    setIsUploadingImage(true);
+
+    try {
+      // Upload image to S3 via backend
+      uploadImage(file, {
+        onSuccess: (data) => {
+          const s3Url = data.imageUrl;
+          setProfileImage(s3Url);
+
+          // Update profile with new S3 URL
+          if (userId) {
+            updateProfile(
+              {
+                userId,
+                data: { coverImageUrl: s3Url },
+              },
+              {
+                onSuccess: () => {
+                  toast.success('Foto de perfil actualizada correctamente');
+                  setIsUploadingImage(false);
+                },
+                onError: (error) => {
+                  toast.error(`Error al actualizar el perfil: ${error.message}`);
+                  setProfileImage(null);
+                  setIsUploadingImage(false);
+                },
+              }
+            );
+          } else {
+            setIsUploadingImage(false);
+          }
+        },
+        onError: (error) => {
+          console.error('Error uploading image to S3:', error);
+          toast.error(`Error al subir la imagen: ${error.message}`);
+          setIsUploadingImage(false);
+        },
+      });
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Error inesperado al subir la imagen.');
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleChangePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Get current profile image
+  const currentImage = profileImage || profile?.coverImageUrl || null;
+
   const tabs = [
     { id: 'profile', label: 'Perfil', icon: User },
     { id: 'payment', label: 'Pagos', icon: CreditCard },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
     { id: 'security', label: 'Seguridad', icon: Shield },
   ];
+
+  // Mostrar loading mientras la sesión carga
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Cargando configuración...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirigir si no hay sesión (aunque el middleware debería evitar esto)
+  if (status === 'unauthenticated') {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-destructive">No autenticado. Redirigiendo...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -95,12 +203,11 @@ export default function ConfiguracionPage() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                className={`flex items-center gap-2 border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
+                onClick={() => handleTabChange(tab.id as typeof activeTab)}
+                className={`flex items-center gap-2 border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${activeTab === tab.id
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 <Icon className="h-4 w-4" />
                 {tab.label}
@@ -114,111 +221,78 @@ export default function ConfiguracionPage() {
       {activeTab === 'profile' && (
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <h2 className="mb-6 text-xl font-semibold">Información Personal</h2>
+            <h2 className="mb-6 text-xl font-semibold">Información General</h2>
 
             {/* Profile Photo */}
             <div className="mb-6 flex items-center gap-6">
               <div className="relative">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary text-3xl font-bold text-primary-foreground">
-                  {session?.user?.name?.charAt(0) || 'U'}
+                <div className="h-24 w-24 overflow-hidden rounded-full bg-primary">
+                  {currentImage ? (
+                    <Image
+                      src={currentImage}
+                      alt="Profile"
+                      width={96}
+                      height={96}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-primary-foreground">
+                      {session?.user?.name?.charAt(0) || 'U'}
+                    </div>
+                  )}
                 </div>
-                <button className="absolute bottom-0 right-0 rounded-full bg-white p-2 shadow-lg">
+                <button
+                  type="button"
+                  onClick={handleChangePhotoClick}
+                  className="absolute bottom-0 right-0 rounded-full bg-white p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                  disabled={isUploadingImage}
+                >
                   <Camera className="h-4 w-4" />
                 </button>
               </div>
               <div>
                 <p className="font-medium">Foto de Perfil</p>
                 <p className="text-sm text-muted-foreground">
-                  JPG, PNG o GIF. Máximo 5MB
+                  JPG, PNG, GIF o WebP. Máximo 10MB
                 </p>
-                <Button variant="outline" size="sm" className="mt-2">
-                  Cambiar Foto
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  disabled={isUploadingImage}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  onClick={handleChangePhotoClick}
+                  disabled={isUploadingImage}
+                >
+                  {isUploadingImage ? 'Subiendo...' : 'Cambiar Foto'}
                 </Button>
               </div>
             </div>
 
-            {/* Form Fields */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">
-                  <User className="mr-2 inline h-4 w-4" />
-                  Nombre Completo
-                </Label>
-                <Input
-                  id="name"
-                  value={profileData.name}
-                  onChange={(e) =>
-                    setProfileData({ ...profileData, name: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">
-                  <Mail className="mr-2 inline h-4 w-4" />
-                  Correo Electrónico
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={profileData.email}
-                  onChange={(e) =>
-                    setProfileData({ ...profileData, email: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">
-                  <Phone className="mr-2 inline h-4 w-4" />
-                  Teléfono
-                </Label>
-                <Input
-                  id="phone"
-                  value={profileData.phone}
-                  onChange={(e) =>
-                    setProfileData({ ...profileData, phone: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">
-                  <MapPin className="mr-2 inline h-4 w-4" />
-                  Ubicación
-                </Label>
-                <Input
-                  id="address"
-                  value={profileData.address}
-                  onChange={(e) =>
-                    setProfileData({ ...profileData, address: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-2">
-              <Label htmlFor="bio">Biografía</Label>
-              <textarea
-                id="bio"
-                rows={4}
-                value={profileData.bio}
-                onChange={(e) =>
-                  setProfileData({ ...profileData, bio: e.target.value })
-                }
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            {/* Profile Form (Backend Integration) */}
+            {session?.user?.id && (
+              <ProfileSettingsFormNew
+                userId={Number(session.user.id)}
+                onDirtyChange={handleDirtyChange}
               />
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <Button onClick={handleSaveProfile} disabled={isSaving} className="gap-2">
-                <Save className="h-4 w-4" />
-                {isSaving ? 'Guardando...' : 'Guardar Cambios'}
-              </Button>
-            </div>
+            )}
           </div>
         </div>
       )}
+
+      {/* Confirmation Dialog for unsaved changes */}
+      <ConfirmationDialog
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        onConfirm={handleConfirmNavigation}
+      />
 
       {/* Payment Tab */}
       {activeTab === 'payment' && (

@@ -52,8 +52,10 @@ export function useAuth() {
       setError(null);
 
       // Create user with USER role by default (no role selection)
+      // Names are now stored in user_profile (source of truth)
       await createUserMutation.mutateAsync({
-        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName || null,
         email: data.email,
         password: data.password,
         phoneNumber: data.phoneNumber,

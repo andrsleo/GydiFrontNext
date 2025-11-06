@@ -106,13 +106,17 @@ export function DashboardSidebar() {
           {/* Navigation */}
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => {
-              const isActive = pathname === item.href;
+              // Check if current path matches the nav item
+              // For exact match (like /dashboard) or nested routes (like /dashboard/propiedades/*)
+              const isActive =
+                pathname === item.href ||
+                (item.href !== '/dashboard' && item.href ? pathname.startsWith(item.href + '/') : false);
               const Icon = item.icon;
 
               return (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href || '/dashboard'}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',

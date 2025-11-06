@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Outfit } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
+import { Toaster } from 'sonner';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -53,6 +54,7 @@ export default function RootLayout({
         <SessionProvider>
           <Providers>{children}</Providers>
         </SessionProvider>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

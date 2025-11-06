@@ -55,19 +55,36 @@ export default function RegisterPage() {
           )}
 
           <div className="space-y-4 rounded-md shadow-sm">
-            <div>
-              <Label htmlFor="name">Nombre Completo</Label>
-              <Input
-                id="name"
-                type="text"
-                autoComplete="name"
-                placeholder="Juan Pérez"
-                {...register('name')}
-                className="mt-1"
-              />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-              )}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="firstName">Nombre</Label>
+                <Input
+                  id="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="Juan"
+                  {...register('firstName')}
+                  className="mt-1"
+                />
+                {errors.firstName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="lastName">Apellido</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Pérez"
+                  {...register('lastName')}
+                  className="mt-1"
+                />
+                {errors.lastName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
+                )}
+              </div>
             </div>
 
             <div>
