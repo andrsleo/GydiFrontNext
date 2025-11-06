@@ -16,11 +16,54 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Send cookies automatically
+  withCredentials: true, // Send cookies automatically (for same-origin)
   timeout: 30000,
 });
 
-// Interceptor removed - cookies sent automatically via withCredentials
+/**
+ * Request interceptor - Add authentication token
+ *
+ * SECURITY STRATEGY:
+ * - Development (localhost): Use Authorization header (cookies don't work cross-origin)
+ * - Production (same domain): Use httpOnly cookies ONLY (more secure, XSS-proof)
+ *
+ * In production, backend sets httpOnly cookie and this interceptor does NOTHING.
+ * The cookie is sent automatically by the browser with withCredentials: true.
+ */
+apiClient.interceptors.request.use(
+  async (config) => {
+    // Skip adding token for public endpoints (exact matches only)
+    const publicEndpoints = [
+      '/api/v1/auth/login',
+      '/api/v1/auth/register',
+      '/api/v1/users/register', // User registration endpoint
+    ];
+    const isPublicEndpoint = publicEndpoints.some((endpoint) =>
+      config.url?.startsWith(endpoint)
+    );
+
+    if (!isPublicEndpoint && typeof window !== 'undefined') {
+      const isDevelopment = process.env.NODE_ENV === 'development';
+
+      // ONLY in development: use Authorization header (cross-origin workaround)
+      if (isDevelopment) {
+        try {
+          const session = await getSession();
+          if (session?.accessToken) {
+            config.headers.Authorization = `Bearer ${session.accessToken}`;
+          }
+        } catch (error) {
+          console.error('Error getting session for API request:', error);
+        }
+      }
+      // In production: httpOnly cookies are sent automatically via withCredentials
+      // No need to add Authorization header - this prevents XSS attacks
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+)
 
 /**
  * Response interceptor - Handle errors and token refresh

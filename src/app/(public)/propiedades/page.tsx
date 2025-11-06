@@ -1,316 +1,257 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { MapPin, Bed, Bath, Maximize, Star, Search, SlidersHorizontal } from 'lucide-react';
+'use client';
 
-// Mock data de propiedades
-const properties = [
-  {
-    id: 1,
-    title: 'Villa de Lujo Frente al Mar',
-    location: 'Bali, Indonesia',
-    price: 450,
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 250,
-    image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80',
-    rating: 4.9,
-    reviews: 128,
-    badge: 'Popular',
-    badgeColor: 'primary',
-  },
-  {
-    id: 2,
-    title: 'Apartamento Moderno en el Centro',
-    location: 'Dubai, UAE',
-    price: 320,
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 120,
-    image: 'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&q=80',
-    rating: 4.8,
-    reviews: 95,
-  },
-  {
-    id: 3,
-    title: 'Casa de Campo Toscana',
-    location: 'Toscana, Italia',
-    price: 280,
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 180,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
-    rating: 4.7,
-    reviews: 72,
-    badge: 'Nuevo',
-    badgeColor: 'purple',
-  },
-  {
-    id: 4,
-    title: 'Penthouse de Lujo Manhattan',
-    location: 'Nueva York, USA',
-    price: 850,
-    bedrooms: 5,
-    bathrooms: 4,
-    area: 380,
-    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',
-    rating: 5.0,
-    reviews: 156,
-    badge: 'Premium',
-    badgeColor: 'blue',
-  },
-  {
-    id: 5,
-    title: 'Cabaña en las Montañas',
-    location: 'Aspen, Colorado',
-    price: 380,
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 200,
-    image: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=800&q=80',
-    rating: 4.6,
-    reviews: 89,
-  },
-  {
-    id: 6,
-    title: 'Loft Moderno Industrial',
-    location: 'Barcelona, España',
-    price: 290,
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 140,
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
-    rating: 4.8,
-    reviews: 103,
-  },
-  {
-    id: 7,
-    title: 'Villa con Piscina Infinity',
-    location: 'Santorini, Grecia',
-    price: 520,
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 280,
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
-    rating: 4.9,
-    reviews: 142,
-    badge: 'Popular',
-    badgeColor: 'primary',
-  },
-  {
-    id: 8,
-    title: 'Apartamento Vista al Mar',
-    location: 'Miami Beach, Florida',
-    price: 410,
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 160,
-    image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&q=80',
-    rating: 4.7,
-    reviews: 87,
-  },
-  {
-    id: 9,
-    title: 'Casa Colonial Restaurada',
-    location: 'Cartagena, Colombia',
-    price: 260,
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 170,
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
-    rating: 4.6,
-    reviews: 64,
-  },
-];
+import { useState } from 'react';
+import { useProperties } from '@/features/properties';
+import { PropertyCard } from '@/features/properties/components';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CountryCitySelector } from '@/components/shared/country-city-selector';
+import { Search, SlidersHorizontal } from 'lucide-react';
+import { PropertyType, PropertyStatus } from '@/features/properties/types';
 
 export default function PropertiesPage() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50/50 to-white">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 py-16 sm:py-20 md:py-24">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:64px_64px]" />
+  const [page, setPage] = useState(0);
+  const [searchText, setSearchText] = useState('');
+  const [country, setCountry] = useState<string>('');
+  const [city, setCity] = useState<string>('');
+  const [propertyType, setPropertyType] = useState<PropertyType | ''>('');
+  const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
+  const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
+  const [minBedrooms, setMinBedrooms] = useState<number | undefined>(undefined);
+  const [minBathrooms, setMinBathrooms] = useState<number | undefined>(undefined);
+  const [minGuests, setMinGuests] = useState<number | undefined>(undefined);
+  const [showFilters, setShowFilters] = useState(false);
 
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="animate-fade-in-down mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
-              <Star className="h-4 w-4" />
-              <span>Más de 500 propiedades disponibles</span>
+  const { data, isLoading } = useProperties({
+    filters: {
+      status: PropertyStatus.PUBLISHED,
+      propertyType: propertyType || undefined,
+      country: country || undefined,
+      city: city || undefined,
+      minPrice,
+      maxPrice,
+      minBedrooms,
+      minBathrooms,
+      minGuests,
+      searchText: searchText || undefined,
+      page,
+      size: 12,
+    },
+  });
+
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
+      {/* Header Section */}
+      <div className="mb-8 sm:mb-10 md:mb-12">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3">
+          Propiedades en Renta
+        </h1>
+        <p className="text-base sm:text-lg text-muted-foreground">
+          Encuentra tu próximo hogar vacacional
+        </p>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="mb-6 sm:mb-8 space-y-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="Buscar por título o descripción..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="pl-9 h-11"
+            />
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setShowFilters(!showFilters)}
+            className="h-11 w-full sm:w-auto"
+          >
+            <SlidersHorizontal className="h-4 w-4 mr-2" />
+            Filtros
+          </Button>
+        </div>
+
+        {showFilters && (
+          <div className="space-y-4 p-4 sm:p-6 border rounded-lg bg-muted/30">
+            {/* Ubicación - Country City Selector */}
+            <div>
+              <h4 className="text-sm font-semibold mb-3">Ubicación</h4>
+              <CountryCitySelector
+                countryValue={country}
+                cityValue={city}
+                onCountryChange={setCountry}
+                onCityChange={setCity}
+                showLabels={false}
+              />
             </div>
 
-            <h1 className="animate-fade-in-up mb-6 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-              Explora Nuestro{' '}
-              <span className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Catálogo de Propiedades
-              </span>
-            </h1>
+            {/* Other Filters */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Tipo de Propiedad</label>
+                <Select value={propertyType || 'ALL'} onValueChange={(v) => setPropertyType(v === 'ALL' ? '' : v as PropertyType)}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">Todos</SelectItem>
+                    <SelectItem value={PropertyType.APARTMENT}>Apartamento</SelectItem>
+                    <SelectItem value={PropertyType.HOUSE}>Casa</SelectItem>
+                    <SelectItem value={PropertyType.VILLA}>Villa</SelectItem>
+                    <SelectItem value={PropertyType.CABIN}>Cabaña</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <p className="animate-fade-in-up animation-delay-100 mb-8 text-base text-muted-foreground sm:text-lg md:text-xl">
-              Propiedades inmobiliarias en venta y destinos vacacionales premium para generar ingresos
-            </p>
+              {/* Rango de Precio */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Precio Mínimo (USD)</label>
+                <Input
+                  type="number"
+                  placeholder="Ej: 50"
+                  value={minPrice || ''}
+                  onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : undefined)}
+                  className="h-10"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Precio Máximo (USD)</label>
+                <Input
+                  type="number"
+                  placeholder="Ej: 500"
+                  value={maxPrice || ''}
+                  onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : undefined)}
+                  className="h-10"
+                  min="0"
+                />
+              </div>
 
-            {/* Search Bar */}
-            <div className="animate-fade-in-up animation-delay-200 mx-auto max-w-2xl">
-              <div className="flex flex-col gap-3 rounded-2xl border border-border/50 bg-card p-4 shadow-xl backdrop-blur-sm sm:flex-row">
-                <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Buscar por ubicación, ciudad o país..."
-                    className="h-12 w-full rounded-xl border border-border/50 bg-background pl-12 pr-4 text-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-                <Button size="lg" className="h-12 shadow-lg transition-all hover:scale-105 hover:shadow-xl">
-                  <Search className="mr-2 h-5 w-5" />
-                  Buscar
-                </Button>
+              {/* Specs */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Habitaciones (mín)</label>
+                <Select
+                  value={minBedrooms?.toString() || 'ALL'}
+                  onValueChange={(v) => setMinBedrooms(v === 'ALL' ? undefined : Number(v))}
+                >
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Cualquiera" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">Cualquiera</SelectItem>
+                    <SelectItem value="1">1+</SelectItem>
+                    <SelectItem value="2">2+</SelectItem>
+                    <SelectItem value="3">3+</SelectItem>
+                    <SelectItem value="4">4+</SelectItem>
+                    <SelectItem value="5">5+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Baños (mín)</label>
+                <Select
+                  value={minBathrooms?.toString() || 'ALL'}
+                  onValueChange={(v) => setMinBathrooms(v === 'ALL' ? undefined : Number(v))}
+                >
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Cualquiera" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">Cualquiera</SelectItem>
+                    <SelectItem value="1">1+</SelectItem>
+                    <SelectItem value="2">2+</SelectItem>
+                    <SelectItem value="3">3+</SelectItem>
+                    <SelectItem value="4">4+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Huéspedes (mín)</label>
+                <Select
+                  value={minGuests?.toString() || 'ALL'}
+                  onValueChange={(v) => setMinGuests(v === 'ALL' ? undefined : Number(v))}
+                >
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Cualquiera" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">Cualquiera</SelectItem>
+                    <SelectItem value="1">1+</SelectItem>
+                    <SelectItem value="2">2+</SelectItem>
+                    <SelectItem value="4">4+</SelectItem>
+                    <SelectItem value="6">6+</SelectItem>
+                    <SelectItem value="8">8+</SelectItem>
+                    <SelectItem value="10">10+</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Filters Bar */}
-      <section className="sticky top-16 z-40 border-b bg-background/95 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Mostrando <span className="font-semibold text-foreground">{properties.length}</span> propiedades
-            </p>
-
-            <Button variant="outline" size="sm" className="gap-2">
-              <SlidersHorizontal className="h-4 w-4" />
-              Filtros
-            </Button>
-          </div>
-        </div>
-      </section>
+        )}
+      </div>
 
       {/* Properties Grid */}
-      <section className="py-12 sm:py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-8">
-            {properties.map((property, index) => (
-              <Link
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          {[...Array(8)].map((_, i) => (
+            <Skeleton key={i} className="h-[350px] sm:h-[400px] rounded-lg" />
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            {data?.content.map((property) => (
+              <PropertyCard
                 key={property.id}
+                property={property}
                 href={`/propiedades/${property.id}`}
-                className={`animate-scale-in group relative overflow-hidden rounded-3xl bg-card shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10`}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Image */}
-                <div className="aspect-[4/3] overflow-hidden">
-                  <Image
-                    src={property.image}
-                    alt={property.title}
-                    width={800}
-                    height={600}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                </div>
-
-                {/* Badge */}
-                {property.badge && (
-                  <div
-                    className={`absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-bold text-white shadow-lg ${
-                      property.badgeColor === 'primary'
-                        ? 'bg-gradient-to-r from-primary to-blue-600'
-                        : property.badgeColor === 'purple'
-                          ? 'bg-purple-600'
-                          : 'bg-gradient-to-r from-blue-600 to-blue-500'
-                    }`}
-                  >
-                    {property.badge}
-                  </div>
-                )}
-
-                {/* Content */}
-                <div className="p-6">
-                  {/* Location */}
-                  <div className="mb-2 flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span className="text-sm font-medium">{property.location}</span>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="mb-3 text-xl font-extrabold text-foreground transition-colors group-hover:text-primary">
-                    {property.title}
-                  </h3>
-
-                  {/* Features */}
-                  <div className="mb-4 flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1.5">
-                      <Bed className="h-4 w-4" />
-                      <span>{property.bedrooms}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Bath className="h-4 w-4" />
-                      <span>{property.bathrooms}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Maximize className="h-4 w-4" />
-                      <span>{property.area}m²</span>
-                    </div>
-                  </div>
-
-                  {/* Rating */}
-                  <div className="mb-4 flex items-center gap-2">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-semibold text-foreground">{property.rating}</span>
-                    </div>
-                    <span className="text-sm text-muted-foreground">({property.reviews} reseñas)</span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-end justify-between border-t border-border/50 pt-4">
-                    <div>
-                      <div className="text-2xl font-extrabold text-foreground">${property.price}</div>
-                      <div className="text-sm text-muted-foreground">por noche</div>
-                    </div>
-
-                    <Button size="sm" className="transition-all group-hover:scale-105">
-                      Ver Detalles
-                    </Button>
-                  </div>
-                </div>
-              </Link>
+              />
             ))}
           </div>
 
-          {/* Load More */}
-          <div className="mt-12 text-center">
-            <Button
-              variant="outline"
-              size="lg"
-              className="transition-all hover:scale-105 hover:border-primary hover:bg-primary/5"
-            >
-              Cargar Más Propiedades
-            </Button>
-          </div>
-        </div>
-      </section>
+          {data?.content.length === 0 && (
+            <div className="text-center py-16 sm:py-20">
+              <div className="max-w-md mx-auto">
+                <p className="text-lg text-muted-foreground mb-2">
+                  No se encontraron propiedades
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Intenta ajustar tus filtros de búsqueda
+                </p>
+              </div>
+            </div>
+          )}
 
-      {/* CTA Section */}
-      <section className="relative overflow-hidden border-t bg-gradient-to-br from-primary via-primary/95 to-blue-600 py-16 text-primary-foreground sm:py-20">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]" />
-
-        <div className="container relative mx-auto px-4 text-center">
-          <h2 className="mb-4 text-3xl font-extrabold sm:text-4xl md:text-5xl">
-            ¿Listo para Generar Ingresos?
-          </h2>
-          <p className="mb-8 text-base opacity-95 sm:text-lg">
-            Únete y empieza a vender propiedades o gana comisiones promocionando destinos vacacionales
-          </p>
-
-          <Button
-            asChild
-            size="lg"
-            variant="secondary"
-            className="shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-          >
-            <Link href="/register">Comenzar Ahora</Link>
-          </Button>
-        </div>
-      </section>
+          {/* Pagination */}
+          {data && data.totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 sm:mt-12">
+              <Button
+                variant="outline"
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={data.first}
+                className="w-full sm:w-auto min-w-[120px]"
+              >
+                Anterior
+              </Button>
+              <div className="flex items-center px-4 py-2 bg-muted/50 rounded-md text-sm font-medium">
+                Página {data.page + 1} de {data.totalPages}
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setPage((p) => p + 1)}
+                disabled={data.last}
+                className="w-full sm:w-auto min-w-[120px]"
+              >
+                Siguiente
+              </Button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

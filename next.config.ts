@@ -24,7 +24,16 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'gydi-profile-images.s3.amazonaws.com', // AWS S3 Producción
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost', // Desarrollo local
+        port: '8080',
       },
     ],
     formats: ['image/avif', 'image/webp'],

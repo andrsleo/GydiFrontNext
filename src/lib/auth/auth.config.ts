@@ -168,7 +168,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.activePlan = extToken.activePlan;
       session.user.capabilities = extToken.capabilities;
       session.user.accountVerified = extToken.accountVerified;
-      // NO exponer accessToken en session (seguridad)
+
+      // SECURITY: Only expose accessToken in development
+      // In production, backend uses httpOnly cookies (XSS-proof)
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      if (isDevelopment) {
+        session.accessToken = extToken.accessToken;
+      }
+      // In production: session.accessToken is undefined (secure)
+
       session.error = extToken.error;
       return session;
     },

@@ -16,10 +16,12 @@ export const loginSchema = z.object({
  * Validation for user registration form.
  * Note: Role is no longer required during registration.
  * All new users are created with USER role by default.
+ * Names are saved in user_profile (source of truth) and users.name (deprecated, for backwards compatibility).
  */
 export const registerSchema = z
   .object({
-    name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+    firstName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
+    lastName: z.string().max(100).optional(),
     email: z.string().email('Email inválido'),
     phoneNumber: z
       .string()
@@ -28,7 +30,7 @@ export const registerSchema = z
         (val) => !val || /^\+?[1-9]\d{1,14}$/.test(val),
         'Número de teléfono inválido (formato E.164)'
       ),
-    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
     confirmPassword: z.string(),
     acceptTerms: z.boolean().refine((val) => val === true, {
       message: 'Debes aceptar los términos y condiciones',

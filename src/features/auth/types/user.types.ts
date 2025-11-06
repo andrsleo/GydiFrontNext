@@ -54,20 +54,31 @@ export type ProfileVisibility = 'public' | 'private' | 'connections';
 export interface UserProfileResponse {
   id: string; // UUID
   userId: number;
+  // Personal Information
+  firstName: string | null;
+  lastName: string | null;
+  phoneNumber: string | null;
   dateOfBirth: string | null; // ISO 8601 date string (YYYY-MM-DD)
   gender: Gender | null;
   bio: string | null;
-  countryCode: string | null; // ISO 3166-1 alpha-3 (e.g., "USA", "CAN")
-  timezone: string | null; // IANA timezone (e.g., "America/New_York")
+  // Location
+  country: string | null; // Full country name (not code)
+  city: string | null;
+  address: string | null;
+  postalCode: string | null;
+  // Professional
+  websiteUrl: string | null;
+  // Preferences
   preferredLanguage: string | null; // ISO 639-1 (e.g., "en", "es")
-  avatarUrl: string | null;
-  coverImageUrl: string | null;
-  socialLinks: Record<string, string> | null;
-  preferences: Record<string, unknown> | null;
-  profileVisibility: ProfileVisibility | null;
+  // Images
+  coverImageUrl: string | null; // Profile image
+  // Social & Metadata
+  socialLinks: Record<string, string>;
+  preferences: Record<string, unknown>;
+  profileVisibility: ProfileVisibility;
   emailNotificationsEnabled: boolean;
   smsNotificationsEnabled: boolean;
-  metadata: Record<string, unknown> | null;
+  metadata: Record<string, unknown>;
   createdAt: string; // ISO 8601 date string
   updatedAt: string; // ISO 8601 date string
 }
@@ -77,14 +88,25 @@ export interface UserProfileResponse {
  */
 export interface CreateUserProfileRequest {
   userId: number;
+  // Personal Information
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
   dateOfBirth?: string; // ISO 8601 date string (YYYY-MM-DD)
   gender?: Gender;
   bio?: string; // max 1000 characters
-  countryCode?: string; // 3 characters
-  timezone?: string;
+  // Location
+  country?: string; // Full country name
+  city?: string;
+  address?: string;
+  postalCode?: string;
+  // Professional
+  websiteUrl?: string;
+  // Preferences
   preferredLanguage?: string; // max 5 characters
-  avatarUrl?: string;
+  // Images
   coverImageUrl?: string;
+  // Social & Metadata
   socialLinks?: Record<string, string>;
   preferences?: Record<string, unknown>;
   profileVisibility?: ProfileVisibility;
@@ -98,14 +120,25 @@ export interface CreateUserProfileRequest {
  * All fields are optional to support PATCH-style updates.
  */
 export interface UpdateUserProfileRequest {
+  // Personal Information
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
   dateOfBirth?: string; // ISO 8601 date string (YYYY-MM-DD)
   gender?: Gender;
   bio?: string; // max 1000 characters
-  countryCode?: string; // 3 characters
-  timezone?: string;
+  // Location
+  country?: string; // Full country name
+  city?: string;
+  address?: string;
+  postalCode?: string;
+  // Professional
+  websiteUrl?: string;
+  // Preferences
   preferredLanguage?: string; // max 5 characters
-  avatarUrl?: string;
+  // Images
   coverImageUrl?: string;
+  // Social & Metadata
   socialLinks?: Record<string, string>;
   preferences?: Record<string, unknown>;
   profileVisibility?: ProfileVisibility;

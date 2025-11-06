@@ -1,0 +1,109 @@
+/**
+ * Properties API Client
+ * CRUD operations for properties
+ */
+
+import { apiClient } from '@/lib/api/client';
+import type {
+  PropertyResponse,
+  PropertyDetailResponse,
+  CreatePropertyRequest,
+  UpdatePropertyRequest,
+  PropertyFilters,
+  PaginatedPropertyResponse,
+} from '../types';
+
+/**
+ * API Base Path
+ */
+const BASE_PATH = '/api/properties';
+
+/**
+ * Properties API
+ */
+export const propertiesApi = {
+  /**
+   * Get all properties with filters (paginated)
+   * Public endpoint - no auth required
+   */
+  async getAll(filters?: PropertyFilters): Promise<PaginatedPropertyResponse> {
+    const params = new URLSearchParams();
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, String(value));
+        }
+      });
+    }
+
+    const { data } = await apiClient.get<PaginatedPropertyResponse>(
+      `${BASE_PATH}?${params.toString()}`
+    );
+    return data;
+  },
+
+  /**
+   * Get property by ID
+   * Public endpoint - no auth required
+   */
+  async getById(id: string): Promise<PropertyDetailResponse> {
+    const { data } = await apiClient.get<PropertyDetailResponse>(`${BASE_PATH}/${id}`);
+    return data;
+  },
+
+  /**
+   * Create new property
+   * Requires authentication (HOST or ADMIN role)
+   */
+  async create(request: CreatePropertyRequest): Promise<PropertyResponse> {
+    const { data } = await apiClient.post<PropertyResponse>(BASE_PATH, request);
+    return data;
+  },
+
+  /**
+   * Update existing property
+   * Requires authentication + ownership
+   */
+  async update(id: string, request: UpdatePropertyRequest): Promise<PropertyResponse> {
+    const { data } = await apiClient.put<PropertyResponse>(`${BASE_PATH}/${id}`, request);
+    return data;
+  },
+
+  /**
+   * Publish property (change status to PUBLISHED)
+   * Requires authentication + ownership
+   */
+  async publish(id: string): Promise<PropertyResponse> {
+    const { data } = await apiClient.post<PropertyResponse>(`${BASE_PATH}/${id}/publish`);
+    return data;
+  },
+
+  /**
+   * Delete property (soft delete)
+   * Requires authentication + ownership
+   */
+  async delete(id: string): Promise<void> {
+    await apiClient.delete(`${BASE_PATH}/${id}`);
+  },
+
+  /**
+   * Get properties by current user (requires auth)
+   */
+  async getMyProperties(filters?: PropertyFilters): Promise<PaginatedPropertyResponse> {
+    const params = new URLSearchParams();
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, String(value));
+        }
+      });
+    }
+
+    const { data } = await apiClient.get<PaginatedPropertyResponse>(
+      `${BASE_PATH}/my-properties?${params.toString()}`
+    );
+    return data;
+  },
+};
