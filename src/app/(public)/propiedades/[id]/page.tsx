@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MapPin, Bed, Bath, Users, Calendar, DollarSign } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
+import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/types';
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -35,6 +36,21 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     );
   }
 
+  // Badge configuration for listing type
+  const listingTypeBadgeConfig = {
+    [PropertyListingType.SHORT_TERM_RENTAL]: {
+      className: 'bg-blue-500 text-white hover:bg-blue-600',
+    },
+    [PropertyListingType.SALE]: {
+      className: 'bg-green-500 text-white hover:bg-green-600',
+    },
+    [PropertyListingType.BOTH]: {
+      className: 'bg-purple-500 text-white hover:bg-purple-600',
+    },
+  };
+
+  const listingConfig = listingTypeBadgeConfig[property.listingType];
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Gallery */}
@@ -51,7 +67,12 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               <Badge variant={property.status === 'PUBLISHED' ? 'default' : 'secondary'}>
                 {property.status}
               </Badge>
-              <Badge variant="outline">{property.propertyType}</Badge>
+              <Badge className="bg-slate-800 text-white hover:bg-slate-900">
+                {property.propertyType}
+              </Badge>
+              <Badge className={listingConfig.className}>
+                {LISTING_TYPE_LABELS[property.listingType]}
+              </Badge>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{property.title}</h1>
             <div className="flex items-center text-sm sm:text-base text-muted-foreground">
@@ -113,18 +134,60 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         {/* Sidebar - Booking Card */}
         <div className="md:col-span-2 lg:col-span-1">
           <div className="lg:sticky lg:top-4 border rounded-lg p-4 sm:p-6 space-y-4 bg-card shadow-lg">
-            <div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl sm:text-3xl font-bold">
-                  {formatCurrency(property.pricePerNight, property.currency)}
-                </span>
-                <span className="text-sm text-muted-foreground">/ noche</span>
-              </div>
+            {/* Precios Condicionales */}
+            <div className="space-y-3">
+              {/* Precio por Noche - Si es RENTA o AMBAS */}
+              {(property.listingType === PropertyListingType.SHORT_TERM_RENTAL ||
+                property.listingType === PropertyListingType.BOTH) && (
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl sm:text-3xl font-bold">
+                      {formatCurrency(property.pricePerNight, property.currency)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">/ noche</span>
+                  </div>
+                  {property.listingType === PropertyListingType.BOTH && (
+                    <p className="text-xs text-muted-foreground mt-1">Para renta vacacional</p>
+                  )}
+                </div>
+              )}
+
+              {/* Precio de Venta - Si es VENTA o AMBAS */}
+              {(property.listingType === PropertyListingType.SALE ||
+                property.listingType === PropertyListingType.BOTH) && property.salePrice && (
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className={property.listingType === PropertyListingType.BOTH ? 'text-xl sm:text-2xl font-bold' : 'text-2xl sm:text-3xl font-bold'}>
+                      {formatCurrency(property.salePrice, property.currency)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">precio de venta</span>
+                  </div>
+                  {property.listingType === PropertyListingType.BOTH && (
+                    <p className="text-xs text-muted-foreground mt-1">Para compra de propiedad</p>
+                  )}
+                </div>
+              )}
             </div>
 
-            <Button className="w-full" size="lg">
-              Reservar Ahora
-            </Button>
+            {/* Botón según tipo de publicación */}
+            {property.listingType === PropertyListingType.SALE ? (
+              <Button className="w-full" size="lg">
+                Contactar Vendedor
+              </Button>
+            ) : property.listingType === PropertyListingType.BOTH ? (
+              <div className="space-y-2">
+                <Button className="w-full" size="lg">
+                  Reservar Ahora
+                </Button>
+                <Button className="w-full" size="lg" variant="outline">
+                  Contactar Vendedor
+                </Button>
+              </div>
+            ) : (
+              <Button className="w-full" size="lg">
+                Reservar Ahora
+              </Button>
+            )}
 
             <div className="text-xs text-muted-foreground text-center">
               No se realizará ningún cargo todavía

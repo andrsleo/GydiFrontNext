@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { PropertyType, Currency } from '../types';
+import { PropertyType, PropertyListingType, Currency } from '../types';
 
 /**
  * Create Property Schema
@@ -27,11 +27,18 @@ export const createPropertySchema = z.object({
     .number()
     .positive('Price must be positive')
     .min(1, 'Price must be at least 1')
-    .max(999999.99, 'Price is too high'),
+    .max(999999999.99, 'Price is too high'),
 
   currency: z.nativeEnum(Currency, {
     errorMap: () => ({ message: 'Invalid currency' }),
   }),
+
+  salePrice: z
+    .number()
+    .positive('Sale price must be positive')
+    .min(1, 'Sale price must be at least 1')
+    .max(999999999999.99, 'Sale price is too high')
+    .optional(),
 
   country: z
     .string()
@@ -84,7 +91,44 @@ export const createPropertySchema = z.object({
   propertyType: z.nativeEnum(PropertyType, {
     errorMap: () => ({ message: 'Invalid property type' }),
   }),
-});
+
+  listingType: z
+    .nativeEnum(PropertyListingType, {
+      errorMap: () => ({ message: 'Invalid listing type' }),
+    })
+    .optional()
+    .default(PropertyListingType.SHORT_TERM_RENTAL),
+}).refine(
+  (data) => {
+    // If listing type allows rental (SHORT_TERM_RENTAL or BOTH), pricePerNight is required
+    if (
+      data.listingType === PropertyListingType.SHORT_TERM_RENTAL ||
+      data.listingType === PropertyListingType.BOTH
+    ) {
+      return data.pricePerNight > 0;
+    }
+    return true;
+  },
+  {
+    message: 'Price per night is required for rental properties',
+    path: ['pricePerNight'],
+  }
+).refine(
+  (data) => {
+    // If listing type allows sale (SALE or BOTH), salePrice is required
+    if (
+      data.listingType === PropertyListingType.SALE ||
+      data.listingType === PropertyListingType.BOTH
+    ) {
+      return data.salePrice != null && data.salePrice > 0;
+    }
+    return true;
+  },
+  {
+    message: 'Sale price is required when property is for sale',
+    path: ['salePrice'],
+  }
+);
 
 /**
  * Update Property Schema
@@ -108,13 +152,20 @@ export const updatePropertySchema = z.object({
     .number()
     .positive('Price must be positive')
     .min(1, 'Price must be at least 1')
-    .max(999999.99, 'Price is too high')
+    .max(999999999.99, 'Price is too high')
     .optional(),
 
   currency: z
     .nativeEnum(Currency, {
       errorMap: () => ({ message: 'Invalid currency' }),
     })
+    .optional(),
+
+  salePrice: z
+    .number()
+    .positive('Sale price must be positive')
+    .min(1, 'Sale price must be at least 1')
+    .max(999999999999.99, 'Sale price is too high')
     .optional(),
 
   country: z
@@ -174,6 +225,12 @@ export const updatePropertySchema = z.object({
       errorMap: () => ({ message: 'Invalid property type' }),
     })
     .optional(),
+
+  listingType: z
+    .nativeEnum(PropertyListingType, {
+      errorMap: () => ({ message: 'Invalid listing type' }),
+    })
+    .optional(),
 });
 
 /**
@@ -183,6 +240,7 @@ export const updatePropertySchema = z.object({
 export const propertyFiltersSchema = z.object({
   status: z.enum(['DRAFT', 'PUBLISHED', 'INACTIVE', 'DELETED']).optional(),
   propertyType: z.nativeEnum(PropertyType).optional(),
+  listingType: z.nativeEnum(PropertyListingType).optional(),
   country: z.string().optional(),
   city: z.string().optional(),
   minPrice: z.number().positive().optional(),

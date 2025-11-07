@@ -28,12 +28,40 @@ export enum PropertyType {
 }
 
 /**
+ * Property Listing Type Enum
+ */
+export enum PropertyListingType {
+  SHORT_TERM_RENTAL = 'SHORT_TERM_RENTAL',
+  SALE = 'SALE',
+  BOTH = 'BOTH',
+}
+
+/**
+ * Listing Type Labels (Spanish)
+ */
+export const LISTING_TYPE_LABELS: Record<PropertyListingType, string> = {
+  [PropertyListingType.SHORT_TERM_RENTAL]: 'Renta Corta',
+  [PropertyListingType.SALE]: 'Venta',
+  [PropertyListingType.BOTH]: 'Renta/Venta',
+};
+
+/**
+ * Listing Type Descriptions
+ */
+export const LISTING_TYPE_DESCRIPTIONS: Record<PropertyListingType, string> = {
+  [PropertyListingType.SHORT_TERM_RENTAL]: 'Propiedad disponible para renta vacacional',
+  [PropertyListingType.SALE]: 'Propiedad en venta',
+  [PropertyListingType.BOTH]: 'Disponible para renta o venta',
+};
+
+/**
  * Currency Enum
  */
 export enum Currency {
   USD = 'USD',
   EUR = 'EUR',
   MXN = 'MXN',
+  COP = 'COP',
   CAD = 'CAD',
   GBP = 'GBP',
 }
@@ -89,12 +117,14 @@ export interface PropertyResponse {
   description: string;
   pricePerNight: number;
   currency: Currency;
+  salePrice?: number;
   country: string;
   city: string;
   bedrooms: number;
   bathrooms: number;
   maxGuests: number;
   propertyType: PropertyType;
+  listingType: PropertyListingType;
   status: PropertyStatus;
   imageCount: number;
   videoCount: number;
@@ -124,6 +154,7 @@ export interface CreatePropertyRequest {
   description?: string;
   pricePerNight: number;
   currency: Currency;
+  salePrice?: number;
   country: string;
   city: string;
   address?: string;
@@ -133,6 +164,7 @@ export interface CreatePropertyRequest {
   bathrooms: number;
   maxGuests: number;
   propertyType: PropertyType;
+  listingType?: PropertyListingType;
 }
 
 /**
@@ -143,6 +175,7 @@ export interface UpdatePropertyRequest {
   description?: string;
   pricePerNight?: number;
   currency?: Currency;
+  salePrice?: number;
   country?: string;
   city?: string;
   address?: string;
@@ -152,6 +185,7 @@ export interface UpdatePropertyRequest {
   bathrooms?: number;
   maxGuests?: number;
   propertyType?: PropertyType;
+  listingType?: PropertyListingType;
 }
 
 /**
@@ -160,6 +194,7 @@ export interface UpdatePropertyRequest {
 export interface PropertyFilters {
   status?: PropertyStatus;
   propertyType?: PropertyType;
+  listingType?: PropertyListingType;
   country?: string;
   city?: string;
   minPrice?: number;

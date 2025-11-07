@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Edit, MapPin, Bed, Bath, Users } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/format';
+import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/types';
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -32,6 +33,21 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     );
   }
 
+  // Badge configuration for listing type
+  const listingTypeBadgeConfig = {
+    [PropertyListingType.SHORT_TERM_RENTAL]: {
+      className: 'bg-blue-500 text-white hover:bg-blue-600',
+    },
+    [PropertyListingType.SALE]: {
+      className: 'bg-green-500 text-white hover:bg-green-600',
+    },
+    [PropertyListingType.BOTH]: {
+      className: 'bg-purple-500 text-white hover:bg-purple-600',
+    },
+  };
+
+  const listingConfig = listingTypeBadgeConfig[property.listingType];
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
@@ -47,6 +63,12 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold truncate">{property.title}</h1>
               <Badge variant={property.status === 'PUBLISHED' ? 'default' : 'secondary'}>
                 {property.status}
+              </Badge>
+              <Badge className="bg-slate-800 text-white hover:bg-slate-900">
+                {property.propertyType}
+              </Badge>
+              <Badge className={listingConfig.className}>
+                {LISTING_TYPE_LABELS[property.listingType]}
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">
@@ -118,11 +140,34 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
             <CardHeader>
               <CardTitle>Precio</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl sm:text-3xl font-bold">
-                {formatCurrency(property.pricePerNight, property.currency)}
-              </div>
-              <p className="text-sm text-muted-foreground">por noche</p>
+            <CardContent className="space-y-3">
+              {/* Precio por Noche - Si es RENTA o AMBAS */}
+              {(property.listingType === PropertyListingType.SHORT_TERM_RENTAL ||
+                property.listingType === PropertyListingType.BOTH) && (
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold">
+                    {formatCurrency(property.pricePerNight, property.currency)}
+                  </div>
+                  <p className="text-sm text-muted-foreground">por noche</p>
+                  {property.listingType === PropertyListingType.BOTH && (
+                    <p className="text-xs text-muted-foreground mt-1">Para renta vacacional</p>
+                  )}
+                </div>
+              )}
+
+              {/* Precio de Venta - Si es VENTA o AMBAS */}
+              {(property.listingType === PropertyListingType.SALE ||
+                property.listingType === PropertyListingType.BOTH) && property.salePrice && (
+                <div className={property.listingType === PropertyListingType.BOTH ? 'pt-3 border-t' : ''}>
+                  <div className={property.listingType === PropertyListingType.BOTH ? 'text-xl sm:text-2xl font-bold' : 'text-2xl sm:text-3xl font-bold'}>
+                    {formatCurrency(property.salePrice, property.currency)}
+                  </div>
+                  <p className="text-sm text-muted-foreground">precio de venta</p>
+                  {property.listingType === PropertyListingType.BOTH && (
+                    <p className="text-xs text-muted-foreground mt-1">Para compra de propiedad</p>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
 

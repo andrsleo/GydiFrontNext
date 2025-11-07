@@ -20,7 +20,7 @@ import {
   type CreatePropertyFormData,
   type UpdatePropertyFormData,
 } from '../schemas/property.schema';
-import { PropertyType, Currency } from '../types';
+import { PropertyType, PropertyListingType, Currency, LISTING_TYPE_LABELS } from '../types';
 import { useAmenities } from '../hooks/use-amenities';
 
 interface PropertyFormProps {
@@ -62,6 +62,7 @@ export function PropertyForm({
     defaultValues: defaultValues || {
       currency: Currency.USD,
       propertyType: PropertyType.APARTMENT,
+      listingType: PropertyListingType.SHORT_TERM_RENTAL,
       bedrooms: 1,
       bathrooms: 1,
       maxGuests: 2,
@@ -103,43 +104,119 @@ export function PropertyForm({
         )}
       </div>
 
-      {/* Price & Currency */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="pricePerNight">
-            Price per Night <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="pricePerNight"
-            type="number"
-            step="0.01"
-            {...register('pricePerNight', { valueAsNumber: true })}
-            placeholder="150"
-            disabled={isSubmitting}
-          />
-          {errors.pricePerNight && (
-            <p className="text-sm text-destructive">{errors.pricePerNight.message}</p>
-          )}
-        </div>
+      {/* Listing Type - DESPUÉS DE DESCRIPCIÓN */}
+      <div className="space-y-2">
+        <Label htmlFor="listingType">
+          Tipo de Publicación <span className="text-destructive">*</span>
+        </Label>
+        <select
+          id="listingType"
+          {...register('listingType')}
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={isSubmitting}
+        >
+          {Object.entries(LISTING_TYPE_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
+        </select>
+        {errors.listingType && (
+          <p className="text-sm text-destructive">{errors.listingType.message}</p>
+        )}
+        <p className="text-sm text-muted-foreground">
+          Define si la propiedad es para renta corta, venta, o ambas opciones
+        </p>
+      </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="currency">
-            Currency <span className="text-destructive">*</span>
-          </Label>
-          <select
-            id="currency"
-            {...register('currency')}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={isSubmitting}
-          >
-            {Object.values(Currency).map((curr) => (
-              <option key={curr} value={curr}>
-                {curr}
-              </option>
-            ))}
-          </select>
-          {errors.currency && <p className="text-sm text-destructive">{errors.currency.message}</p>}
-        </div>
+      {/* Precios Condicionales */}
+      <div className="space-y-4">
+        {/* Precio por Noche - Si es RENTA CORTA o AMBAS */}
+        {(watch('listingType') === PropertyListingType.SHORT_TERM_RENTAL ||
+          watch('listingType') === PropertyListingType.BOTH) && (
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="pricePerNight">
+                Precio por Noche <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="pricePerNight"
+                type="number"
+                step="0.01"
+                {...register('pricePerNight', { valueAsNumber: true })}
+                placeholder="150"
+                disabled={isSubmitting}
+              />
+              {errors.pricePerNight && (
+                <p className="text-sm text-destructive">{errors.pricePerNight.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="currency">
+                Moneda <span className="text-destructive">*</span>
+              </Label>
+              <select
+                id="currency"
+                {...register('currency')}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isSubmitting}
+              >
+                {Object.values(Currency).map((curr) => (
+                  <option key={curr} value={curr}>
+                    {curr}
+                  </option>
+                ))}
+              </select>
+              {errors.currency && <p className="text-sm text-destructive">{errors.currency.message}</p>}
+            </div>
+          </div>
+        )}
+
+        {/* Precio de Venta - Si es VENTA o AMBAS */}
+        {(watch('listingType') === PropertyListingType.SALE ||
+          watch('listingType') === PropertyListingType.BOTH) && (
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="salePrice">
+                Precio de Venta <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="salePrice"
+                type="number"
+                step="0.01"
+                {...register('salePrice', { valueAsNumber: true })}
+                placeholder="250000"
+                disabled={isSubmitting}
+              />
+              {errors.salePrice && (
+                <p className="text-sm text-destructive">{errors.salePrice.message}</p>
+              )}
+            </div>
+
+            {/* Moneda solo aparece si NO se mostró arriba */}
+            {watch('listingType') !== PropertyListingType.BOTH && (
+              <div className="space-y-2">
+                <Label htmlFor="currency">
+                  Moneda <span className="text-destructive">*</span>
+                </Label>
+                <select
+                  id="currency"
+                  {...register('currency')}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={isSubmitting}
+                >
+                  {Object.values(Currency).map((curr) => (
+                    <option key={curr} value={curr}>
+                      {curr}
+                    </option>
+                  ))}
+                </select>
+                {errors.currency && <p className="text-sm text-destructive">{errors.currency.message}</p>}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Property Type */}

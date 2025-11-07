@@ -28,7 +28,9 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
     description: property.description,
     pricePerNight: property.pricePerNight,
     currency: property.currency,
+    salePrice: property.salePrice,
     propertyType: property.propertyType,
+    listingType: property.listingType,
     // Flatten location object
     country: property.location?.country || '',
     city: property.location?.city || '',
