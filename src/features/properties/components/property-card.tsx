@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Bed, Bath, Users } from 'lucide-react';
 import type { PropertyResponse } from '../types';
+import { LISTING_TYPE_LABELS, PropertyListingType } from '../types';
 import { formatCurrency } from '@/lib/utils/format';
 import { PropertyActionsMenu } from './property-actions-menu';
 
@@ -36,6 +37,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
     title,
     mainImageUrl,
     pricePerNight,
+    salePrice,
     currency,
     city,
     country,
@@ -44,7 +46,26 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
     maxGuests,
     status,
     propertyType,
+    listingType,
   } = property;
+
+  // Badge styling based on listing type
+  const listingTypeBadgeConfig = {
+    [PropertyListingType.SHORT_TERM_RENTAL]: {
+      variant: 'secondary' as const,
+      className: 'bg-blue-500/90 text-white hover:bg-blue-600',
+    },
+    [PropertyListingType.SALE]: {
+      variant: 'destructive' as const,
+      className: 'bg-green-500/90 text-white hover:bg-green-600',
+    },
+    [PropertyListingType.BOTH]: {
+      variant: 'default' as const,
+      className: 'bg-purple-500/90 text-white hover:bg-purple-600',
+    },
+  };
+
+  const listingConfig = listingTypeBadgeConfig[listingType];
 
   const linkHref = href || `/dashboard/propiedades/${id}`;
   const imageUrl = mainImageUrl || '/images/property-placeholder.jpg';
@@ -62,16 +83,21 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
-          {/* Status Badge */}
+          {/* Status Badge (top right) */}
           {status !== 'PUBLISHED' && (
             <div className="absolute right-2 top-2">
               <Badge variant={status === 'DRAFT' ? 'warning' : 'secondary'}>{status}</Badge>
             </div>
           )}
 
-          {/* Property Type Badge */}
-          <div className="absolute left-2 top-2">
-            <Badge variant="secondary">{propertyType}</Badge>
+          {/* Property Type & Listing Type Badges (top left) */}
+          <div className="absolute left-2 top-2 flex flex-col gap-2">
+            <Badge variant="secondary" className="bg-slate-800/90 text-white hover:bg-slate-900">
+              {propertyType}
+            </Badge>
+            <Badge variant={listingConfig.variant} className={listingConfig.className}>
+              {LISTING_TYPE_LABELS[listingType]}
+            </Badge>
           </div>
         </div>
 
@@ -122,12 +148,29 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
         </CardContent>
 
         <CardFooter className="pt-0">
-          {/* Price */}
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold">
-              {formatCurrency(pricePerNight, currency)}
-            </span>
-            <span className="text-sm text-muted-foreground">/ night</span>
+          {/* Price - Conditional based on listing type */}
+          <div className="w-full space-y-2">
+            {/* Precio por Noche - Si es RENTA o AMBAS */}
+            {(listingType === PropertyListingType.SHORT_TERM_RENTAL ||
+              listingType === PropertyListingType.BOTH) && (
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-bold">
+                  {formatCurrency(pricePerNight, currency)}
+                </span>
+                <span className="text-sm text-muted-foreground">/ noche</span>
+              </div>
+            )}
+
+            {/* Precio de Venta - Si es VENTA o AMBAS */}
+            {(listingType === PropertyListingType.SALE ||
+              listingType === PropertyListingType.BOTH) && salePrice && (
+              <div className="flex items-baseline gap-1">
+                <span className={listingType === PropertyListingType.BOTH ? 'text-lg font-semibold' : 'text-2xl font-bold'}>
+                  {formatCurrency(salePrice, currency)}
+                </span>
+                <span className="text-sm text-muted-foreground">precio de venta</span>
+              </div>
+            )}
           </div>
         </CardFooter>
       </Link>
