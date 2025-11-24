@@ -42,7 +42,10 @@ export function useAuth() {
 
       return { success: true };
     } catch (err) {
+      // CRITICAL: Extract the actual error message
+      // React Query wraps errors, so we need to extract properly
       const message = err instanceof Error ? err.message : 'Error al iniciar sesión';
+      setError(message); // Also set local error state
       return { success: false, error: message };
     }
   };

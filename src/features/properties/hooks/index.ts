@@ -5,6 +5,7 @@
 
 export { useProperties } from './use-properties';
 export { usePropertyDetail } from './use-property-detail';
+export { usePropertyById } from './use-property-by-id';
 export { useCreateProperty } from './use-create-property';
 export { useUpdateProperty } from './use-update-property';
 export { useUploadImages } from './use-upload-images';

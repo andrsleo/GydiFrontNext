@@ -6,33 +6,37 @@
 'use client';
 
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { useSearchParams } from 'next/navigation';
 import { propertiesApi } from '../api/properties.api';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import type { PropertyDetailResponse } from '../types';
 
 interface UsePropertyDetailOptions
   extends Omit<UseQueryOptions<PropertyDetailResponse, Error>, 'queryKey' | 'queryFn'> {
-  id: string;
+  slug: string;
 }
 
 /**
- * Hook to fetch property details by ID
+ * Hook to fetch property details by SEO-friendly slug
  * Includes all property info, images, videos, amenities
+ * Automatically extracts and includes referral token from URL if present
  *
  * @example
  * ```tsx
- * const { data, isLoading, error } = usePropertyDetail({ id: 'property-123' });
+ * const { data, isLoading, error } = usePropertyDetail({ slug: 'beach-house-malibu-x7k2m' });
  * ```
  */
 export function usePropertyDetail(options: UsePropertyDetailOptions) {
-  const { id, ...queryOptions } = options;
+  const { slug, ...queryOptions } = options;
+  const searchParams = useSearchParams();
+  const ref = searchParams.get('ref');
 
   return useQuery<PropertyDetailResponse, Error>({
-    queryKey: propertyKeys.detail(id),
-    queryFn: () => propertiesApi.getById(id),
+    queryKey: propertyKeys.detail(slug, ref),
+    queryFn: () => propertiesApi.getBySlug(slug, ref || undefined),
     staleTime: 2 * 60 * 1000, // 2 minutes - details can change
     gcTime: 5 * 60 * 1000, // 5 minutes cache
-    enabled: !!id, // Only fetch if ID is provided
+    enabled: !!slug, // Only fetch if slug is provided
     ...queryOptions,
   });
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   MousePointerClick,
   Users,
@@ -11,130 +12,107 @@ import {
   ExternalLink,
   Copy,
   Check,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-// Mock data - replace with real API calls
-const referralStats = [
-  {
-    name: 'Total de Clicks',
-    value: '1,234',
-    change: '+23.1%',
-    icon: MousePointerClick,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50',
-  },
-  {
-    name: 'Conversiones',
-    value: '48',
-    change: '+8',
-    icon: Users,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-  },
-  {
-    name: 'Tasa de Conversión',
-    value: '3.89%',
-    change: '-0.21%',
-    icon: TrendingUp,
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
-  },
-  {
-    name: 'Días Activos',
-    value: '42',
-    change: 'Último click: Hace 2h',
-    icon: Calendar,
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-50',
-  },
-];
-
-const referrals = [
-  {
-    id: 1,
-    code: 'REF-ABC123',
-    property: 'Villa Paradise - Cancún',
-    clicks: 156,
-    conversions: 8,
-    conversionRate: 5.13,
-    commission: 350,
-    status: 'active',
-    createdAt: '2025-09-15',
-    lastClick: '2025-10-19',
-  },
-  {
-    id: 2,
-    code: 'REF-XYZ789',
-    property: 'Beach House - Playa del Carmen',
-    clicks: 243,
-    conversions: 12,
-    conversionRate: 4.94,
-    commission: 280,
-    status: 'active',
-    createdAt: '2025-09-01',
-    lastClick: '2025-10-20',
-  },
-  {
-    id: 3,
-    code: 'REF-DEF456',
-    property: 'Mountain Cabin - Valle de Bravo',
-    clicks: 89,
-    conversions: 3,
-    conversionRate: 3.37,
-    commission: 420,
-    status: 'active',
-    createdAt: '2025-09-22',
-    lastClick: '2025-10-18',
-  },
-  {
-    id: 4,
-    code: 'REF-GHI012',
-    property: 'City Loft - CDMX',
-    clicks: 312,
-    conversions: 15,
-    conversionRate: 4.81,
-    commission: 190,
-    status: 'active',
-    createdAt: '2025-08-10',
-    lastClick: '2025-10-20',
-  },
-  {
-    id: 5,
-    code: 'REF-JKL345',
-    property: 'Ocean View Penthouse - Puerto Vallarta',
-    clicks: 67,
-    conversions: 2,
-    conversionRate: 2.99,
-    commission: 450,
-    status: 'paused',
-    createdAt: '2025-10-01',
-    lastClick: '2025-10-15',
-  },
-];
+import { Skeleton } from '@/components/ui/skeleton';
+import { useReferralLinks, useReferralStats } from '@/features/referrals/hooks';
+import { formatDate, formatCurrency, formatNumber } from '@/lib/utils';
 
 const statusConfig = {
-  active: { label: 'Activo', color: 'bg-green-100 text-green-800' },
-  paused: { label: 'Pausado', color: 'bg-gray-100 text-gray-800' },
+  ACTIVE: { label: 'Activo', color: 'bg-green-100 text-green-800' },
+  INACTIVE: { label: 'Inactivo', color: 'bg-gray-100 text-gray-800' },
+  EXPIRED: { label: 'Expirado', color: 'bg-red-100 text-red-800' },
+  DELETED: { label: 'Eliminado', color: 'bg-red-200 text-red-900' },
 };
 
 export default function ReferidosPage() {
+  const { data: session } = useSession();
   const [searchQuery, setSearchQuery] = useState('');
-  const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const filteredReferrals = referrals.filter(
-    (referral) =>
-      referral.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      referral.property.toLowerCase().includes(searchQuery.toLowerCase())
+  // Fetch real data from API
+  const { data: links, isLoading: linksLoading, error: linksError } = useReferralLinks();
+  const { data: stats, isLoading: statsLoading, error: statsError } = useReferralStats(
+    session?.user?.id ? parseInt(session.user.id) : undefined
   );
 
-  const handleCopyLink = (referralCode: string, id: number) => {
-    const affiliateLink = `${window.location.origin}/propiedades?ref=${referralCode}`;
-    navigator.clipboard.writeText(affiliateLink);
+  // Prepare stats data
+  const referralStatsDisplay = stats ? [
+    {
+      name: 'Total de Clicks',
+      value: formatNumber(stats.totalClicks),
+      change: `${stats.clicksLast30Days} en últimos 30 días`,
+      icon: MousePointerClick,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+    },
+    {
+      name: 'Conversiones',
+      value: formatNumber(stats.totalConversions),
+      change: `+${stats.conversionsLast30Days} este mes`,
+      icon: Users,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+    },
+    {
+      name: 'Tasa de Conversión',
+      value: `${stats.conversionRate.toFixed(2)}%`,
+      change: stats.conversionRate > 3 ? 'Excelente' : 'Promedio',
+      icon: TrendingUp,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+    },
+    {
+      name: 'Enlaces Activos',
+      value: formatNumber(stats.activeLinksCount),
+      change: `${stats.totalLinksCreated} totales`,
+      icon: Calendar,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
+    },
+  ] : [];
+
+  const filteredReferrals = links?.filter(
+    (link) =>
+      link.shortCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      link.fullUrl.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
+  const handleCopyLink = (fullUrl: string, id: string) => {
+    navigator.clipboard.writeText(fullUrl);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
+
+  // Loading state
+  if (linksLoading || statsLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (linksError || statsError) {
+    return (
+      <div className="space-y-6">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6">
+          <h3 className="text-lg font-semibold text-red-900">Error al cargar datos</h3>
+          <p className="mt-2 text-sm text-red-700">
+            {linksError?.message || statsError?.message || 'Ocurrió un error inesperado'}
+          </p>
+          <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
+            Reintentar
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -146,7 +124,7 @@ export default function ReferidosPage() {
             Monitorea tus enlaces de referido y su rendimiento
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" disabled>
           <Download className="h-4 w-4" />
           Exportar Reporte
         </Button>
@@ -154,7 +132,7 @@ export default function ReferidosPage() {
 
       {/* Stats Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {referralStats.map((stat) => {
+        {referralStatsDisplay.map((stat) => {
           const Icon = stat.icon;
 
           return (
@@ -227,50 +205,46 @@ export default function ReferidosPage() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {filteredReferrals.map((referral) => (
-                <tr key={referral.id} className="hover:bg-gray-50">
+              {filteredReferrals.map((link) => (
+                <tr key={link.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <code className="rounded bg-gray-100 px-2 py-1 text-sm font-mono">
-                        {referral.code}
+                        {link.shortCode}
                       </code>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div>
-                      <p className="font-medium">{referral.property}</p>
+                      <p className="font-medium text-xs truncate max-w-xs">{link.fullUrl}</p>
                       <p className="text-xs text-muted-foreground">
-                        Creado: {referral.createdAt}
+                        Creado: {formatDate(link.createdAt)}
                       </p>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="font-semibold">{referral.clicks}</span>
+                    <span className="font-semibold">{link.clicksCount}</span>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className="font-semibold text-blue-600">
-                      {referral.conversions}
+                      {link.conversionsCount}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className="font-semibold text-green-600">
-                      {referral.conversionRate.toFixed(2)}%
+                      {link.conversionRate.toFixed(2)}%
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="font-semibold">${referral.commission}</span>
+                    <span className="font-semibold">{formatCurrency(link.totalCommission)}</span>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span
                       className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                        statusConfig[referral.status as keyof typeof statusConfig]
-                          .color
+                        statusConfig[link.status as keyof typeof statusConfig]?.color || 'bg-gray-100 text-gray-800'
                       }`}
                     >
-                      {
-                        statusConfig[referral.status as keyof typeof statusConfig]
-                          .label
-                      }
+                      {statusConfig[link.status as keyof typeof statusConfig]?.label || link.status}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -278,10 +252,10 @@ export default function ReferidosPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleCopyLink(referral.code, referral.id)}
+                        onClick={() => handleCopyLink(link.fullUrl, link.id)}
                         title="Copiar enlace"
                       >
-                        {copiedId === referral.id ? (
+                        {copiedId === link.id ? (
                           <Check className="h-4 w-4 text-green-600" />
                         ) : (
                           <Copy className="h-4 w-4" />
@@ -291,12 +265,9 @@ export default function ReferidosPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() =>
-                          window.open(
-                            `/dashboard/referidos/${referral.id}`,
-                            '_blank'
-                          )
+                          window.open(link.fullUrl, '_blank')
                         }
-                        title="Ver detalles"
+                        title="Abrir enlace"
                       >
                         <ExternalLink className="h-4 w-4" />
                       </Button>

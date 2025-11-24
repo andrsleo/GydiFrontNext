@@ -13,7 +13,8 @@ export const propertyKeys = {
   lists: () => [...propertyKeys.all, 'list'] as const,
   list: (filters?: PropertyFilters) => [...propertyKeys.lists(), filters] as const,
   details: () => [...propertyKeys.all, 'detail'] as const,
-  detail: (id: string) => [...propertyKeys.details(), id] as const,
+  detail: (slug: string, ref?: string | null) =>
+    ref ? [...propertyKeys.details(), slug, ref] as const : [...propertyKeys.details(), slug] as const,
   myProperties: (filters?: PropertyFilters) =>
     [...propertyKeys.all, 'my-properties', filters] as const,
 };

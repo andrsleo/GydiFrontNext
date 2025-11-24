@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCreateProperty, useUploadImages, useUploadVideos, usePropertyDetail } from '@/features/properties';
+import { useCreateProperty, useUploadImages, useUploadVideos, usePropertyById } from '@/features/properties';
 import { PropertyForm, ImageUploader, VideoUploader, ImageOrganizer } from '@/features/properties/components';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Save, Upload, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { CreatePropertyFormData } from '@/features/properties/schemas';
+import { toast } from 'sonner';
 
 export default function NewPropertyPage() {
   const router = useRouter();
@@ -23,18 +24,25 @@ export default function NewPropertyPage() {
   const uploadVideos = useUploadVideos();
 
   // Fetch property detail after images are uploaded to get image data
-  const { data: property } = usePropertyDetail({
+  const { data: property } = usePropertyById({
     id: propertyId || '',
     enabled: !!propertyId && imagesUploaded
   });
 
   const handleCreateProperty = async (data: CreatePropertyFormData) => {
+    console.log('=== FORM SUBMISSION STARTED ===');
+    console.log('Form data:', data);
+
     try {
+      console.log('Calling createProperty.mutateAsync...');
       const property = await createProperty.mutateAsync(data);
+      console.log('Property created successfully:', property);
       setPropertyId(property.id);
       setStep('images');
     } catch (error) {
-      console.error('Error creating property:', error);
+      // Error is already handled by the mutation hook with a toast
+      console.error('=== ERROR CREATING PROPERTY ===');
+      console.error('Error details:', error);
     }
   };
 
@@ -222,7 +230,7 @@ export default function NewPropertyPage() {
               >
                 <Save className="h-4 w-4 mr-2" />
                 {uploadVideos.isPending ? 'Subiendo...' :
-                 videos.length > 0 ? `Subir ${videos.length} Videos y Finalizar` : 'Omitir y Finalizar'}
+                  videos.length > 0 ? `Subir ${videos.length} Videos y Finalizar` : 'Omitir y Finalizar'}
               </Button>
             </div>
           </CardContent>

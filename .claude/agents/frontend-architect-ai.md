@@ -142,7 +142,7 @@ Define **qué herramienta usar para qué tipo de estado**:
 
 **Estado del Servidor (Server State):**
 - **TanStack Query** para:
-  - Datos de API (properties, users, bookings)
+  - Datos de API (properties, users)
   - Caché automático
   - Revalidation strategies
   - Optimistic updates

@@ -10,9 +10,9 @@ import { MapPin, Bed, Bath, Users, Calendar, DollarSign } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
 import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/types';
 
-export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const { data: property, isLoading, error } = usePropertyDetail({ id });
+export default function PropertyDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
+  const { data: property, isLoading, error } = usePropertyDetail({ slug });
 
   if (isLoading) {
     return (
@@ -131,7 +131,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           </div>
         </div>
 
-        {/* Sidebar - Booking Card */}
+        {/* Sidebar - Property Info */}
         <div className="md:col-span-2 lg:col-span-1">
           <div className="lg:sticky lg:top-4 border rounded-lg p-4 sm:p-6 space-y-4 bg-card shadow-lg">
             {/* Precios Condicionales */}

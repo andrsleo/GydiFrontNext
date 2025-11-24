@@ -53,6 +53,24 @@ export const propertiesApi = {
   },
 
   /**
+   * Get property by SEO-friendly slug
+   * Public endpoint - no auth required
+   * Supports optional referral token (ref query param)
+   */
+  async getBySlug(slug: string, ref?: string): Promise<PropertyDetailResponse> {
+    const params = new URLSearchParams();
+    if (ref) {
+      params.append('ref', ref);
+    }
+
+    const queryString = params.toString();
+    const url = `${BASE_PATH}/by-slug/${slug}${queryString ? `?${queryString}` : ''}`;
+
+    const { data } = await apiClient.get<PropertyDetailResponse>(url);
+    return data;
+  },
+
+  /**
    * Create new property
    * Requires authentication (HOST or ADMIN role)
    */

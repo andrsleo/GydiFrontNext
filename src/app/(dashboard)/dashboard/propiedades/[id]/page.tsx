@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import Link from 'next/link';
-import { usePropertyDetail } from '@/features/properties';
+import { usePropertyById } from '@/features/properties';
 import { PropertyGallery } from '@/features/properties/components';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,7 @@ import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { data: property, isLoading } = usePropertyDetail({ id });
+  const { data: property, isLoading } = usePropertyById({ id });
 
   if (isLoading) {
     return (

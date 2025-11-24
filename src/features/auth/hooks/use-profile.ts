@@ -34,7 +34,7 @@ export const profileKeys = {
 /**
  * Hook to fetch a profile by profile ID
  *
- * @param id - Profile ID (UUID)
+ * @param id - Profile ID (Long)
  * @param options - React Query options
  * @returns Query object with profile data
  *

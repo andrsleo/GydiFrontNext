@@ -15,7 +15,7 @@ interface UseCreatePropertyOptions
   extends Omit<
     UseMutationOptions<PropertyResponse, Error, CreatePropertyRequest>,
     'mutationFn'
-  > {}
+  > { }
 
 /**
  * Hook to create a new property
@@ -49,16 +49,40 @@ export function useCreateProperty(options?: UseCreatePropertyOptions) {
 
       // Show success toast
       toast.success('Property created successfully', {
-        description: `${data.title} has been created with ID: ${data.id}`,
+        description: `${data.title} has been created`,
       });
 
       // Call custom onSuccess if provided
       options?.onSuccess?.(data, variables, context);
     },
-    onError: (error, variables, context) => {
-      // Show error toast
-      toast.error('Failed to create property', {
-        description: error.message || 'An unexpected error occurred',
+    onError: (error: any, variables, context) => {
+      console.error('Create property error:', error);
+
+      // Extract error message from backend
+      let errorMessage = 'An unexpected error occurred';
+      let errorDescription = 'Please try again later';
+
+      if (error.response?.data) {
+        const backendError = error.response.data;
+
+        // Handle validation errors (400)
+        if (error.response.status === 400 && backendError.errors) {
+          errorMessage = 'Validation Error';
+          errorDescription = backendError.errors.map((err: any) => `${err.field}: ${err.message}`).join(', ');
+        }
+        // Handle other backend errors
+        else if (backendError.message) {
+          errorMessage = backendError.error || 'Server Error';
+          errorDescription = backendError.message;
+        }
+      } else if (error.message) {
+        errorDescription = error.message;
+      }
+
+      // Show error toast with details
+      toast.error(errorMessage, {
+        description: errorDescription,
+        duration: 5000, // Show for 5 seconds
       });
 
       // Call custom onError if provided

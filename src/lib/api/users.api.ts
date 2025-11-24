@@ -213,7 +213,7 @@ export const profilesApi = {
   /**
    * Get profile by profile ID
    *
-   * @param id - Profile ID (UUID)
+   * @param id - Profile ID (Long)
    * @returns Profile data
    *
    * @example

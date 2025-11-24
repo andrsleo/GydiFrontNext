@@ -32,7 +32,7 @@ export type SubscriptionPlan = 'FREE' | 'PRO' | 'ELITE';
  * These flags can be disabled by administrators for moderation purposes:
  * - canPublish: Can publish new properties (requires verification)
  * - canRefer: Can generate referral links (requires verification)
- * - canRent: Can create bookings/reservations
+ * - canRent: Can create reservations
  */
 export interface UserCapabilities {
   canPublish: boolean;
@@ -47,7 +47,6 @@ export interface UserCapabilities {
  * - Profile permissions (READ, UPDATE, DELETE)
  * - Property permissions (PUBLISH, UPDATE_OWN, DELETE_OWN, VIEW_ANY, etc.)
  * - Referral permissions (GENERATE, VIEW_OWN, VIEW_ANY)
- * - Booking permissions (CREATE, VIEW_OWN, VIEW_ANY)
  * - Analytics permissions (VIEW_OWN, VIEW_ADVANCED, EXPORT, VIEW_GLOBAL)
  * - Admin permissions (USER_MANAGE, SUBSCRIPTION_MANAGE, SYSTEM_CONFIGURE, etc.)
  */
@@ -70,10 +69,6 @@ export type Permission =
   | 'REFERRAL_GENERATE'
   | 'REFERRAL_VIEW_OWN'
   | 'REFERRAL_VIEW_ANY'
-  // Booking
-  | 'BOOKING_CREATE'
-  | 'BOOKING_VIEW_OWN'
-  | 'BOOKING_VIEW_ANY'
   // Analytics
   | 'ANALYTICS_VIEW_OWN'
   | 'ANALYTICS_VIEW_ADVANCED'
