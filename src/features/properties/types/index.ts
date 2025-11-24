@@ -114,6 +114,7 @@ export interface PropertyResponse {
   id: string;
   hostId: string;
   title: string;
+  slug?: string;
   description: string;
   pricePerNight: number;
   currency: Currency;

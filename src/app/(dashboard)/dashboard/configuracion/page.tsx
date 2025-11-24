@@ -64,10 +64,8 @@ export default function ConfiguracionPage() {
 
   // Mock notifications state
   const [notifications, setNotifications] = useState({
-    emailBookings: true,
     emailCommissions: true,
     emailNews: false,
-    pushBookings: true,
     pushCommissions: true,
   });
 
@@ -376,25 +374,6 @@ export default function ConfiguracionPage() {
             <h2 className="mb-6 text-xl font-semibold">Notificaciones por Email</h2>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Nuevas Reservas</p>
-                  <p className="text-sm text-muted-foreground">
-                    Recibe un email cuando alguien haga una reserva con tu link
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={notifications.emailBookings}
-                  onChange={(e) =>
-                    setNotifications({
-                      ...notifications,
-                      emailBookings: e.target.checked,
-                    })
-                  }
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-              </div>
 
               <div className="flex items-center justify-between">
                 <div>
@@ -442,25 +421,6 @@ export default function ConfiguracionPage() {
             <h2 className="mb-6 text-xl font-semibold">Notificaciones Push</h2>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Nuevas Reservas</p>
-                  <p className="text-sm text-muted-foreground">
-                    Notificaciones instantáneas en tu navegador
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={notifications.pushBookings}
-                  onChange={(e) =>
-                    setNotifications({
-                      ...notifications,
-                      pushBookings: e.target.checked,
-                    })
-                  }
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-              </div>
 
               <div className="flex items-center justify-between">
                 <div>

@@ -15,27 +15,74 @@ export function usePublishProperty() {
     },
     onError: (error: any) => {
       const errorData = error.response?.data;
-      const errorMessage = errorData?.message || 'Error al publicar la propiedad';
+      let errorMessage = errorData?.message || 'Error al publicar la propiedad';
+
+      // Transform technical error messages into user-friendly messages
+      const transformErrorMessage = (msg: string): string => {
+        // Pattern: "Property must have at least X images (currently has Y)"
+        const imageMatch = msg.match(/must have at least (\d+) images.*currently has (\d+)/i);
+        if (imageMatch) {
+          const required = imageMatch[1];
+          const current = imageMatch[2];
+          return `📸 Necesitas al menos ${required} imágenes para publicar (tienes ${current})`;
+        }
+
+        // Pattern: "Property must have at least X videos"
+        const videoMatch = msg.match(/must have at least (\d+) videos/i);
+        if (videoMatch) {
+          const required = videoMatch[1];
+          return `🎥 Necesitas al menos ${required} video(s) para publicar`;
+        }
+
+        // Pattern: "Description is required" or "Title is required"
+        if (msg.includes('Description') && msg.includes('required')) {
+          return '📝 La descripción es obligatoria para publicar';
+        }
+        if (msg.includes('Title') && msg.includes('required')) {
+          return '📝 El título es obligatorio para publicar';
+        }
+
+        // Pattern: "Address is required"
+        if (msg.includes('Address') && msg.includes('required')) {
+          return '📍 La dirección es obligatoria para publicar';
+        }
+
+        // Pattern: "Amenities" validation
+        if (msg.includes('amenities') || msg.includes('Amenities')) {
+          return '✨ Debes agregar al menos 3 amenidades para publicar';
+        }
+
+        // Pattern: "Property domain exception:" - remove technical prefix
+        if (msg.includes('Property domain exception:')) {
+          return msg.replace('Property domain exception:', '❌').trim();
+        }
+
+        // Default: return original message with emoji
+        return `⚠️ ${msg}`;
+      };
 
       // Check if there are validation errors with details
       if (errorData?.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
-        // Format the errors list
+        // Format the errors list with user-friendly messages
         const errorsList = errorData.errors
-          .map((err: any) => `• ${err.message}`)
+          .map((err: any) => `• ${transformErrorMessage(err.message)}`)
           .join('\n');
 
         toast.error(
-          `No se puede publicar la propiedad. Faltan los siguientes requisitos:\n\n${errorsList}`,
+          `No se puede publicar la propiedad:\n\n${errorsList}`,
           {
-            duration: 8000, // Show for 8 seconds due to multiple errors
+            duration: 10000, // Show for 10 seconds due to multiple errors
             style: {
               whiteSpace: 'pre-line',
             },
           }
         );
       } else {
-        // Single error message
-        toast.error(errorMessage);
+        // Single error message - transform it
+        const friendlyMessage = transformErrorMessage(errorMessage);
+        toast.error(friendlyMessage, {
+          duration: 6000,
+        });
       }
     },
   });

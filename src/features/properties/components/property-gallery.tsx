@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, X, Play } from 'lucide-react';
+import { getImagePath } from '@/lib/utils/image';
 import type { PropertyImage, PropertyVideo } from '../types';
 
 interface PropertyGalleryProps {
@@ -87,7 +88,7 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
         {currentMedia.type === 'image' ? (
           <>
             <Image
-              src={currentMedia.url}
+              src={getImagePath(currentMedia.url)}
               alt={`${title} - Image ${currentIndex + 1}`}
               fill
               className="object-cover"
@@ -143,7 +144,7 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 sm:gap-3">
         {allMedia.map((media, index) => (
           <button
-            key={media.id}
+            key={`${media.type}-${media.id}`}
             onClick={() => setCurrentIndex(index)}
             className={`relative aspect-square overflow-hidden rounded-md transition-all min-h-[44px] min-w-[44px] ${
               index === currentIndex
@@ -154,7 +155,7 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
           >
             {media.type === 'image' ? (
               <Image
-                src={media.url}
+                src={getImagePath(media.url)}
                 alt={`Thumbnail ${index + 1}`}
                 fill
                 className="object-cover"
@@ -165,7 +166,7 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
               <>
                 {media.thumbnailUrl ? (
                   <Image
-                    src={media.thumbnailUrl}
+                    src={getImagePath(media.thumbnailUrl)}
                     alt={`Video thumbnail ${index + 1}`}
                     fill
                     className="object-cover"
@@ -203,7 +204,7 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
           <div className="relative h-[90vh] w-[90vw]" onClick={(e) => e.stopPropagation()}>
             {currentMedia.type === 'image' ? (
               <Image
-                src={currentMedia.url}
+                src={getImagePath(currentMedia.url)}
                 alt={`${title} - Image ${currentIndex + 1}`}
                 fill
                 className="object-contain"

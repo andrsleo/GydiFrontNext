@@ -52,7 +52,7 @@ export type ProfileVisibility = 'public' | 'private' | 'connections';
  * User profile response (corresponds to UserProfileResponse.java)
  */
 export interface UserProfileResponse {
-  id: string; // UUID
+  id: string; // Long
   userId: number;
   // Personal Information
   firstName: string | null;

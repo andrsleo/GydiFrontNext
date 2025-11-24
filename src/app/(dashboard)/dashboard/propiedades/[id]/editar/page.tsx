@@ -2,7 +2,7 @@
 
 import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { usePropertyDetail, useUpdateProperty, useUploadImages, useUploadVideos, usePublishProperty } from '@/features/properties';
+import { usePropertyById, useUpdateProperty, useUploadImages, useUploadVideos, usePublishProperty } from '@/features/properties';
 import { PropertyForm, ImageUploader, VideoUploader, PropertyGallery, ImageOrganizer, VideoOrganizer } from '@/features/properties/components';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 export default function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
-  const { data: property, isLoading } = usePropertyDetail({ id });
+  const { data: property, isLoading } = usePropertyById({ id });
   const updateProperty = useUpdateProperty();
   const uploadImages = useUploadImages();
   const uploadVideos = useUploadVideos();
@@ -100,13 +100,21 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <Link href={`/propiedades/${id}`} target="_blank" className="flex-1 sm:flex-initial">
-            <Button variant="outline" className="w-full sm:w-auto">
+          {property.slug ? (
+            <Link href={`/propiedades/${property.slug}`} target="_blank" className="flex-1 sm:flex-initial">
+              <Button variant="outline" className="w-full sm:w-auto">
+                <Eye className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">Vista Previa</span>
+                <span className="sm:hidden">Preview</span>
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="outline" className="w-full sm:w-auto" disabled title="El slug de la propiedad no está disponible">
               <Eye className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Vista Previa</span>
               <span className="sm:hidden">Preview</span>
             </Button>
-          </Link>
+          )}
           {property.status === 'DRAFT' && (
             <Button
               className="flex-1 sm:flex-initial"

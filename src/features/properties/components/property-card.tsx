@@ -11,6 +11,7 @@ import { MapPin, Bed, Bath, Users } from 'lucide-react';
 import type { PropertyResponse } from '../types';
 import { LISTING_TYPE_LABELS, PropertyListingType } from '../types';
 import { formatCurrency } from '@/lib/utils/format';
+import { getImagePath } from '@/lib/utils/image';
 import { PropertyActionsMenu } from './property-actions-menu';
 
 interface PropertyCardProps {
@@ -34,6 +35,7 @@ interface PropertyCardProps {
 export function PropertyCard({ property, href, showActions = false }: PropertyCardProps) {
   const {
     id,
+    slug,
     title,
     mainImageUrl,
     pricePerNight,
@@ -67,8 +69,11 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
 
   const listingConfig = listingTypeBadgeConfig[listingType];
 
-  const linkHref = href || `/dashboard/propiedades/${id}`;
-  const imageUrl = mainImageUrl || '/images/property-placeholder.jpg';
+  // Use slug for public routes, fallback to ID for dashboard routes or if slug doesn't exist
+  const linkHref = href || (showActions
+    ? `/dashboard/propiedades/${id}`
+    : `/propiedades/${slug || id}`);
+  const imageUrl = getImagePath(mainImageUrl);
 
   return (
     <Card className="group overflow-hidden transition-shadow hover:shadow-lg">

@@ -19,9 +19,9 @@ export const createPropertySchema = z.object({
 
   description: z
     .string()
+    .min(20, 'Description must be at least 20 characters')
     .max(2000, 'Description must not exceed 2000 characters')
-    .trim()
-    .optional(),
+    .trim(),
 
   pricePerNight: z
     .number()
@@ -54,21 +54,20 @@ export const createPropertySchema = z.object({
 
   address: z
     .string()
+    .min(5, 'Address must be at least 5 characters')
     .max(200, 'Address too long')
-    .trim()
-    .optional(),
+    .trim(),
 
   postalCode: z
     .string()
+    .min(3, 'Postal code must be at least 3 characters')
     .max(20, 'Postal code too long')
-    .trim()
-    .optional(),
+    .trim(),
 
   amenities: z
     .array(z.string().trim())
-    .max(50, 'Maximum 50 amenities allowed')
-    .optional()
-    .default([]),
+    .min(3, 'Please select at least 3 amenities')
+    .max(50, 'Maximum 50 amenities allowed'),
 
   bedrooms: z
     .number()
@@ -132,34 +131,30 @@ export const createPropertySchema = z.object({
 
 /**
  * Update Property Schema
- * All fields optional for partial updates
+ * Same validation as create schema - all fields required for data integrity
  */
 export const updatePropertySchema = z.object({
   title: z
     .string()
     .min(10, 'Title must be at least 10 characters')
     .max(100, 'Title must not exceed 100 characters')
-    .trim()
-    .optional(),
+    .trim(),
 
   description: z
     .string()
+    .min(20, 'Description must be at least 20 characters')
     .max(2000, 'Description must not exceed 2000 characters')
-    .trim()
-    .optional(),
+    .trim(),
 
   pricePerNight: z
     .number()
     .positive('Price must be positive')
     .min(1, 'Price must be at least 1')
-    .max(999999999.99, 'Price is too high')
-    .optional(),
+    .max(999999999.99, 'Price is too high'),
 
-  currency: z
-    .nativeEnum(Currency, {
-      errorMap: () => ({ message: 'Invalid currency' }),
-    })
-    .optional(),
+  currency: z.nativeEnum(Currency, {
+    errorMap: () => ({ message: 'Invalid currency' }),
+  }),
 
   salePrice: z
     .number()
@@ -172,66 +167,90 @@ export const updatePropertySchema = z.object({
     .string()
     .min(2, 'Country is required')
     .max(100, 'Country name too long')
-    .trim()
-    .optional(),
+    .trim(),
 
   city: z
     .string()
     .min(2, 'City is required')
     .max(100, 'City name too long')
-    .trim()
-    .optional(),
+    .trim(),
 
   address: z
     .string()
+    .min(5, 'Address must be at least 5 characters')
     .max(200, 'Address too long')
-    .trim()
-    .optional(),
+    .trim(),
 
   postalCode: z
     .string()
+    .min(3, 'Postal code must be at least 3 characters')
     .max(20, 'Postal code too long')
-    .trim()
-    .optional(),
+    .trim(),
 
   amenities: z
     .array(z.string().trim())
-    .max(50, 'Maximum 50 amenities allowed')
-    .optional(),
+    .min(3, 'Please select at least 3 amenities')
+    .max(50, 'Maximum 50 amenities allowed'),
 
   bedrooms: z
     .number()
     .int('Bedrooms must be a whole number')
     .min(0, 'Bedrooms cannot be negative')
-    .max(50, 'Maximum 50 bedrooms')
-    .optional(),
+    .max(50, 'Maximum 50 bedrooms'),
 
   bathrooms: z
     .number()
     .int('Bathrooms must be a whole number')
     .min(0, 'Bathrooms cannot be negative')
-    .max(50, 'Maximum 50 bathrooms')
-    .optional(),
+    .max(50, 'Maximum 50 bathrooms'),
 
   maxGuests: z
     .number()
     .int('Max guests must be a whole number')
     .min(1, 'At least 1 guest required')
-    .max(100, 'Maximum 100 guests')
-    .optional(),
+    .max(100, 'Maximum 100 guests'),
 
-  propertyType: z
-    .nativeEnum(PropertyType, {
-      errorMap: () => ({ message: 'Invalid property type' }),
-    })
-    .optional(),
+  propertyType: z.nativeEnum(PropertyType, {
+    errorMap: () => ({ message: 'Invalid property type' }),
+  }),
 
   listingType: z
     .nativeEnum(PropertyListingType, {
       errorMap: () => ({ message: 'Invalid listing type' }),
     })
-    .optional(),
-});
+    .optional()
+    .default(PropertyListingType.SHORT_TERM_RENTAL),
+}).refine(
+  (data) => {
+    // If listing type allows rental (SHORT_TERM_RENTAL or BOTH), pricePerNight is required
+    if (
+      data.listingType === PropertyListingType.SHORT_TERM_RENTAL ||
+      data.listingType === PropertyListingType.BOTH
+    ) {
+      return data.pricePerNight > 0;
+    }
+    return true;
+  },
+  {
+    message: 'Price per night is required for rental properties',
+    path: ['pricePerNight'],
+  }
+).refine(
+  (data) => {
+    // If listing type allows sale (SALE or BOTH), salePrice is required
+    if (
+      data.listingType === PropertyListingType.SALE ||
+      data.listingType === PropertyListingType.BOTH
+    ) {
+      return data.salePrice != null && data.salePrice > 0;
+    }
+    return true;
+  },
+  {
+    message: 'Sale price is required when property is for sale',
+    path: ['salePrice'],
+  }
+);
 
 /**
  * Property Filters Schema

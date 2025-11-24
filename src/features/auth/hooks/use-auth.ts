@@ -18,6 +18,35 @@ import type {
 } from '../types';
 
 /**
+ * Maps NextAuth error codes to user-friendly messages
+ * NextAuth returns generic error codes like "CredentialsSignin"
+ * We convert these to messages that users can understand
+ */
+function mapNextAuthError(error: string | null | undefined): string {
+  if (!error) {
+    return 'CredentialsSignin';
+  }
+
+  const errorLower = error.toLowerCase();
+
+  // Specific NextAuth error codes
+  if (errorLower === 'credentialssignin') {
+    return 'CredentialsSignin';
+  }
+
+  if (errorLower === 'configuration') {
+    return 'Configuration error';
+  }
+
+  if (errorLower === 'accessdenied') {
+    return 'Access denied';
+  }
+
+  // Return original error (might be from backend)
+  return error;
+}
+
+/**
  * Hook for user login
  *
  * Uses NextAuth signIn under the hood for session management.
@@ -57,8 +86,12 @@ export function useLogin(
         redirect: false,
       });
 
+      // CRITICAL: NextAuth does NOT throw errors - it returns { ok: false, error: string }
+      // We must check result.ok and throw manually for React Query to catch
       if (!result?.ok) {
-        throw new Error(result?.error || 'Login failed');
+        // Map NextAuth errors to user-friendly messages
+        const errorMessage = mapNextAuthError(result?.error);
+        throw new Error(errorMessage);
       }
 
       // Also call backend API to get full response with tokens

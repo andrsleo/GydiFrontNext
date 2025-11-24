@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { AlertCircle } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -98,7 +99,7 @@ export function CountryCitySelector({
       <div className="space-y-2">
         {showLabels && (
           <Label htmlFor="country">
-            País {required && <span className="text-destructive">*</span>}
+            Country {required && <span className="text-red-600" style={{ color: '#dc2626' }}>*</span>}
           </Label>
         )}
         <Select
@@ -119,7 +120,10 @@ export function CountryCitySelector({
           </SelectContent>
         </Select>
         {countryError && (
-          <p className="text-sm text-destructive">{countryError}</p>
+          <p className="text-sm text-red-600 font-bold flex items-center gap-1" style={{ color: '#dc2626' }}>
+            <AlertCircle className="h-4 w-4" style={{ color: '#dc2626' }} />
+            {countryError}
+          </p>
         )}
       </div>
 
@@ -127,7 +131,7 @@ export function CountryCitySelector({
       <div className="space-y-2">
         {showLabels && (
           <Label htmlFor="city">
-            Ciudad {required && <span className="text-destructive">*</span>}
+            City {required && <span className="text-red-600" style={{ color: '#dc2626' }}>*</span>}
           </Label>
         )}
         <Select
@@ -161,8 +165,12 @@ export function CountryCitySelector({
             )}
           </SelectContent>
         </Select>
-        {cityError && <p className="text-sm text-destructive">{cityError}</p>}
-      </div>
+        {cityError && (
+          <p className="text-sm text-red-600 font-bold flex items-center gap-1" style={{ color: '#dc2626' }}>
+            <AlertCircle className="h-4 w-4" style={{ color: '#dc2626' }} />
+            {cityError}
+          </p>
+        )}</div>
     </div>
   );
 }

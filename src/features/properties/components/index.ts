@@ -11,3 +11,4 @@ export { ImageUploader } from './image-uploader';
 export { VideoUploader } from './video-uploader';
 export { ImageOrganizer } from './image-organizer';
 export { VideoOrganizer } from './video-organizer';
+export { ReferPropertiesTab } from './refer-properties-tab';

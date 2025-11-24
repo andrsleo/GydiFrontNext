@@ -366,8 +366,7 @@ export interface Subscription {
 export interface Earning {
   id: string;
   userId: string;
-  referralId: string;
-  bookingId: string;
+  referralId: string;  
   amount: number;
   commissionRate: number;
   status: 'PENDING' | 'PAID' | 'CANCELLED';

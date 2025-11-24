@@ -49,77 +49,66 @@ const commissionStats = [
   },
 ];
 
-const commissions = [
-  {
-    id: 1,
-    bookingId: 'BK-2025-001234',
-    property: 'Villa Paradise - Cancún',
-    guestName: 'Juan Pérez',
-    checkIn: '2025-10-25',
-    checkOut: '2025-10-30',
-    nights: 5,
-    bookingAmount: 3500,
-    commissionRate: 10,
-    commissionAmount: 350,
-    status: 'paid',
-    paidAt: '2025-10-18',
-  },
-  {
-    id: 2,
-    bookingId: 'BK-2025-001198',
-    property: 'Beach House - Playa del Carmen',
-    guestName: 'María González',
-    checkIn: '2025-10-22',
-    checkOut: '2025-10-27',
-    nights: 5,
-    bookingAmount: 2800,
-    commissionRate: 8,
-    commissionAmount: 224,
-    status: 'approved',
-    approvedAt: '2025-10-15',
-  },
-  {
-    id: 3,
-    bookingId: 'BK-2025-001156',
-    property: 'Mountain Cabin - Valle de Bravo',
-    guestName: 'Carlos Rodríguez',
-    checkIn: '2025-10-20',
-    checkOut: '2025-10-23',
-    nights: 3,
-    bookingAmount: 4200,
-    commissionRate: 9,
-    commissionAmount: 378,
-    status: 'pending',
-    createdAt: '2025-10-18',
-  },
-  {
-    id: 4,
-    bookingId: 'BK-2025-001089',
-    property: 'City Loft - CDMX',
-    guestName: 'Ana López',
-    checkIn: '2025-10-15',
-    checkOut: '2025-10-19',
-    nights: 4,
-    bookingAmount: 1900,
-    commissionRate: 7,
-    commissionAmount: 133,
-    status: 'paid',
-    paidAt: '2025-10-12',
-  },
-  {
-    id: 5,
-    bookingId: 'BK-2025-001045',
-    property: 'Ocean View Penthouse - Puerto Vallarta',
-    guestName: 'Roberto Sánchez',
-    checkIn: '2025-10-10',
-    checkOut: '2025-10-17',
-    nights: 7,
-    bookingAmount: 4500,
-    commissionRate: 12,
-    commissionAmount: 540,
-    status: 'paid',
-    paidAt: '2025-10-08',
-  },
+const commissions = [{
+  id: 1,
+  property: 'Villa Paradise - Cancún',
+  guestName: 'Juan Pérez',
+  checkIn: '2025-10-25',
+  checkOut: '2025-10-30',
+  nights: 5,
+  commissionRate: 10,
+  commissionAmount: 350,
+  status: 'paid',
+  paidAt: '2025-10-18',
+},
+{
+  id: 2,
+  property: 'Beach House - Playa del Carmen',
+  guestName: 'María González',
+  checkIn: '2025-10-22',
+  checkOut: '2025-10-27',
+  nights: 5,
+  commissionRate: 8,
+  commissionAmount: 224,
+  status: 'approved',
+  approvedAt: '2025-10-15',
+},
+{
+  id: 3,
+  property: 'Mountain Cabin - Valle de Bravo',
+  guestName: 'Carlos Rodríguez',
+  checkIn: '2025-10-20',
+  checkOut: '2025-10-23',
+  nights: 3,
+  commissionRate: 9,
+  commissionAmount: 378,
+  status: 'pending',
+  createdAt: '2025-10-18',
+},
+{
+  id: 4,
+  property: 'City Loft - CDMX',
+  guestName: 'Ana López',
+  checkIn: '2025-10-15',
+  checkOut: '2025-10-19',
+  nights: 4,
+  commissionRate: 7,
+  commissionAmount: 133,
+  status: 'paid',
+  paidAt: '2025-10-12',
+},
+{
+  id: 5,
+  property: 'Ocean View Penthouse - Puerto Vallarta',
+  guestName: 'Roberto Sánchez',
+  checkIn: '2025-10-10',
+  checkOut: '2025-10-17',
+  nights: 7,
+  commissionRate: 12,
+  commissionAmount: 540,
+  status: 'paid',
+  paidAt: '2025-10-08',
+},
 ];
 
 const paymentHistory = [
@@ -237,21 +226,19 @@ export default function ComisionesPage() {
         <nav className="flex gap-4">
           <button
             onClick={() => setSelectedTab('commissions')}
-            className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-              selectedTab === 'commissions'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
+            className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${selectedTab === 'commissions'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
           >
             Comisiones
           </button>
           <button
             onClick={() => setSelectedTab('payments')}
-            className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-              selectedTab === 'payments'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
+            className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${selectedTab === 'payments'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
           >
             Historial de Pagos
           </button>
@@ -300,9 +287,6 @@ export default function ComisionesPage() {
                     <tr key={commission.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div>
-                          <code className="rounded bg-gray-100 px-2 py-1 text-xs font-mono">
-                            {commission.bookingId}
-                          </code>
                           <p className="mt-1 text-xs text-muted-foreground">
                             {commission.guestName}
                           </p>
@@ -321,9 +305,6 @@ export default function ComisionesPage() {
                         <span className="font-semibold">{commission.nights}</span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className="font-semibold">
-                          ${commission.bookingAmount.toFixed(2)}
-                        </span>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className="text-sm font-medium text-primary">
@@ -338,11 +319,10 @@ export default function ComisionesPage() {
                       <td className="px-6 py-4 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <span
-                            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${
-                              statusConfig[
-                                commission.status as keyof typeof statusConfig
-                              ].color
-                            }`}
+                            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${statusConfig[
+                              commission.status as keyof typeof statusConfig
+                            ].color
+                              }`}
                           >
                             <StatusIcon className="h-3 w-3" />
                             {

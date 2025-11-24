@@ -50,7 +50,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`${plusJakarta.variable} ${outfit.variable} font-sans antialiased`}>
+      <body
+        className={`${plusJakarta.variable} ${outfit.variable} font-sans antialiased`}
+        suppressHydrationWarning
+      >
         <SessionProvider>
           <Providers>{children}</Providers>
         </SessionProvider>

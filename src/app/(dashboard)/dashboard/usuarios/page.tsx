@@ -50,7 +50,6 @@ const users = [
     role: 'HOST',
     status: 'active',
     properties: 5,
-    totalBookings: 127,
     joinedAt: '2024-11-20',
     lastActive: '2025-10-20',
   },
@@ -74,7 +73,6 @@ const users = [
     role: 'HOST',
     status: 'active',
     properties: 3,
-    totalBookings: 85,
     joinedAt: '2025-03-12',
     lastActive: '2025-10-18',
   },
@@ -267,18 +265,16 @@ export default function UsuariosPage() {
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                        roleConfig[user.role as keyof typeof roleConfig].color
-                      }`}
+                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${roleConfig[user.role as keyof typeof roleConfig].color
+                        }`}
                     >
                       {roleConfig[user.role as keyof typeof roleConfig].label}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                        statusConfig[user.status as keyof typeof statusConfig].color
-                      }`}
+                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${statusConfig[user.status as keyof typeof statusConfig].color
+                        }`}
                     >
                       {statusConfig[user.status as keyof typeof statusConfig].label}
                     </span>
@@ -298,9 +294,6 @@ export default function UsuariosPage() {
                         <>
                           <p className="font-semibold text-blue-600">
                             {user.properties} propiedades
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {user.totalBookings} reservas
                           </p>
                         </>
                       )}
