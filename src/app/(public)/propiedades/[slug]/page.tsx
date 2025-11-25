@@ -1,8 +1,10 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { usePropertyDetail } from '@/features/properties';
 import { PropertyGallery } from '@/features/properties/components';
+import { BookingModal } from '@/features/bookings';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -12,6 +14,11 @@ import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
+  const searchParams = useSearchParams();
+  const referralLinkId = searchParams.get('ref') || 'default-referral-link'; // Get from URL or use default
+
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   const { data: property, isLoading, error } = usePropertyDetail({ slug });
 
   if (isLoading) {
@@ -176,7 +183,11 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ slug:
               </Button>
             ) : property.listingType === PropertyListingType.BOTH ? (
               <div className="space-y-2">
-                <Button className="w-full" size="lg">
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={() => setIsBookingModalOpen(true)}
+                >
                   Reservar Ahora
                 </Button>
                 <Button className="w-full" size="lg" variant="outline">
@@ -184,7 +195,11 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ slug:
                 </Button>
               </div>
             ) : (
-              <Button className="w-full" size="lg">
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={() => setIsBookingModalOpen(true)}
+              >
                 Reservar Ahora
               </Button>
             )}
@@ -206,6 +221,19 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ slug:
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        property={{
+          id: property.id,
+          title: property.title,
+          pricePerNight: property.pricePerNight,
+          currency: property.currency,
+        }}
+        referralLinkId={referralLinkId}
+      />
     </div>
   );
 }
