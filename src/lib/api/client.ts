@@ -7,6 +7,7 @@
 
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
 import { getSession } from 'next-auth/react';
+import { getCsrfToken } from '@/lib/utils/csrf';
 
 /**
  * Base API client
@@ -21,11 +22,18 @@ export const apiClient = axios.create({
 });
 
 /**
- * Request interceptor - Add authentication token
+ * Request interceptor - Add authentication token and CSRF protection
  *
  * SECURITY STRATEGY:
- * - Development (localhost): Use Authorization header (cookies don't work cross-origin)
- * - Production (same domain): Use httpOnly cookies ONLY (more secure, XSS-proof)
+ * 1. JWT Authentication:
+ *    - Development (localhost): Use Authorization header (cookies don't work cross-origin)
+ *    - Production (same domain): Use httpOnly cookies ONLY (more secure, XSS-proof)
+ *
+ * 2. CSRF Protection:
+ *    - For state-changing requests (POST, PUT, PATCH, DELETE), include CSRF token
+ *    - Token is read from XSRF-TOKEN cookie (set by backend)
+ *    - Token is sent in X-XSRF-TOKEN header (Spring Security convention)
+ *    - Read-only requests (GET, HEAD, OPTIONS) don't need CSRF protection
  *
  * In production, backend sets httpOnly cookie and this interceptor does NOTHING.
  * The cookie is sent automatically by the browser with withCredentials: true.
@@ -37,6 +45,7 @@ apiClient.interceptors.request.use(
       '/api/v1/auth/login',
       '/api/v1/auth/register',
       '/api/v1/users/register', // User registration endpoint
+      '/api/csrf', // CSRF token endpoint
     ];
     const isPublicEndpoint = publicEndpoints.some((endpoint) =>
       config.url?.startsWith(endpoint)
@@ -58,6 +67,30 @@ apiClient.interceptors.request.use(
       }
       // In production: httpOnly cookies are sent automatically via withCredentials
       // No need to add Authorization header - this prevents XSS attacks
+    }
+
+    // Add CSRF token for state-changing requests
+    // CSRF protection is only needed for requests that modify data
+    const methodsRequiringCsrf = ['POST', 'PUT', 'PATCH', 'DELETE'];
+    const method = config.method?.toUpperCase();
+
+    if (method && methodsRequiringCsrf.includes(method) && !isPublicEndpoint) {
+      if (typeof window !== 'undefined') {
+        // Get CSRF token from cookie
+        const csrfToken = getCsrfToken();
+
+        if (csrfToken) {
+          // Add CSRF token to request header
+          config.headers['X-XSRF-TOKEN'] = csrfToken;
+        } else {
+          // Log warning if CSRF token is missing for protected endpoint
+          console.warn(
+            `CSRF token not found for ${method} request to ${config.url}. ` +
+            'The request may be rejected by the server. ' +
+            'Call fetchCsrfToken() to obtain a token.'
+          );
+        }
+      }
     }
 
     return config;
@@ -89,7 +122,18 @@ apiClient.interceptors.response.use(
 
       switch (status) {
         case 403:
-          console.error('Permission denied:', error.response.data);
+          // Could be CSRF error or permission error
+          const errorMessage = error.response.data?.message || '';
+          const isCsrfError = errorMessage.toLowerCase().includes('csrf') ||
+                             errorMessage.toLowerCase().includes('invalid csrf token');
+
+          if (isCsrfError) {
+            console.error('CSRF token validation failed:', error.response.data);
+            // You could automatically retry the request with a new token here
+            // For now, just log the error - the user should call fetchCsrfToken() manually
+          } else {
+            console.error('Permission denied:', error.response.data);
+          }
           break;
         case 404:
           console.error('Resource not found:', error.response.data);

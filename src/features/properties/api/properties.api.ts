@@ -11,6 +11,9 @@ import type {
   UpdatePropertyRequest,
   PropertyFilters,
   PaginatedPropertyResponse,
+  ValidateAirbnbUrlRequest,
+  ValidateAirbnbUrlResponse,
+  ImportPropertyFromAirbnbRequest,
 } from '../types';
 
 /**
@@ -121,6 +124,30 @@ export const propertiesApi = {
 
     const { data } = await apiClient.get<PaginatedPropertyResponse>(
       `${BASE_PATH}/my-properties?${params.toString()}`
+    );
+    return data;
+  },
+
+  /**
+   * Validate Airbnb URL and extract metadata
+   * Public endpoint - no auth required
+   */
+  async validateAirbnbUrl(request: ValidateAirbnbUrlRequest): Promise<ValidateAirbnbUrlResponse> {
+    const { data } = await apiClient.post<ValidateAirbnbUrlResponse>(
+      `${BASE_PATH}/import/validate`,
+      request
+    );
+    return data;
+  },
+
+  /**
+   * Import property from Airbnb
+   * Requires authentication (HOST or ADMIN role)
+   */
+  async importFromAirbnb(request: ImportPropertyFromAirbnbRequest): Promise<PropertyDetailResponse> {
+    const { data } = await apiClient.post<PropertyDetailResponse>(
+      `${BASE_PATH}/import/airbnb`,
+      request
     );
     return data;
   },

@@ -6,6 +6,10 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
+
+
+
+
 // Extend the built-in session type
 declare module 'next-auth' {
   interface Session {
@@ -124,8 +128,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
 
           return null;
-        } catch (error) {
-          console.error('Auth error:', error);
+        } catch (error: any) {
+          // Handle expected errors (invalid credentials)
+          if (axios.isAxiosError(error) && error.response?.status === 401) {
+            return null;
+          }
+
+          // Log unexpected errors
+          console.error('Auth error:', error instanceof Error ? error.message : error);
           return null;
         }
       },
@@ -183,7 +193,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   pages: {
     signIn: '/login',
-    error: '/login',
   },
   session: {
     strategy: 'jwt',
@@ -199,6 +208,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         path: '/',
         secure: process.env.NODE_ENV === 'production',
       },
+    },
+  },
+  logger: {
+    error(code, ...message) {
+      if (code instanceof Error && code.name === 'CredentialsSignin') {
+        return;
+      }
+      if (typeof code === 'string' && code === 'CredentialsSignin') {
+        return;
+      }
+      console.error(code, ...message);
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { CountryCitySelector } from '@/components/shared/country-city-selector';
 
 import { useProfileByUserId, useUpdateProfile } from '../hooks/use-profile';
 import { profileFormSchema, type ProfileFormData } from '../schemas/profile.schema';
@@ -199,9 +200,6 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
               )}
             </div>
 
-
-
-            // ... inside component
             <div className="space-y-2">
               <Label htmlFor="phoneNumber">Teléfono</Label>
               <Controller
@@ -295,48 +293,37 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
         <div className="space-y-4 rounded-lg border p-6">
           <h3 className="text-lg font-semibold">Ubicación</h3>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="country">País</Label>
-              <Select
-                key={`country-${form.watch('country')}`}
-                value={form.watch('country') || ''}
-                onValueChange={(value) =>
-                  form.setValue('country', value, { shouldDirty: true })
-                }
-              >
-                <SelectTrigger id="country">
-                  <SelectValue placeholder="Selecciona tu país" />
-                </SelectTrigger>
-                <SelectContent>
-                  {COUNTRY_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {form.formState.errors.country && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.country.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="city">Ciudad</Label>
-              <Input
-                id="city"
-                {...form.register('city')}
-                placeholder="Ciudad de México"
+          <Controller
+            name="country"
+            control={form.control}
+            render={({ field: countryField }) => (
+              <Controller
+                name="city"
+                control={form.control}
+                render={({ field: cityField }) => (
+                  <CountryCitySelector
+                    countryValue={countryField.value || ''}
+                    cityValue={cityField.value || ''}
+                    onCountryChange={(value) => {
+                      countryField.onChange(value);
+                      form.trigger('country'); // Trigger validation
+                    }}
+                    onCityChange={(value) => {
+                      cityField.onChange(value);
+                      form.trigger('city'); // Trigger validation
+                    }}
+                    disabled={isPending}
+                    required={false}
+                    countryError={form.formState.errors.country?.message}
+                    cityError={form.formState.errors.city?.message}
+                    showLabels
+                  />
+                )}
               />
-              {form.formState.errors.city && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.city.message}
-                </p>
-              )}
-            </div>
+            )}
+          />
 
+          <div className="grid gap-4 md:grid-cols-2 mt-4">
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="address">Dirección</Label>
               <Input

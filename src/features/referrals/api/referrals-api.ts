@@ -52,7 +52,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 /**
  * Generate a new referral link
  * @param request - Request payload
- * @param token - Optional JWT token from NextAuth session
+ * @param token - JWT token from NextAuth session
  */
 export async function generateReferralLink(
   request: GenerateReferralLinkRequest,
@@ -62,7 +62,7 @@ export async function generateReferralLink(
     method: 'POST',
     headers: createHeaders(token),
     body: JSON.stringify(request),
-    credentials: 'include', // Send httpOnly cookies
+    // No credentials needed - JWT is in Authorization header
   });
 
   return handleResponse<GenerateReferralLinkResponse>(response);
@@ -70,13 +70,12 @@ export async function generateReferralLink(
 
 /**
  * Get all referral links for the authenticated user
- * @param token - Optional JWT token from NextAuth session
+ * @param token - JWT token from NextAuth session
  */
 export async function getReferralLinks(token?: string): Promise<ReferralLink[]> {
   const response = await fetch(`${API_BASE_URL}${API_PREFIX}/links`, {
     method: 'GET',
     headers: createHeaders(token),
-    credentials: 'include',
     // Next.js 15: Cache for 60 seconds
     next: { revalidate: 60 },
   });
@@ -87,13 +86,12 @@ export async function getReferralLinks(token?: string): Promise<ReferralLink[]> 
 /**
  * Get a specific referral link by ID
  * @param id - Referral link ID
- * @param token - Optional JWT token from NextAuth session
+ * @param token - JWT token from NextAuth session
  */
 export async function getReferralLinkById(id: string, token?: string): Promise<ReferralLink> {
   const response = await fetch(`${API_BASE_URL}${API_PREFIX}/links/${id}`, {
     method: 'GET',
     headers: createHeaders(token),
-    credentials: 'include',
     next: { revalidate: 60 },
   });
 
@@ -118,7 +116,7 @@ export async function trackClick(request: TrackClickRequest): Promise<void> {
 /**
  * Get referral statistics for the authenticated user
  * @param affiliateId - Optional affiliate ID
- * @param token - Optional JWT token from NextAuth session
+ * @param token - JWT token from NextAuth session
  */
 export async function getReferralStats(affiliateId?: number, token?: string): Promise<ReferralStats> {
   const url = new URL(`${API_BASE_URL}${API_PREFIX}/stats`);
@@ -129,7 +127,6 @@ export async function getReferralStats(affiliateId?: number, token?: string): Pr
   const response = await fetch(url.toString(), {
     method: 'GET',
     headers: createHeaders(token),
-    credentials: 'include',
     // Revalidate every 5 minutes
     next: { revalidate: 300 },
   });
@@ -140,7 +137,7 @@ export async function getReferralStats(affiliateId?: number, token?: string): Pr
 /**
  * Get earnings for the authenticated user
  * @param currentPlan - Optional current plan filter
- * @param token - Optional JWT token from NextAuth session
+ * @param token - JWT token from NextAuth session
  */
 export async function getEarnings(currentPlan?: string, token?: string): Promise<Earnings> {
   const url = new URL(`${API_BASE_URL}${API_PREFIX}/earnings`);
@@ -151,7 +148,6 @@ export async function getEarnings(currentPlan?: string, token?: string): Promise
   const response = await fetch(url.toString(), {
     method: 'GET',
     headers: createHeaders(token),
-    credentials: 'include',
     next: { revalidate: 300 },
   });
 

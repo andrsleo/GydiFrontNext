@@ -49,8 +49,13 @@ export default function ReferralRedirectPage() {
                 const data = await response.json();
 
                 if (data.destinationUrl) {
-                    // Redirect to the property page
-                    window.location.href = data.destinationUrl;
+                    // CRITICAL: Preserve the JWT token by adding it as 'ref' query parameter
+                    // This ensures the referral attribution is maintained throughout the flow
+                    const url = new URL(data.destinationUrl);
+                    url.searchParams.set('ref', token);
+
+                    // Redirect to the property page WITH the ref token
+                    window.location.href = url.toString();
                 } else {
                     throw new Error('Invalid response from server');
                 }

@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { registerSchema, type RegisterFormData } from '@/features/auth/schemas/auth.schema';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { PasswordStrengthIndicator } from '@/features/auth/components/password-strength-indicator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,7 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -118,6 +120,10 @@ export default function RegisterPage() {
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
               )}
+            </div>
+
+            <div className="mt-2">
+              <PasswordStrengthIndicator password={watch('password') || ''} />
             </div>
 
             <div>

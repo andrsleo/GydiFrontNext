@@ -162,7 +162,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
                 <span className="text-2xl font-bold">
                   {formatCurrency(pricePerNight, currency)}
                 </span>
-                <span className="text-sm text-muted-foreground">/ noche</span>
+                <span className="text-sm text-muted-foreground">aproximado</span>
               </div>
             )}
 

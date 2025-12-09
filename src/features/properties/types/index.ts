@@ -14,6 +14,14 @@ export enum PropertyStatus {
 }
 
 /**
+ * Import Mode Enum
+ */
+export enum ImportMode {
+  MANUAL = 'MANUAL',
+  SEMI_IMPORT = 'SEMI_IMPORT',
+}
+
+/**
  * Property Type Enum
  */
 export enum PropertyType {
@@ -130,8 +138,10 @@ export interface PropertyResponse {
   imageCount: number;
   videoCount: number;
   mainImageUrl?: string;
+  importMode?: ImportMode;
   createdAt: string;
   publishedAt?: string;
+  icalUrlAirbnb?: string;
 }
 
 /**
@@ -144,6 +154,12 @@ export interface PropertyDetailResponse extends PropertyResponse {
   images: PropertyImage[];
   videos: PropertyVideo[];
   coverImageId?: string;
+  // Airbnb import fields
+  airbnbUrl?: string;
+  importMode?: ImportMode;
+  importedAt?: string;
+  airbnbListingId?: string;
+  icalUrlAirbnb?: string;
   updatedAt: string;
 }
 
@@ -166,6 +182,8 @@ export interface CreatePropertyRequest {
   maxGuests: number;
   propertyType: PropertyType;
   listingType?: PropertyListingType;
+  airbnbUrl?: string;
+  icalUrlAirbnb?: string;
 }
 
 /**
@@ -187,6 +205,8 @@ export interface UpdatePropertyRequest {
   maxGuests?: number;
   propertyType?: PropertyType;
   listingType?: PropertyListingType;
+  airbnbUrl?: string;
+  icalUrlAirbnb?: string;
 }
 
 /**
@@ -232,4 +252,51 @@ export interface MediaUploadResponse {
   url: string;
   displayOrder: number;
   uploadedAt: string;
+}
+
+/**
+ * Validate Airbnb URL Request
+ */
+export interface ValidateAirbnbUrlRequest {
+  airbnbUrl: string;
+}
+
+/**
+ * Validate Airbnb URL Response
+ */
+export interface ValidateAirbnbUrlResponse {
+  valid: boolean;
+  listingId?: string;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  maxGuests?: number;
+  amenities?: string[];
+  city?: string;
+  country?: string;
+  address?: string;
+  errorMessage?: string;
+}
+
+/**
+ * Import Property from Airbnb Request
+ */
+export interface ImportPropertyFromAirbnbRequest {
+  airbnbUrl: string;
+  priceAmount: number;
+  priceCurrency: Currency;
+  country: string;
+  city: string;
+  address: string;
+  postalCode?: string;
+  bedrooms: number;
+  bathrooms: number;
+  maxGuests: number;
+  propertyType: PropertyType;
+  listingType: PropertyListingType;
+  titleOverride?: string;
+  descriptionOverride?: string;
+  additionalAmenities?: string[];
 }

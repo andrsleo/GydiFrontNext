@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { usePropertyDetail } from '@/features/properties';
 import { PropertyGallery } from '@/features/properties/components';
@@ -11,15 +11,35 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { MapPin, Bed, Bath, Users, Calendar, DollarSign } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
 import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/types';
+import { apiClient } from '@/lib/api/client';
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const searchParams = useSearchParams();
-  const referralLinkId = searchParams.get('ref') || 'default-referral-link'; // Get from URL or use default
+  const refParam = searchParams.get('ref');
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [referralLinkId, setReferralLinkId] = useState<string>(refParam || '');
 
   const { data: property, isLoading, error } = usePropertyDetail({ slug });
+
+  // Fetch system referral link if no ref parameter
+  useEffect(() => {
+    if (!refParam && property?.id) {
+      // User arrived organically (no referral link)
+      // Fetch or create system referral link
+      apiClient
+        .get(`/api/v1/referrals/public/system-link/${property.id}`)
+        .then((response) => {
+          setReferralLinkId(response.data.referralLinkId.toString());
+        })
+        .catch((error) => {
+          console.error('Error fetching system referral link:', error);
+          // Fallback to a placeholder if the endpoint fails
+          setReferralLinkId('0');
+        });
+    }
+  }, [refParam, property?.id]);
 
   if (isLoading) {
     return (
@@ -141,40 +161,20 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ slug:
         {/* Sidebar - Property Info */}
         <div className="md:col-span-2 lg:col-span-1">
           <div className="lg:sticky lg:top-4 border rounded-lg p-4 sm:p-6 space-y-4 bg-card shadow-lg">
-            {/* Precios Condicionales */}
-            <div className="space-y-3">
-              {/* Precio por Noche - Si es RENTA o AMBAS */}
-              {(property.listingType === PropertyListingType.SHORT_TERM_RENTAL ||
-                property.listingType === PropertyListingType.BOTH) && (
+            {/* Precios Condicionales - Solo precio de VENTA (si aplica) */}
+            {(property.listingType === PropertyListingType.SALE ||
+              property.listingType === PropertyListingType.BOTH) && property.salePrice && (
+              <div className="space-y-3">
                 <div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl sm:text-3xl font-bold">
-                      {formatCurrency(property.pricePerNight, property.currency)}
-                    </span>
-                    <span className="text-sm text-muted-foreground">/ noche</span>
-                  </div>
-                  {property.listingType === PropertyListingType.BOTH && (
-                    <p className="text-xs text-muted-foreground mt-1">Para renta vacacional</p>
-                  )}
-                </div>
-              )}
-
-              {/* Precio de Venta - Si es VENTA o AMBAS */}
-              {(property.listingType === PropertyListingType.SALE ||
-                property.listingType === PropertyListingType.BOTH) && property.salePrice && (
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className={property.listingType === PropertyListingType.BOTH ? 'text-xl sm:text-2xl font-bold' : 'text-2xl sm:text-3xl font-bold'}>
                       {formatCurrency(property.salePrice, property.currency)}
                     </span>
                     <span className="text-sm text-muted-foreground">precio de venta</span>
                   </div>
-                  {property.listingType === PropertyListingType.BOTH && (
-                    <p className="text-xs text-muted-foreground mt-1">Para compra de propiedad</p>
-                  )}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Botón según tipo de publicación */}
             {property.listingType === PropertyListingType.SALE ? (
@@ -188,7 +188,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ slug:
                   size="lg"
                   onClick={() => setIsBookingModalOpen(true)}
                 >
-                  Reservar Ahora
+                  Validar Disponibilidad
                 </Button>
                 <Button className="w-full" size="lg" variant="outline">
                   Contactar Vendedor
@@ -200,13 +200,9 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ slug:
                 size="lg"
                 onClick={() => setIsBookingModalOpen(true)}
               >
-                Reservar Ahora
+                Validar Disponibilidad
               </Button>
             )}
-
-            <div className="text-xs text-muted-foreground text-center">
-              No se realizará ningún cargo todavía
-            </div>
 
             <div className="border-t pt-4 space-y-2 text-sm">
               <div className="flex items-start gap-2 text-muted-foreground">
@@ -231,6 +227,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ slug:
           title: property.title,
           pricePerNight: property.pricePerNight,
           currency: property.currency,
+          airbnbUrl: property.airbnbUrl,
         }}
         referralLinkId={referralLinkId}
       />

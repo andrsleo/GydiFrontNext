@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { differenceInDays, format } from 'date-fns';
@@ -30,6 +30,7 @@ import { formatCurrency } from '@/lib/utils/format';
 
 import { createBookingSchema, type CreateBookingFormData } from '../schemas/booking.schema';
 import { useCreateBooking } from '../hooks';
+import { BookingCalendar } from './booking-calendar';
 
 import { Currency } from '@/features/properties/types';
 
@@ -41,17 +42,19 @@ interface BookingModalProps {
     title: string;
     pricePerNight: number;
     currency: Currency;
+    airbnbUrl?: string;
   };
   referralLinkId: string;
 }
 
 export function BookingModal({ isOpen, onClose, property, referralLinkId }: BookingModalProps) {
   const createBooking = useCreateBooking();
+  const [selectedDates, setSelectedDates] = useState<{ from: Date; to: Date } | undefined>();
 
   const form = useForm<CreateBookingFormData>({
     resolver: zodResolver(createBookingSchema),
     defaultValues: {
-      referralLinkId,
+      referralLinkId: '',
       propertyId: property.id,
       startDate: '',
       endDate: '',
@@ -62,7 +65,28 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
       totalAmount: 0,
       currency: property.currency,
     },
+    mode: 'onChange', // Validate on change
   });
+
+  // Update referralLinkId when it changes
+  useEffect(() => {
+    if (referralLinkId) {
+      form.setValue('referralLinkId', referralLinkId, { shouldValidate: true });
+    }
+  }, [referralLinkId, form]);
+
+  // Handle calendar date selection
+  const handleDateSelect = (dates: { from: Date; to: Date } | undefined) => {
+    setSelectedDates(dates);
+    if (dates?.from && dates?.to) {
+      // Convert dates to YYYY-MM-DD format
+      form.setValue('startDate', format(dates.from, 'yyyy-MM-dd'));
+      form.setValue('endDate', format(dates.to, 'yyyy-MM-dd'));
+    } else {
+      form.setValue('startDate', '');
+      form.setValue('endDate', '');
+    }
+  };
 
   // Watch date fields to calculate quote
   const startDate = form.watch('startDate');
@@ -90,97 +114,79 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
   }, [nights, property.pricePerNight, form]);
 
   const onSubmit = async (data: CreateBookingFormData) => {
-    await createBooking.mutateAsync(data);
-    onClose();
-    form.reset();
+    try {
+      await createBooking.mutateAsync(data);
+
+      // Si la propiedad tiene URL de Airbnb, construir la URL con las fechas y abrir en nueva pestaña
+      if (property.airbnbUrl) {
+        const checkInDate = data.startDate; // Already in YYYY-MM-DD format
+        const checkOutDate = data.endDate; // Already in YYYY-MM-DD format
+
+        // Construir URL de Airbnb con parámetros de fechas
+        const url = new URL(property.airbnbUrl);
+        url.searchParams.set('check_in', checkInDate);
+        url.searchParams.set('check_out', checkOutDate);
+
+        // Abrir en nueva pestaña
+        window.open(url.toString(), '_blank');
+      }
+
+      onClose();
+      form.reset();
+      setSelectedDates(undefined);
+    } catch (error) {
+      // Error ya manejado por el hook
+      console.error('Error creating booking:', error);
+    }
   };
 
   const handleClose = () => {
     onClose();
     form.reset();
+    setSelectedDates(undefined);
   };
 
   const hasSelectedDates = startDate && endDate;
   const subtotal = nights * property.pricePerNight;
   const serviceFee = subtotal * 0.1;
 
-  // Get today's date in YYYY-MM-DD format for min attribute
-  const today = format(new Date(), 'yyyy-MM-dd');
+  // Check if form is valid for submission
+  const isFormValid = form.formState.isValid && hasSelectedDates && nights > 0 && referralLinkId;
+
+  // Show loading state if referralLinkId is not ready yet
+  const isLoadingReferralLink = !referralLinkId;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Reservar {property.title}</DialogTitle>
+          <DialogTitle>Validar Disponibilidad - {property.title}</DialogTitle>
           <DialogDescription>
-            Completa los siguientes datos para realizar tu reserva
+            {isLoadingReferralLink
+              ? 'Preparando formulario...'
+              : 'Completa los siguientes datos para validar la disponibilidad'
+            }
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Date Selection */}
+            {/* Calendar Selection */}
             <div className="space-y-4">
               <FormLabel>Selecciona las fechas</FormLabel>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Check-in</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          min={today}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Check-out</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          min={startDate || today}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              <div className="flex justify-center">
+                <BookingCalendar
+                  propertyId={property.id}
+                  onDateSelect={handleDateSelect}
                 />
               </div>
 
               {hasSelectedDates && nights > 0 && (
                 <div className="p-4 bg-muted rounded-lg space-y-2">
                   <div className="flex justify-between text-sm">
+                    <span className="font-medium">Fechas seleccionadas:</span>
                     <span>{nights} {nights === 1 ? 'noche' : 'noches'}</span>
-                    <span className="font-medium">
-                      {formatCurrency(property.pricePerNight, property.currency)} x {nights}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Subtotal:</span>
-                    <span>{formatCurrency(subtotal, property.currency)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Tarifa de servicio (10%):</span>
-                    <span>{formatCurrency(serviceFee, property.currency)}</span>
-                  </div>
-                  <div className="border-t pt-2 mt-2"></div>
-                  <div className="flex justify-between font-bold">
-                    <span>Total:</span>
-                    <span>{formatCurrency(total, property.currency)}</span>
                   </div>
                 </div>
               )}
@@ -268,15 +274,20 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
               </Button>
               <Button
                 type="submit"
-                disabled={!hasSelectedDates || nights <= 0 || createBooking.isPending}
+                disabled={!isFormValid || createBooking.isPending || isLoadingReferralLink}
               >
-                {createBooking.isPending ? (
+                {isLoadingReferralLink ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Procesando...
+                    Cargando...
+                  </>
+                ) : createBooking.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Validando...
                   </>
                 ) : (
-                  `Reservar ${total > 0 ? formatCurrency(total, property.currency) : ''}`
+                  'Validar'
                 )}
               </Button>
             </DialogFooter>

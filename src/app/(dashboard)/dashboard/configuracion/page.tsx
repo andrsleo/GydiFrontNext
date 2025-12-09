@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ProfileSettingsFormNew } from '@/features/auth/components/profile-settings-form-new';
+import { ChangePasswordForm } from '@/features/auth/components/change-password-form';
 import { useProfileByUserId, useUpdateProfile } from '@/features/auth/hooks/use-profile';
 import { useUploadProfileImage } from '@/features/auth/hooks/use-image-upload';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
@@ -458,30 +459,7 @@ export default function ConfiguracionPage() {
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-6 shadow-sm">
             <h2 className="mb-6 text-xl font-semibold">Cambiar Contraseña</h2>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">Contraseña Actual</Label>
-                <Input id="currentPassword" type="password" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">Nueva Contraseña</Label>
-                <Input id="newPassword" type="password" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Nueva Contraseña</Label>
-                <Input id="confirmPassword" type="password" />
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <Button className="gap-2">
-                <Shield className="h-4 w-4" />
-                Actualizar Contraseña
-              </Button>
-            </div>
+            <ChangePasswordForm />
           </div>
 
           <div className="rounded-lg border border-red-200 bg-red-50 p-6">

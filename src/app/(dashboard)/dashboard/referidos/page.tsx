@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useReferralLinks, useReferralStats } from '@/features/referrals/hooks';
-import { formatDate, formatCurrency, formatNumber } from '@/lib/utils';
+import { formatDate, formatCurrency, formatNumber } from '@/lib/utils/format';
 
 const statusConfig = {
   ACTIVE: { label: 'Activo', color: 'bg-green-100 text-green-800' },

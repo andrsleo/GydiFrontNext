@@ -97,6 +97,83 @@ export const createPropertySchema = z.object({
     })
     .optional()
     .default(PropertyListingType.SHORT_TERM_RENTAL),
+
+  airbnbUrl: z
+    .string()
+    .min(1, 'Airbnb URL is required')
+    .transform((val) => {
+      let cleaned = val.trim();
+
+      // Try to extract URL from text (e.g. "Check out this home... https://airbnb.com/...")
+      const urlMatch = cleaned.match(/https?:\/\/[^\s]+/);
+      if (urlMatch) {
+        return urlMatch[0];
+      }
+
+      // If no protocol found, but looks like a domain, prepend https://
+      if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
+        // Simple check if it looks like a domain (has dot, no spaces)
+        if (cleaned.includes('.') && !cleaned.includes(' ')) {
+          return `https://${cleaned}`;
+        }
+      }
+
+      return cleaned;
+    })
+    .refine(
+      (val) => {
+        try {
+          new URL(val);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Invalid URL format' }
+    )
+    .refine(
+      (url) => {
+        try {
+          const parsed = new URL(url);
+          const hostname = parsed.hostname;
+          const pathname = parsed.pathname;
+
+          // Allow airbnb.* (international) and abnb.me
+          const isAirbnbDomain = /^((www\.)?airbnb\.[a-z]{2,}(\.[a-z]{2})?|abnb\.me)$/.test(hostname);
+
+          if (!isAirbnbDomain) return false;
+
+          // abnb.me links usually redirect, so we just check domain
+          if (hostname === 'abnb.me' || hostname === 'www.abnb.me') return true;
+
+          // For standard airbnb domains, check path
+          return pathname.includes('/rooms/') || pathname.includes('/h/');
+        } catch {
+          return false;
+        }
+      },
+      {
+        message: 'URL must be a valid Airbnb listing (e.g., https://www.airbnb.com/rooms/12345 or https://www.airbnb.com/h/name)',
+      }
+    ),
+
+  icalUrlAirbnb: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        try {
+          new URL(val);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Invalid URL format' }
+    ),
+
 }).refine(
   (data) => {
     // If listing type allows rental (SHORT_TERM_RENTAL or BOTH), pricePerNight is required
@@ -220,6 +297,82 @@ export const updatePropertySchema = z.object({
     })
     .optional()
     .default(PropertyListingType.SHORT_TERM_RENTAL),
+
+  airbnbUrl: z
+    .string()
+    .min(1, 'Airbnb URL is required')
+    .transform((val) => {
+      let cleaned = val.trim();
+
+      // Try to extract URL from text (e.g. "Check out this home... https://airbnb.com/...")
+      const urlMatch = cleaned.match(/https?:\/\/[^\s]+/);
+      if (urlMatch) {
+        return urlMatch[0];
+      }
+
+      // If no protocol found, but looks like a domain, prepend https://
+      if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
+        // Simple check if it looks like a domain (has dot, no spaces)
+        if (cleaned.includes('.') && !cleaned.includes(' ')) {
+          return `https://${cleaned}`;
+        }
+      }
+
+      return cleaned;
+    })
+    .refine(
+      (val) => {
+        try {
+          new URL(val);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Invalid URL format' }
+    )
+    .refine(
+      (url) => {
+        try {
+          const parsed = new URL(url);
+          const hostname = parsed.hostname;
+          const pathname = parsed.pathname;
+
+          // Allow airbnb.* (international) and abnb.me
+          const isAirbnbDomain = /^((www\.)?airbnb\.[a-z]{2,}(\.[a-z]{2})?|abnb\.me)$/.test(hostname);
+
+          if (!isAirbnbDomain) return false;
+
+          // abnb.me links usually redirect, so we just check domain
+          if (hostname === 'abnb.me' || hostname === 'www.abnb.me') return true;
+
+          // For standard airbnb domains, check path
+          return pathname.includes('/rooms/') || pathname.includes('/h/');
+        } catch {
+          return false;
+        }
+      },
+      {
+        message: 'URL must be a valid Airbnb listing (e.g., https://www.airbnb.com/rooms/12345 or https://www.airbnb.com/h/name)',
+      }
+    ),
+
+  icalUrlAirbnb: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        try {
+          new URL(val);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Invalid URL format' }
+    ),
 }).refine(
   (data) => {
     // If listing type allows rental (SHORT_TERM_RENTAL or BOTH), pricePerNight is required
@@ -320,6 +473,165 @@ export const videoUploadSchema = z.object({
 });
 
 /**
+ * Validate Airbnb URL Schema
+ * For initial URL validation before import
+ */
+export const validateAirbnbUrlSchema = z.object({
+  airbnbUrl: z
+    .string()
+    .min(1, 'Airbnb URL is required')
+    .transform((val) => {
+      let cleaned = val.trim();
+
+      // Try to extract URL from text (e.g. "Check out this home... https://airbnb.com/...")
+      const urlMatch = cleaned.match(/https?:\/\/[^\s]+/);
+      if (urlMatch) {
+        return urlMatch[0];
+      }
+
+      // If no protocol found, but looks like a domain, prepend https://
+      if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
+        // Simple check if it looks like a domain (has dot, no spaces)
+        if (cleaned.includes('.') && !cleaned.includes(' ')) {
+          return `https://${cleaned}`;
+        }
+      }
+
+      return cleaned;
+    })
+    .refine(
+      (val) => {
+        try {
+          new URL(val);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Invalid URL format' }
+    )
+    .refine(
+      (url) => {
+        try {
+          const parsed = new URL(url);
+          const hostname = parsed.hostname;
+          const pathname = parsed.pathname;
+
+          // Allow airbnb.* (international) and abnb.me
+          const isAirbnbDomain = /^((www\.)?airbnb\.[a-z]{2,}(\.[a-z]{2})?|abnb\.me)$/.test(hostname);
+
+          if (!isAirbnbDomain) return false;
+
+          // abnb.me links usually redirect, so we just check domain
+          if (hostname === 'abnb.me' || hostname === 'www.abnb.me') return true;
+
+          // For standard airbnb domains, check path
+          return pathname.includes('/rooms/') || pathname.includes('/h/');
+        } catch {
+          return false;
+        }
+      },
+      {
+        message: 'URL must be a valid Airbnb listing (e.g., https://www.airbnb.com/rooms/12345 or https://www.airbnb.com/h/name)',
+      }
+    ),
+});
+
+/**
+ * Import from Airbnb Schema
+ * Full form validation for importing a property from Airbnb
+ */
+export const importFromAirbnbSchema = z.object({
+  airbnbUrl: z
+    .string()
+    .min(1, 'Airbnb URL is required')
+    .url('Invalid URL format'),
+
+  priceAmount: z
+    .number()
+    .positive('Price must be positive')
+    .min(1, 'Price must be at least 1')
+    .max(999999999.99, 'Price is too high'),
+
+  priceCurrency: z.nativeEnum(Currency, {
+    errorMap: () => ({ message: 'Invalid currency' }),
+  }),
+
+  country: z
+    .string()
+    .min(2, 'Country is required')
+    .max(100, 'Country name too long')
+    .trim(),
+
+  city: z
+    .string()
+    .min(2, 'City is required')
+    .max(100, 'City name too long')
+    .trim(),
+
+  address: z
+    .string()
+    .min(5, 'Address must be at least 5 characters')
+    .max(200, 'Address too long')
+    .trim(),
+
+  postalCode: z
+    .string()
+    .min(3, 'Postal code must be at least 3 characters')
+    .max(20, 'Postal code too long')
+    .trim()
+    .optional(),
+
+  bedrooms: z
+    .number()
+    .int('Bedrooms must be a whole number')
+    .min(0, 'Bedrooms cannot be negative')
+    .max(50, 'Maximum 50 bedrooms'),
+
+  bathrooms: z
+    .number()
+    .int('Bathrooms must be a whole number')
+    .min(0, 'Bathrooms cannot be negative')
+    .max(50, 'Maximum 50 bathrooms'),
+
+  maxGuests: z
+    .number()
+    .int('Max guests must be a whole number')
+    .min(1, 'At least 1 guest required')
+    .max(100, 'Maximum 100 guests'),
+
+  propertyType: z.nativeEnum(PropertyType, {
+    errorMap: () => ({ message: 'Invalid property type' }),
+  }),
+
+  listingType: z
+    .nativeEnum(PropertyListingType, {
+      errorMap: () => ({ message: 'Invalid listing type' }),
+    })
+    .optional()
+    .default(PropertyListingType.SHORT_TERM_RENTAL),
+
+  titleOverride: z
+    .string()
+    .min(10, 'Title must be at least 10 characters')
+    .max(100, 'Title must not exceed 100 characters')
+    .trim()
+    .optional(),
+
+  descriptionOverride: z
+    .string()
+    .min(20, 'Description must be at least 20 characters')
+    .max(2000, 'Description must not exceed 2000 characters')
+    .trim()
+    .optional(),
+
+  additionalAmenities: z
+    .array(z.string().trim())
+    .max(50, 'Maximum 50 amenities allowed')
+    .optional(),
+});
+
+/**
  * Export inferred types for use with React Hook Form
  */
 export type CreatePropertyFormData = z.infer<typeof createPropertySchema>;
@@ -327,3 +639,5 @@ export type UpdatePropertyFormData = z.infer<typeof updatePropertySchema>;
 export type PropertyFiltersFormData = z.infer<typeof propertyFiltersSchema>;
 export type ImageUploadFormData = z.infer<typeof imageUploadSchema>;
 export type VideoUploadFormData = z.infer<typeof videoUploadSchema>;
+export type ValidateAirbnbUrlFormData = z.infer<typeof validateAirbnbUrlSchema>;
+export type ImportFromAirbnbFormData = z.infer<typeof importFromAirbnbSchema>;

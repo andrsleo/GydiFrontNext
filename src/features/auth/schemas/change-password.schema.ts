@@ -1,7 +1,7 @@
 /**
- * Reset Password Schema
+ * Change Password Schema
  *
- * Zod validation schema for reset password form with strong password requirements.
+ * Zod validation schema for changing password in security settings.
  *
  * Password requirements (matches backend @StrongPassword):
  * - Minimum 8 characters
@@ -10,13 +10,18 @@
  * - At least one number (0-9)
  * - At least one special character (@$!%*?&)
  * - Not a common password (password123, qwerty, etc.)
+ * - Must be different from current password
  */
 
 import { z } from 'zod';
 import { PASSWORD_RULES, validatePasswordStrength } from '@/lib/password-validator';
 
-export const resetPasswordSchema = z
+export const changePasswordSchema = z
   .object({
+    currentPassword: z
+      .string()
+      .min(1, 'La contraseña actual es requerida'),
+
     newPassword: z
       .string()
       .min(PASSWORD_RULES.minLength, `La contraseña debe tener al menos ${PASSWORD_RULES.minLength} caracteres`)
@@ -34,11 +39,18 @@ export const resetPasswordSchema = z
           message: 'Esta contraseña es muy común y fácil de adivinar. Por favor elige una contraseña más segura',
         }
       ),
-    confirmPassword: z.string().min(1, 'Confirma tu contraseña'),
+
+    confirmPassword: z
+      .string()
+      .min(1, 'Confirma tu nueva contraseña'),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: 'Las contraseñas no coinciden',
     path: ['confirmPassword'],
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: 'La nueva contraseña debe ser diferente a la actual',
+    path: ['newPassword'],
   });
 
-export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;

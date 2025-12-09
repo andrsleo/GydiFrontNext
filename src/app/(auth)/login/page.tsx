@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
@@ -35,13 +36,17 @@ function getFriendlyErrorMessage(error: string | null): string {
   // Errores de credenciales
   if (
     errorLower.includes('credential') ||
+    errorLower === 'credentialssignin' ||
+    errorLower === 'sessionexpired' ||
     errorLower.includes('invalid') ||
     errorLower.includes('incorrect') ||
     errorLower.includes('wrong') ||
     errorLower.includes('unauthorized') ||
-    errorLower.includes('401')
+    errorLower.includes('401') ||
+    errorLower.includes('autenticación') ||
+    errorLower.includes('custom_error')
   ) {
-    return 'El email o la contraseña que ingresaste no coinciden. Por favor, verifica e intenta nuevamente.';
+    return 'El email o la contraseña están incorrectos. Por favor, verifica e intenta nuevamente.';
   }
 
   // Usuario no encontrado
@@ -74,6 +79,8 @@ function getFriendlyErrorMessage(error: string | null): string {
 }
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, isLoading } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -88,6 +95,25 @@ export default function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  // Handle error from URL query parameter (NextAuth redirects with error)
+  useEffect(() => {
+    const urlError = searchParams?.get('error');
+    if (urlError) {
+      const friendlyMessage = getFriendlyErrorMessage(urlError);
+      const isRateLimited = friendlyMessage.toLowerCase().includes('demasiados intentos');
+
+      toast.error('No pudimos iniciar sesión', {
+        description: friendlyMessage,
+        duration: isRateLimited ? 10000 : 8000,
+        closeButton: true,
+      });
+      setErrorMessage(friendlyMessage);
+
+      // Clear the error from URL without page reload
+      router.replace('/login', { scroll: false });
+    }
+  }, [searchParams, router]);
 
   // Show toast for validation errors
   useEffect(() => {
@@ -141,12 +167,13 @@ export default function LoginPage() {
 
       // Check if error contains rate limit info
       const isRateLimited = friendlyMessage.toLowerCase().includes('demasiados intentos') ||
-                           friendlyMessage.toLowerCase().includes('too many');
+        friendlyMessage.toLowerCase().includes('too many');
 
       // Show error toast
       toast.error('No pudimos iniciar sesión', {
         description: friendlyMessage,
-        duration: isRateLimited ? 8000 : 5000, // Longer duration for rate limit errors
+        duration: isRateLimited ? 10000 : 8000, // Longer duration for better UX
+        closeButton: true, // Allow user to close it manually
       });
       setErrorMessage(friendlyMessage);
 

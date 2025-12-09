@@ -164,6 +164,23 @@ export function ImageOrganizer({
 
   function handleSetCover(imageId: string) {
     setCoverImageId(imageId);
+
+    // Move the selected image to the first position
+    setImages((currentImages) => {
+      const imageIndex = currentImages.findIndex((img) => img.id === imageId);
+      if (imageIndex === -1 || imageIndex === 0) {
+        // Image not found or already first, no need to move
+        return currentImages;
+      }
+
+      // Move image to first position
+      const newImages = [...currentImages];
+      const [movedImage] = newImages.splice(imageIndex, 1);
+      newImages.unshift(movedImage);
+
+      return newImages;
+    });
+
     setHasChanges(true);
   }
 
@@ -222,7 +239,7 @@ export function ImageOrganizer({
         <div>
           <h3 className="text-lg font-semibold">Organize Photos</h3>
           <p className="text-sm text-muted-foreground">
-            Drag to reorder. The first photo will be displayed in listings.
+            Drag to reorder or mark a photo as cover. The cover photo will be displayed first.
           </p>
         </div>
         <div className="flex gap-2">
