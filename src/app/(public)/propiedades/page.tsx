@@ -208,7 +208,7 @@ export default function PropertiesPage() {
               <PropertyCard
                 key={property.id}
                 property={property}
-                href={`/propiedades/${property.id}`}
+                href={`/propiedades/${property.slug || property.id}`}
               />
             ))}
           </div>

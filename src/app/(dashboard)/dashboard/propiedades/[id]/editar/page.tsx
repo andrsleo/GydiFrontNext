@@ -31,6 +31,8 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
     salePrice: property.salePrice,
     propertyType: property.propertyType,
     listingType: property.listingType,
+    airbnbUrl: property.airbnbUrl || '',
+    icalUrlAirbnb: property.icalUrlAirbnb || '',
     // Flatten location object
     country: property.location?.country || '',
     city: property.location?.city || '',
@@ -44,11 +46,8 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
   } : undefined;
 
   const handleUpdateProperty = async (data: UpdatePropertyFormData) => {
-    try {
-      await updateProperty.mutateAsync({ id, data });
-    } catch (error) {
-      console.error('Error updating property:', error);
-    }
+    // Return the promise so the form can handle errors
+    return updateProperty.mutateAsync({ id, data });
   };
 
   const handlePublishProperty = async () => {

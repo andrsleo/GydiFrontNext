@@ -14,20 +14,22 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { CountryCitySelector } from '@/components/shared/country-city-selector';
-import { AlertCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { AlertCircle, HelpCircle } from 'lucide-react';
+import { useState } from 'react';
 import {
   createPropertySchema,
   updatePropertySchema,
   type CreatePropertyFormData,
   type UpdatePropertyFormData,
-} from '../schemas/property.schema';
+} from '../schemas';
+import { useAmenities, useValidateICalUrl } from '../hooks';
 import { PropertyType, PropertyListingType, Currency, LISTING_TYPE_LABELS } from '../types';
-import { useAmenities } from '../hooks/use-amenities';
 
 interface PropertyFormProps {
   mode: 'create' | 'edit';
   defaultValues?: Partial<CreatePropertyFormData | UpdatePropertyFormData>;
-  onSubmit: (data: CreatePropertyFormData | UpdatePropertyFormData) => void;
+  onSubmit: (data: CreatePropertyFormData | UpdatePropertyFormData) => Promise<any> | void;
   isSubmitting?: boolean;
 }
 
@@ -39,7 +41,7 @@ interface PropertyFormProps {
  * ```tsx
  * <PropertyForm
  *   mode="create"
- *   onSubmit={(data) => createMutation.mutate(data)}
+ *   onSubmit={(data) => createMutation.mutateAsync(data)}
  *   isSubmitting={createMutation.isPending}
  * />
  * ```
@@ -58,6 +60,7 @@ export function PropertyForm({
     control,
     formState: { errors, touchedFields },
     watch,
+    setError,
   } = useForm<CreatePropertyFormData | UpdatePropertyFormData>({
     resolver: zodResolver(schema),
     mode: 'onTouched', // Validate immediately when field is touched
@@ -70,18 +73,77 @@ export function PropertyForm({
       bathrooms: 1,
       maxGuests: 2,
       amenities: [],
+      airbnbUrl: '',
+      icalUrlAirbnb: '',
     },
   });
 
   // Fetch available amenities
   const { data: amenities, isLoading: isLoadingAmenities } = useAmenities();
 
-  // Debug wrapper for onSubmit
-  const handleFormSubmit = (data: CreatePropertyFormData | UpdatePropertyFormData) => {
-    console.log('=== HANDLESUBMIT WRAPPER CALLED ===');
-    console.log('Data received:', data);
-    console.log('Calling parent onSubmit...');
-    onSubmit(data);
+  // iCal URL validation
+  const { mutate: validateICalUrl, isPending: isValidating, data: validationResult } = useValidateICalUrl();
+  const [icalUrlValidated, setIcalUrlValidated] = useState<string>('');
+  const icalUrlValue = watch('icalUrlAirbnb');
+
+  // Validate iCal URL on blur
+  const handleICalUrlBlur = () => {
+    const url = icalUrlValue as string | undefined;
+    if (url && url.trim() && url !== icalUrlValidated) {
+      validateICalUrl({ icalUrl: url }, {
+        onSuccess: () => {
+          setIcalUrlValidated(url);
+        }
+      });
+    }
+  };
+
+  const handleFormSubmit = async (data: CreatePropertyFormData | UpdatePropertyFormData) => {
+    try {
+      await onSubmit(data);
+    } catch (error: any) {
+      // Extract backend error data safely
+      const backendData = error?.response?.data;
+      const backendMessage = backendData?.message || error?.message || '';
+
+      // Check for iCal URL errors (case insensitive)
+      const isICalError =
+        backendMessage.toLowerCase().includes('ical url') ||
+        backendMessage.toLowerCase().includes('ical data') ||
+        backendMessage.toLowerCase().includes('begin:vcalendar');
+
+      if (isICalError) {
+        let userMsg = 'El enlace no contiene datos válidos de iCal';
+
+        if (backendMessage.includes('missing BEGIN:VCALENDAR') || backendMessage.includes('does not contain valid iCal')) {
+          userMsg = 'El enlace no contiene datos válidos de iCal (falta BEGIN:VCALENDAR)';
+        } else if (backendMessage.includes('HTTPS protocol')) {
+          userMsg = 'El enlace debe ser seguro (comenzar con https://)';
+        } else if (backendMessage.includes('HTTP 404') || backendMessage.includes('Unable to access')) {
+          userMsg = 'No pudimos acceder al enlace (Error 404). Verifica que sea público.';
+        } else if (backendMessage.includes('Timeout')) {
+          userMsg = 'Tardó demasiado en responder. Inténtalo de nuevo.';
+        }
+
+        // Set error on the field
+        setError('icalUrlAirbnb', {
+          type: 'manual',
+          message: userMsg
+        }, { shouldFocus: true });
+
+        // Force scroll to the field with a slight delay to ensure UI update
+        setTimeout(() => {
+          const element = document.getElementById('icalUrlAirbnb');
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.focus();
+            // Add a temporary highlight effect
+            element.classList.add('ring-2', 'ring-red-500', 'ring-offset-2');
+            setTimeout(() => element.classList.remove('ring-2', 'ring-red-500', 'ring-offset-2'), 2000);
+          }
+        }, 100);
+      }
+    }
   };
 
   return (
@@ -312,6 +374,91 @@ export function PropertyForm({
         )}
       </div>
 
+      {/* Airbnb URL - Shown in both create and edit modes */}
+      <div className="space-y-2">
+        <Label htmlFor="airbnbUrl">
+          Airbnb URL <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="airbnbUrl"
+          {...register('airbnbUrl')}
+          placeholder="https://www.airbnb.com/rooms/12345 or https://abnb.me/..."
+          disabled={isSubmitting}
+          error={!!errors.airbnbUrl}
+          aria-describedby={errors.airbnbUrl ? 'airbnbUrl-error' : undefined}
+        />
+        {errors.airbnbUrl && (
+          <p id="airbnbUrl-error" className="text-sm text-red-600 font-bold flex items-center gap-1" style={{ color: '#dc2626' }}>
+            <AlertCircle className="h-4 w-4" style={{ color: '#dc2626' }} />
+            {errors.airbnbUrl.message}
+          </p>
+        )}
+        <p className="text-sm text-muted-foreground">
+          Paste the URL from the Airbnb listing (mobile or web links supported)
+        </p>
+      </div>
+
+      {/* Airbnb iCal URL - Optional */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Label htmlFor="icalUrlAirbnb">
+            Airbnb iCal URL <span className="text-muted-foreground">(Optional)</span>
+          </Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="inline-flex items-center">
+                  <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs p-4" side="right">
+                <div className="space-y-2">
+                  <p className="font-semibold text-sm">¿Cómo obtener tu link iCal desde Airbnb?</p>
+                  <ol className="text-xs space-y-1 list-decimal list-inside">
+                    <li>Entra a tu cuenta de Airbnb y abre la propiedad que deseas sincronizar.</li>
+                    <li>Ve al menú Calendario.</li>
+                    <li>Haz clic en Exportar calendario (o Export Calendar).</li>
+                    <li>Copia el enlace que Airbnb te genera en formato .ics.</li>
+                    <li>Pégalo aquí para sincronizar tu disponibilidad automáticamente.</li>
+                  </ol>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <Input
+          id="icalUrlAirbnb"
+          {...register('icalUrlAirbnb')}
+          placeholder="https://www.airbnb.com/calendar/ical/..."
+          disabled={isSubmitting}
+          error={!!errors.icalUrlAirbnb}
+          aria-describedby={errors.icalUrlAirbnb ? 'icalUrlAirbnb-error' : undefined}
+          onBlur={handleICalUrlBlur}
+        />
+        {errors.icalUrlAirbnb && (
+          <p id="icalUrlAirbnb-error" className="text-sm text-red-600 font-bold flex items-center gap-1" style={{ color: '#dc2626' }}>
+            <AlertCircle className="h-4 w-4" style={{ color: '#dc2626' }} />
+            {errors.icalUrlAirbnb.message}
+          </p>
+        )}
+        {/* Validation feedback */}
+        {isValidating && (
+          <p className="text-sm text-muted-foreground flex items-center gap-1">
+            <span className="animate-spin">⏳</span>
+            Validating iCal URL...
+          </p>
+        )}
+        {!isValidating && validationResult && (
+          <p className={`text-sm font-medium flex items-center gap-1 ${validationResult.valid ? 'text-green-600' : 'text-red-600'
+            }`}>
+            {validationResult.valid ? '✓' : '✗'} {validationResult.message}
+          </p>
+        )}
+        <p className="text-sm text-muted-foreground">
+          Paste the iCal URL from Airbnb to sync availability
+        </p>
+      </div>
+
       {/* Location */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Location</h3>
@@ -495,12 +642,6 @@ export function PropertyForm({
         <Button
           type="submit"
           disabled={isSubmitting}
-          onClick={() => {
-            console.log('🔘 Submit button clicked!');
-            console.log('📝 Current form errors:', errors);
-            console.log('❌ Has validation errors:', Object.keys(errors).length > 0);
-            console.log('⏳ Is submitting:', isSubmitting);
-          }}
         >
           {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create Property' : 'Update Property'}
         </Button>

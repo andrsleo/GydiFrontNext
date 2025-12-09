@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
 } from 'lucide-react';
+import { useProfileByUserId } from '@/features/auth/hooks/use-profile';
 
 // Mock data - replace with real API calls
 const stats = [
@@ -89,13 +90,22 @@ const statusConfig = {
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const userId = session?.user?.id ? Number(session.user.id) : null;
+  const { data: profile } = useProfileByUserId(userId!, {
+    enabled: !!userId,
+  });
+
+  // Get name from profile, fallback to session, then to 'Usuario'
+  const displayName = profile
+    ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || session?.user?.name || 'Usuario'
+    : session?.user?.name || 'Usuario';
 
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Bienvenido, {session?.user?.name || 'Usuario'}
+          Bienvenido, {displayName}
         </h1>
         <p className="text-muted-foreground">
           Aquí está un resumen de tu actividad reciente
@@ -118,9 +128,8 @@ export default function DashboardPage() {
                   <Icon className={`h-6 w-6 ${stat.color}`} />
                 </div>
                 <div
-                  className={`flex items-center text-sm font-medium ${
-                    stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
-                  }`}
+                  className={`flex items-center text-sm font-medium ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
+                    }`}
                 >
                   <TrendIcon className="mr-1 h-4 w-4" />
                   {stat.change}
@@ -159,9 +168,8 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-4">
                   <span className="font-semibold">{referral.commission}</span>
                   <span
-                    className={`rounded-full px-2 py-1 text-xs font-medium ${
-                      statusConfig[referral.status as keyof typeof statusConfig].color
-                    }`}
+                    className={`rounded-full px-2 py-1 text-xs font-medium ${statusConfig[referral.status as keyof typeof statusConfig].color
+                      }`}
                   >
                     {statusConfig[referral.status as keyof typeof statusConfig].label}
                   </span>

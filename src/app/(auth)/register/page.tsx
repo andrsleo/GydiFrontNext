@@ -1,12 +1,15 @@
 'use client';
 
+import 'react-phone-number-input/style.css';
+import PhoneInput from 'react-phone-number-input';
 import { useState } from 'react';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { registerSchema, type RegisterFormData } from '@/features/auth/schemas/auth.schema';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { PasswordStrengthIndicator } from '@/features/auth/components/password-strength-indicator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +21,8 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
+    control,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -117,6 +122,10 @@ export default function RegisterPage() {
               )}
             </div>
 
+            <div className="mt-2">
+              <PasswordStrengthIndicator password={watch('password') || ''} />
+            </div>
+
             <div>
               <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
               <Input
@@ -136,14 +145,21 @@ export default function RegisterPage() {
               <Label htmlFor="phoneNumber">
                 Teléfono <span className="text-gray-400">(opcional)</span>
               </Label>
-              <Input
-                id="phoneNumber"
-                type="tel"
-                autoComplete="tel"
-                placeholder="+1234567890"
-                {...register('phoneNumber')}
-                className="mt-1"
-              />
+              <div className="mt-1">
+                <Controller
+                  name="phoneNumber"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <PhoneInput
+                      placeholder="Ingresa tu número de teléfono"
+                      value={value}
+                      onChange={onChange}
+                      defaultCountry="CO"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  )}
+                />
+              </div>
               {errors.phoneNumber && (
                 <p className="mt-1 text-sm text-red-600">{errors.phoneNumber.message}</p>
               )}

@@ -1,57 +1,104 @@
 /**
  * Password Strength Indicator Component
  *
- * Visual feedback component that shows password strength based on criteria:
- * - Weak: 1-2 criteria met (red)
- * - Fair: 3 criteria met (orange)
- * - Good: 4 criteria met (yellow)
- * - Strong: All 5 criteria met (green)
+ * Visual feedback component that shows password strength with:
+ * - Real-time validation using password-validator utility
+ * - Visual strength meter (color-coded progress bar)
+ * - List of requirements with check/cross icons
+ * - Common password detection
+ * - Matches backend @StrongPassword validation
+ *
+ * @updated 2025-12-02 - Added common password detection and full validation
  */
 
 'use client';
 
 import { useMemo } from 'react';
-import { Check, X } from 'lucide-react';
-import type { PasswordStrength, PasswordCriteria } from '../types/password-reset.types';
+import { Check, X, AlertCircle } from 'lucide-react';
+import {
+  validatePasswordStrength,
+  PASSWORD_RULES,
+  type PasswordValidationResult,
+} from '@/lib/password-validator';
 
 interface PasswordStrengthIndicatorProps {
   password: string;
+  showCommonPasswordWarning?: boolean;
 }
 
-export function PasswordStrengthIndicator({ password }: PasswordStrengthIndicatorProps) {
-  const criteria: PasswordCriteria = useMemo(
-    () => ({
-      minLength: password.length >= 8,
-      hasUppercase: /[A-Z]/.test(password),
-      hasLowercase: /[a-z]/.test(password),
-      hasNumber: /[0-9]/.test(password),
-      hasSpecialChar: /[^A-Za-z0-9]/.test(password),
-    }),
-    [password]
-  );
-
-  const { strength, color, percentage } = useMemo(() => {
-    const metCriteria = Object.values(criteria).filter(Boolean).length;
-
-    if (metCriteria === 0) {
-      return { strength: 'weak' as PasswordStrength, color: 'bg-gray-300', percentage: 0 };
-    } else if (metCriteria <= 2) {
-      return { strength: 'weak' as PasswordStrength, color: 'bg-red-500', percentage: 25 };
-    } else if (metCriteria === 3) {
-      return { strength: 'fair' as PasswordStrength, color: 'bg-orange-500', percentage: 50 };
-    } else if (metCriteria === 4) {
-      return { strength: 'good' as PasswordStrength, color: 'bg-yellow-500', percentage: 75 };
-    } else {
-      return { strength: 'strong' as PasswordStrength, color: 'bg-green-500', percentage: 100 };
+export function PasswordStrengthIndicator({
+  password,
+  showCommonPasswordWarning = true,
+}: PasswordStrengthIndicatorProps) {
+  const validation = useMemo<PasswordValidationResult>(() => {
+    if (!password) {
+      return {
+        isValid: false,
+        errors: [],
+        strength: 'weak',
+      };
     }
-  }, [criteria]);
+    return validatePasswordStrength(password);
+  }, [password]);
 
-  const strengthText = {
-    weak: 'Débil',
-    fair: 'Regular',
-    good: 'Buena',
-    strong: 'Fuerte',
+  const strengthConfig = {
+    weak: {
+      label: 'Débil',
+      color: 'bg-red-500',
+      textColor: 'text-red-600',
+      progress: 25,
+    },
+    medium: {
+      label: 'Media',
+      color: 'bg-orange-500',
+      textColor: 'text-orange-600',
+      progress: 50,
+    },
+    strong: {
+      label: 'Fuerte',
+      color: 'bg-yellow-500',
+      textColor: 'text-yellow-600',
+      progress: 75,
+    },
+    'very-strong': {
+      label: 'Muy Fuerte',
+      color: 'bg-green-500',
+      textColor: 'text-green-600',
+      progress: 100,
+    },
   };
+
+  const config = strengthConfig[validation.strength];
+
+  // Determine if each requirement is met
+  const requirements = [
+    {
+      met: password.length >= PASSWORD_RULES.minLength,
+      text: `Al menos ${PASSWORD_RULES.minLength} caracteres`,
+    },
+    {
+      met: PASSWORD_RULES.patterns.uppercase.test(password),
+      text: 'Una letra mayúscula (A-Z)',
+    },
+    {
+      met: PASSWORD_RULES.patterns.lowercase.test(password),
+      text: 'Una letra minúscula (a-z)',
+    },
+    {
+      met: PASSWORD_RULES.patterns.digit.test(password),
+      text: 'Un número (0-9)',
+    },
+    {
+      met: PASSWORD_RULES.patterns.specialChar.test(password),
+      text: 'Un carácter especial (@$!%*?&)',
+    },
+    {
+      met: !validation.errors.some((error) => error.includes('too common')),
+      text: 'No es una contraseña común',
+    },
+  ];
+
+  const isCommonPassword = validation.errors.some((error) => error.includes('too common'));
 
   if (!password) {
     return null;
@@ -62,27 +109,37 @@ export function PasswordStrengthIndicator({ password }: PasswordStrengthIndicato
       {/* Strength Bar */}
       <div className="space-y-1">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Seguridad de la contraseña</span>
-          <span className={`font-medium ${color.replace('bg-', 'text-')}`}>
-            {strengthText[strength]}
-          </span>
+          <span className="text-muted-foreground">Fortaleza de la contraseña</span>
+          <span className={`font-medium ${config.textColor}`}>{config.label}</span>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
           <div
-            className={`h-full transition-all duration-300 ${color}`}
-            style={{ width: `${percentage}%` }}
+            className={`h-full transition-all duration-300 ${config.color}`}
+            style={{ width: `${config.progress}%` }}
           />
         </div>
       </div>
 
       {/* Criteria Checklist */}
       <div className="space-y-1.5 text-sm">
-        <CriteriaItem met={criteria.minLength} text="Al menos 8 caracteres" />
-        <CriteriaItem met={criteria.hasUppercase} text="Una letra mayúscula" />
-        <CriteriaItem met={criteria.hasLowercase} text="Una letra minúscula" />
-        <CriteriaItem met={criteria.hasNumber} text="Un número" />
-        <CriteriaItem met={criteria.hasSpecialChar} text="Un carácter especial (!@#$%^&*)" />
+        {requirements.map((req, index) => (
+          <CriteriaItem key={index} met={req.met} text={req.text} />
+        ))}
       </div>
+
+      {/* Common Password Warning */}
+      {showCommonPasswordWarning && isCommonPassword && (
+        <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
+          <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-amber-800">
+            <p className="font-medium">Contraseña común detectada</p>
+            <p className="text-amber-700 mt-1">
+              Esta contraseña es muy común y vulnerable a ataques. Por favor elige una contraseña
+              única y más segura.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

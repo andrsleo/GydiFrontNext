@@ -33,17 +33,12 @@ export default function NewPropertyPage() {
     console.log('=== FORM SUBMISSION STARTED ===');
     console.log('Form data:', data);
 
-    try {
-      console.log('Calling createProperty.mutateAsync...');
-      const property = await createProperty.mutateAsync(data);
-      console.log('Property created successfully:', property);
-      setPropertyId(property.id);
-      setStep('images');
-    } catch (error) {
-      // Error is already handled by the mutation hook with a toast
-      console.error('=== ERROR CREATING PROPERTY ===');
-      console.error('Error details:', error);
-    }
+    console.log('Calling createProperty.mutateAsync...');
+    const property = await createProperty.mutateAsync(data);
+    console.log('Property created successfully:', property);
+    setPropertyId(property.id);
+    setStep('images');
+    return property;
   };
 
   const handleUploadImages = async () => {
@@ -131,7 +126,7 @@ export default function NewPropertyPage() {
             <PropertyForm
               mode="create"
               onSubmit={handleCreateProperty}
-              isLoading={createProperty.isPending}
+              isSubmitting={createProperty.isPending}
             />
           </CardContent>
         </Card>
