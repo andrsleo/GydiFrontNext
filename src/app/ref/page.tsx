@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
 // TODO: Move to a shared config or env var
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
-export default function ReferralRedirectPage() {
+function ReferralRedirectContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [error, setError] = useState<string | null>(null);
@@ -94,5 +94,21 @@ export default function ReferralRedirectPage() {
                 <p className="text-gray-500 mt-2">Please wait while we take you to the property.</p>
             </div>
         </div>
+    );
+}
+
+export default function ReferralRedirectPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+                <div className="text-center">
+                    <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+                    <h2 className="text-xl font-semibold text-gray-800">Loading...</h2>
+                    <p className="text-gray-500 mt-2">Please wait...</p>
+                </div>
+            </div>
+        }>
+            <ReferralRedirectContent />
+        </Suspense>
     );
 }

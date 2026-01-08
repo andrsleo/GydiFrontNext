@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { PlanSelectButton } from '@/components/shared/plan-select-button';
 import { Building2, TrendingUp, Users, Shield, Zap, DollarSign, Check, Star, Crown, Rocket, MapPin, Bed, Bath, Maximize, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 
@@ -622,9 +623,13 @@ export default function HomePage() {
                 </ul>
 
                 {/* CTA Button */}
-                <Button asChild className="w-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20" variant="outline">
-                  <Link href="/register">Empezar Gratis</Link>
-                </Button>
+                <PlanSelectButton
+                  planCode="FREE"
+                  className="w-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
+                  variant="outline"
+                >
+                  Empezar Gratis
+                </PlanSelectButton>
               </div>
             </div>
 
@@ -698,9 +703,12 @@ export default function HomePage() {
                 </ul>
 
                 {/* CTA Button */}
-                <Button asChild className="w-full bg-gradient-to-r from-primary to-blue-600 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">
-                  <Link href="/register">Comenzar Pro</Link>
-                </Button>
+                <PlanSelectButton
+                  planCode="PRO"
+                  className="w-full bg-gradient-to-r from-primary to-blue-600 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30"
+                >
+                  Comenzar Pro
+                </PlanSelectButton>
               </div>
             </div>
 
@@ -775,9 +783,12 @@ export default function HomePage() {
                 </ul>
 
                 {/* CTA Button */}
-                <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-purple-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/30">
-                  <Link href="/register">Comenzar Elite</Link>
-                </Button>
+                <PlanSelectButton
+                  planCode="ELITE"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/30"
+                >
+                  Comenzar Elite
+                </PlanSelectButton>
               </div>
             </div>
           </div>

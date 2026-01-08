@@ -15,6 +15,7 @@ const CURRENCY_SYMBOLS: Record<Currency, string> = {
   MXN: '$',
   CAD: 'CA$',
   GBP: '£',
+  COP: '$',
 };
 
 /**
@@ -24,7 +25,7 @@ const CURRENCY_SYMBOLS: Record<Currency, string> = {
  * formatCurrency(150, 'USD') // "$150"
  * formatCurrency(99.99, 'EUR') // "€99.99"
  */
-export function formatCurrency(amount: number, currency: Currency = 'USD'): string {
+export function formatCurrency(amount: number, currency: Currency = 'USD' as Currency): string {
   const symbol = CURRENCY_SYMBOLS[currency] || currency;
   const formatted = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,

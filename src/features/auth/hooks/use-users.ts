@@ -125,6 +125,7 @@ export function useCreateUser(
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
 
       // Call user's onSuccess if provided (React Query handles this automatically)
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
   });
@@ -170,6 +171,7 @@ export function useUpdateUser(
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
   });
@@ -212,6 +214,7 @@ export function useDeleteUser(
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, userId, context);
     },
   });

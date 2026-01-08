@@ -180,7 +180,7 @@ export function PropertyForm({
           placeholder="Describe your property..."
           rows={5}
           disabled={isSubmitting}
-          error={!!errors.description}
+          className={errors.description ? 'border-red-600' : ''}
           aria-describedby={errors.description ? 'description-error' : undefined}
         />
         {errors.description && (

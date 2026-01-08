@@ -176,6 +176,7 @@ export function useCreateProfile(
       queryClient.invalidateQueries({ queryKey: profileKeys.current() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,
@@ -230,6 +231,7 @@ export function useUpdateProfile(
       queryClient.invalidateQueries({ queryKey: profileKeys.current() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,
@@ -270,6 +272,7 @@ export function useDeleteProfile(
       queryClient.invalidateQueries({ queryKey: profileKeys.current() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, userId, context);
     },
     ...options,
@@ -326,6 +329,7 @@ export function useUpsertProfile(
       queryClient.invalidateQueries({ queryKey: profileKeys.current() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,

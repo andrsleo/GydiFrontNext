@@ -1,16 +1,17 @@
 import { ImageOrganizer } from '@/features/properties';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
  * Property Images Organization Page
  * Allows users to reorder images and set cover image
  */
-export default function PropertyImagesPage({ params }: Props) {
+export default async function PropertyImagesPage({ params }: Props) {
+  const { id } = await params;
   // TODO: Fetch property data with Server Component
-  // const property = await propertyApi.getById(params.id);
+  // const property = await propertyApi.getById(id);
 
   // Temporary mock data for demonstration
   const mockImages = [
@@ -29,7 +30,7 @@ export default function PropertyImagesPage({ params }: Props) {
       </div>
 
       <ImageOrganizer
-        propertyId={params.id}
+        propertyId={id}
         images={mockImages}
         coverImageId="1"
         onSuccess={() => {

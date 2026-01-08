@@ -1,32 +1,72 @@
+/**
+ * Subscriptions API Client
+ *
+ * API client for all subscription-related endpoints.
+ * Connects to Spring Boot backend REST controllers.
+ */
+
 import { apiClient } from '@/lib/api/client';
 import type {
-  Subscription,
-  Earning,
-  EarningsStats,
-  MonthlyEarning,
-  UpgradePlanRequest,
-  UpgradePlanResponse,
+  PlanResponse,
+  UserSubscriptionResponse,
+  PaymentMethodResponse,
+  SubscriptionTransactionResponse,
+  SubscribeToPlanRequest,
+  ChangePlanRequest,
   CancelSubscriptionRequest,
+  CreatePaymentMethodRequest,
 } from '../types';
 
 /**
- * Subscriptions API client
+ * Plans API
+ * Endpoint: /api/plans
+ */
+export const plansApi = {
+  /**
+   * Get all active subscription plans
+   * GET /api/plans
+   */
+  async getAll(): Promise<PlanResponse[]> {
+    const { data } = await apiClient.get<PlanResponse[]>('/api/plans');
+    return data;
+  },
+};
+
+/**
+ * Subscriptions API
+ * Endpoint: /api/subscriptions
  */
 export const subscriptionsApi = {
   /**
-   * Get current user subscription
+   * Get current user's subscription
+   * GET /api/subscriptions/current
    */
-  async getCurrent(): Promise<Subscription> {
-    const { data } = await apiClient.get<Subscription>('/api/subscriptions/current');
+  async getCurrent(): Promise<UserSubscriptionResponse> {
+    const { data } = await apiClient.get<UserSubscriptionResponse>(
+      '/api/subscriptions/current'
+    );
     return data;
   },
 
   /**
-   * Upgrade to a new plan
+   * Subscribe to a plan
+   * POST /api/subscriptions
    */
-  async upgradePlan(request: UpgradePlanRequest): Promise<UpgradePlanResponse> {
-    const { data } = await apiClient.post<UpgradePlanResponse>(
-      '/api/subscriptions/upgrade',
+  async subscribe(request: SubscribeToPlanRequest): Promise<UserSubscriptionResponse> {
+    const { data } = await apiClient.post<UserSubscriptionResponse>(
+      '/api/subscriptions',
+      request
+    );
+    return data;
+  },
+
+  /**
+   * Change subscription plan (upgrade or downgrade)
+   * PUT /api/subscriptions/change-plan
+   */
+  async changePlan(request: ChangePlanRequest): Promise<UserSubscriptionResponse> {
+    const { data } = await apiClient.put<UserSubscriptionResponse>(
+      '/api/subscriptions/change-plan',
       request
     );
     return data;
@@ -34,60 +74,55 @@ export const subscriptionsApi = {
 
   /**
    * Cancel subscription
+   * POST /api/subscriptions/cancel
    */
-  async cancel(request: CancelSubscriptionRequest): Promise<Subscription> {
-    const { data } = await apiClient.post<Subscription>(
+  async cancel(request: CancelSubscriptionRequest): Promise<UserSubscriptionResponse> {
+    const { data } = await apiClient.post<UserSubscriptionResponse>(
       '/api/subscriptions/cancel',
       request
     );
     return data;
   },
+};
 
+/**
+ * Payment Methods API
+ * Endpoint: /api/payment-methods
+ */
+export const paymentMethodsApi = {
   /**
-   * Reactivate cancelled subscription
+   * Get all user's payment methods
+   * GET /api/payment-methods
    */
-  async reactivate(): Promise<Subscription> {
-    const { data} = await apiClient.post<Subscription>('/api/subscriptions/reactivate');
+  async getAll(): Promise<PaymentMethodResponse[]> {
+    const { data } = await apiClient.get<PaymentMethodResponse[]>('/api/payment-methods');
     return data;
   },
 
   /**
-   * Get earnings history
+   * Add a new payment method
+   * POST /api/payment-methods
+   *
+   * NOTE: The stripePaymentMethodId must be obtained from Stripe Elements
+   * tokenization on the frontend BEFORE calling this endpoint.
    */
-  async getEarnings(params?: {
-    status?: string;
-    page?: number;
-    limit?: number;
-    startDate?: string;
-    endDate?: string;
-  }): Promise<{ data: Earning[]; total: number; page: number; limit: number }> {
-    const { data } = await apiClient.get('/api/earnings', { params });
-    return data;
-  },
-
-  /**
-   * Get earnings statistics
-   */
-  async getEarningsStats(): Promise<EarningsStats> {
-    const { data } = await apiClient.get<EarningsStats>('/api/earnings/stats');
-    return data;
-  },
-
-  /**
-   * Get monthly earnings for charts
-   */
-  async getMonthlyEarnings(months: number = 6): Promise<MonthlyEarning[]> {
-    const { data } = await apiClient.get<MonthlyEarning[]>('/api/earnings/monthly', {
-      params: { months },
-    });
-    return data;
-  },
-
-  /**
-   * Get earning by ID
-   */
-  async getEarningById(id: string): Promise<Earning> {
-    const { data } = await apiClient.get<Earning>(`/api/earnings/${id}`);
+  async create(request: CreatePaymentMethodRequest): Promise<PaymentMethodResponse> {
+    const { data } = await apiClient.post<PaymentMethodResponse>(
+      '/api/payment-methods',
+      request
+    );
     return data;
   },
 };
+
+/**
+ * Combined API object for convenience
+ */
+const subscriptionApi = {
+  plans: plansApi,
+  subscriptions: subscriptionsApi,
+  paymentMethods: paymentMethodsApi,
+};
+
+// Default export
+export default subscriptionApi;

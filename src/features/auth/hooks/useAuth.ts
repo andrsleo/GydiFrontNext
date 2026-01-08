@@ -4,26 +4,31 @@
  * Wrapper around new React Query hooks to maintain compatibility
  * with existing components while using the new API client.
  *
+ * BACKEND-ONLY AUTHENTICATION (NO NextAuth):
+ * - Uses backend-managed authentication with cookies (production) or localStorage (dev)
+ * - All authentication logic handled by backend
+ *
  * @deprecated Use useLogin, useLogout, useCreateUser directly for new components
  */
 
 'use client';
 
 import { useState } from 'react';
-import { signOut } from 'next-auth/react';
-import { useLogin } from './use-auth';
+import { useLogin, useLogout } from './use-auth';
 import { useCreateUser } from './use-users';
 import type { LoginFormData, RegisterFormData } from '../schemas/auth.schema';
 
 export function useAuth() {
   const [error, setError] = useState<string | null>(null);
 
-  // Use new React Query hooks
+  // Use new React Query hooks (backend-only authentication)
   const loginMutation = useLogin({
     onError: (err) => {
       setError(err.message || 'Error al iniciar sesión');
     },
   });
+
+  const logoutMutation = useLogout();
 
   const createUserMutation = useCreateUser({
     onError: (err) => {
@@ -55,10 +60,10 @@ export function useAuth() {
       setError(null);
 
       // Create user with USER role by default (no role selection)
-      // Names are now stored in user_profile (source of truth)
+      // Send firstName and lastName separately to backend
       await createUserMutation.mutateAsync({
         firstName: data.firstName,
-        lastName: data.lastName || null,
+        lastName: data.lastName,
         email: data.email,
         password: data.password,
         phoneNumber: data.phoneNumber,
@@ -76,14 +81,15 @@ export function useAuth() {
   };
 
   const logout = async () => {
-    await signOut({ redirect: true, callbackUrl: '/' });
+    // Use backend-only logout (clears cookies in production, localStorage in dev)
+    await logoutMutation.mutateAsync();
   };
 
   return {
     login,
     register,
     logout,
-    isLoading: loginMutation.isPending || createUserMutation.isPending,
+    isLoading: loginMutation.isPending || createUserMutation.isPending || logoutMutation.isPending,
     error,
   };
 }

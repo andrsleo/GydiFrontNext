@@ -10,11 +10,10 @@ import { propertiesApi } from '../api/properties.api';
 import { toast } from 'sonner';
 import type { ValidateAirbnbUrlRequest, ValidateAirbnbUrlResponse } from '../types';
 
-interface UseValidateAirbnbUrlOptions
-  extends Omit<
-    UseMutationOptions<ValidateAirbnbUrlResponse, Error, ValidateAirbnbUrlRequest>,
-    'mutationFn'
-  > {}
+type UseValidateAirbnbUrlOptions = Omit<
+  UseMutationOptions<ValidateAirbnbUrlResponse, Error, ValidateAirbnbUrlRequest>,
+  'mutationFn'
+>;
 
 /**
  * Hook to validate an Airbnb URL and extract listing metadata
@@ -45,6 +44,7 @@ export function useValidateAirbnbUrl(options?: UseValidateAirbnbUrlOptions) {
       }
 
       // Call custom onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error: any, variables, context) => {
@@ -76,6 +76,7 @@ export function useValidateAirbnbUrl(options?: UseValidateAirbnbUrlOptions) {
       });
 
       // Call custom onError if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onError?.(error, variables, context);
     },
     ...options,

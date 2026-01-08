@@ -87,7 +87,7 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
         lastName: profile.lastName || '',
         phoneNumber: profile.phoneNumber || '',
         dateOfBirth: profile.dateOfBirth || '',
-        gender: profile.gender,
+        gender: profile.gender ?? undefined,
         bio: profile.bio || '',
         country: profile.country || '',
         city: profile.city || '',
@@ -381,9 +381,9 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
             value={form.watch('socialLinks') || {}}
             onChange={(value) => form.setValue('socialLinks', value, { shouldDirty: true })}
           />
-          {form.formState.errors.socialLinks && (
+          {form.formState.errors.socialLinks?.message && (
             <p className="text-sm text-destructive">
-              {form.formState.errors.socialLinks.message}
+              {String(form.formState.errors.socialLinks.message)}
             </p>
           )}
         </div>
@@ -397,9 +397,9 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
             value={form.watch('preferences') || {}}
             onChange={(value) => form.setValue('preferences', value, { shouldDirty: true })}
           />
-          {form.formState.errors.preferences && (
+          {form.formState.errors.preferences?.message && (
             <p className="text-sm text-destructive">
-              {form.formState.errors.preferences.message}
+              {String(form.formState.errors.preferences.message)}
             </p>
           )}
 

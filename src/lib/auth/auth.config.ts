@@ -1,4 +1,5 @@
 import NextAuth, { type DefaultSession } from 'next-auth';
+import type { JWT } from '@auth/core/jwt';
 import Credentials from 'next-auth/providers/credentials';
 import { loginSchema } from '@/features/auth/schemas/auth.schema';
 import type { UserRole, SubscriptionPlan, UserCapabilities } from '@/types/user';
@@ -157,16 +158,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         extToken.accessToken = user.accessToken;
         extToken.refreshToken = user.refreshToken;
         extToken.accessTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
-        return extToken;
+        return extToken as unknown as JWT;
       }
 
       // Token still valid
       if (Date.now() < extToken.accessTokenExpires) {
-        return extToken;
+        return extToken as unknown as JWT;
       }
 
       // Token expired, refresh it
-      return refreshAccessToken(extToken);
+      return (await refreshAccessToken(extToken)) as unknown as JWT;
     },
 
     async session({ session, token }) {

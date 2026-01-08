@@ -91,12 +91,9 @@ export const createPropertySchema = z.object({
     errorMap: () => ({ message: 'Invalid property type' }),
   }),
 
-  listingType: z
-    .nativeEnum(PropertyListingType, {
-      errorMap: () => ({ message: 'Invalid listing type' }),
-    })
-    .optional()
-    .default(PropertyListingType.SHORT_TERM_RENTAL),
+  listingType: z.nativeEnum(PropertyListingType, {
+    errorMap: () => ({ message: 'Invalid listing type' }),
+  }),
 
   airbnbUrl: z
     .string()
@@ -291,12 +288,9 @@ export const updatePropertySchema = z.object({
     errorMap: () => ({ message: 'Invalid property type' }),
   }),
 
-  listingType: z
-    .nativeEnum(PropertyListingType, {
-      errorMap: () => ({ message: 'Invalid listing type' }),
-    })
-    .optional()
-    .default(PropertyListingType.SHORT_TERM_RENTAL),
+  listingType: z.nativeEnum(PropertyListingType, {
+    errorMap: () => ({ message: 'Invalid listing type' }),
+  }),
 
   airbnbUrl: z
     .string()
@@ -604,12 +598,9 @@ export const importFromAirbnbSchema = z.object({
     errorMap: () => ({ message: 'Invalid property type' }),
   }),
 
-  listingType: z
-    .nativeEnum(PropertyListingType, {
-      errorMap: () => ({ message: 'Invalid listing type' }),
-    })
-    .optional()
-    .default(PropertyListingType.SHORT_TERM_RENTAL),
+  listingType: z.nativeEnum(PropertyListingType, {
+    errorMap: () => ({ message: 'Invalid listing type' }),
+  }),
 
   titleOverride: z
     .string()

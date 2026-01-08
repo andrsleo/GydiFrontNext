@@ -2,8 +2,9 @@
 
 import { useState, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { User, CreditCard, Bell, Shield, Camera, Save } from 'lucide-react';
+import { User, CreditCard, Bell, Shield, Camera, Save, Crown } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,7 +17,7 @@ import { toast } from 'sonner';
 
 export default function ConfiguracionPage() {
   const { data: session, status } = useSession();
-  const [activeTab, setActiveTab] = useState<'profile' | 'payment' | 'notifications' | 'security'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'membership' | 'payment' | 'notifications' | 'security'>('profile');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [pendingTab, setPendingTab] = useState<typeof activeTab | null>(null);
@@ -156,6 +157,7 @@ export default function ConfiguracionPage() {
 
   const tabs = [
     { id: 'profile', label: 'Perfil', icon: User },
+    { id: 'membership', label: 'Membresía', icon: Crown },
     { id: 'payment', label: 'Pagos', icon: CreditCard },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
     { id: 'security', label: 'Seguridad', icon: Shield },
@@ -292,6 +294,84 @@ export default function ConfiguracionPage() {
         onOpenChange={setShowDialog}
         onConfirm={handleConfirmNavigation}
       />
+
+      {/* Membership Tab */}
+      {activeTab === 'membership' && (
+        <div className="space-y-6">
+          <div className="rounded-lg border bg-card p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold">Membresía y Suscripción</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Administra tu plan de suscripción, métodos de pago y facturación
+                </p>
+              </div>
+              <Link href="/dashboard/subscription">
+                <Button variant="outline" size="sm">
+                  Ver detalles completos
+                </Button>
+              </Link>
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-lg bg-gradient-to-br from-primary/10 via-blue-50 to-purple-50 p-6 border">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Crown className="h-5 w-5 text-primary" />
+                      <h3 className="text-lg font-semibold">Tu Plan Actual</h3>
+                    </div>
+                    <p className="text-muted-foreground text-sm mb-4">
+                      Accede a la página de suscripción para ver tu plan actual, cambiar de plan,
+                      administrar métodos de pago y ver tu historial de facturación.
+                    </p>
+                    <Link href="/dashboard/subscription">
+                      <Button className="w-full sm:w-auto">
+                        <Crown className="mr-2 h-4 w-4" />
+                        Administrar Suscripción
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-lg border p-4">
+                  <h4 className="font-medium mb-2">Cambiar Plan</h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Actualiza o cambia tu plan de membresía
+                  </p>
+                  <Link href="/dashboard/subscription/plans">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Ver Planes Disponibles
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="rounded-lg border p-4">
+                  <h4 className="font-medium mb-2">Métodos de Pago</h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Administra tus tarjetas y métodos de pago
+                  </p>
+                  <Link href="/dashboard/subscription">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Administrar Pagos
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
+                <h4 className="font-medium text-blue-900 mb-2">💡 ¿Necesitas ayuda?</h4>
+                <p className="text-sm text-blue-800">
+                  Si tienes preguntas sobre tu membresía, planes o facturación,
+                  visita nuestra página de ayuda o contacta a soporte.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Payment Tab */}
       {activeTab === 'payment' && (

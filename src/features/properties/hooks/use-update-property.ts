@@ -16,11 +16,10 @@ interface UpdatePropertyVariables {
   data: UpdatePropertyRequest;
 }
 
-interface UseUpdatePropertyOptions
-  extends Omit<
-    UseMutationOptions<PropertyResponse, Error, UpdatePropertyVariables>,
-    'mutationFn'
-  > { }
+type UseUpdatePropertyOptions = Omit<
+  UseMutationOptions<PropertyResponse, Error, UpdatePropertyVariables>,
+  'mutationFn'
+>;
 
 /**
  * Hook to update an existing property

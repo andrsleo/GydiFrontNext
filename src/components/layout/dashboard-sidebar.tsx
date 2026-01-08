@@ -59,7 +59,7 @@ const navigation = [
     href: '/dashboard/configuracion',
     icon: Settings,
   },
-];
+] as const;
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -159,7 +159,7 @@ export function DashboardSidebar() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Link
-                            href={item.href || '/dashboard'}
+                            href={item.href as any}
                             onClick={() => setMobileMenuOpen(false)}
                             className={cn(
                               'flex items-center justify-center rounded-lg py-3 transition-all duration-300',
@@ -178,7 +178,7 @@ export function DashboardSidebar() {
                       </Tooltip>
                     ) : (
                       <Link
-                        href={item.href || '/dashboard'}
+                        href={item.href as any}
                         onClick={() => setMobileMenuOpen(false)}
                         className={cn(
                           'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300',

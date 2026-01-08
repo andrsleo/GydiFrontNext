@@ -105,7 +105,7 @@ export function PreferencesManager({ value, onChange }: PreferencesManagerProps)
       );
     }
 
-    if (commonPref?.options) {
+    if (commonPref && 'options' in commonPref && commonPref.options) {
       return (
         <Select value={String(value)} onValueChange={(val) => handleUpdate(key, val)}>
           <SelectTrigger>
@@ -164,7 +164,7 @@ export function PreferencesManager({ value, onChange }: PreferencesManagerProps)
                   size="sm"
                   onClick={() => {
                     const defaultValue =
-                      pref.type === 'boolean' ? false : pref.options?.[0] || '';
+                      pref.type === 'boolean' ? false : ('options' in pref && pref.options?.[0]) || '';
                     handleUpdate(pref.key, defaultValue);
                   }}
                 >

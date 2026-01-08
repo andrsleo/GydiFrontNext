@@ -50,6 +50,7 @@ export function useUploadProfileImage(
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,
@@ -89,6 +90,7 @@ export function useDeleteProfileImage(
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,

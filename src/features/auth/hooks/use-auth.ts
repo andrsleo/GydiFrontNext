@@ -2,54 +2,21 @@
  * Authentication Hooks
  *
  * React Query hooks for user authentication operations.
+ * Backend-only authentication (no NextAuth).
  */
 
 'use client';
 
-import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
-import { signIn, signOut } from 'next-auth/react';
+import { useMutation, useQuery, type UseMutationOptions, type UseQueryOptions } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { authApi } from '@/lib/api/users.api';
-import type {
-  LoginRequest,
-  AuthResponse,
-  RefreshTokenRequest,
-  LogoutRequest,
-} from '../types';
-
-/**
- * Maps NextAuth error codes to user-friendly messages
- * NextAuth returns generic error codes like "CredentialsSignin"
- * We convert these to messages that users can understand
- */
-function mapNextAuthError(error: string | null | undefined): string {
-  if (!error) {
-    return 'CredentialsSignin';
-  }
-
-  const errorLower = error.toLowerCase();
-
-  // Specific NextAuth error codes
-  if (errorLower === 'credentialssignin') {
-    return 'CredentialsSignin';
-  }
-
-  if (errorLower === 'configuration') {
-    return 'Configuration error';
-  }
-
-  if (errorLower === 'accessdenied') {
-    return 'Access denied';
-  }
-
-  // Return original error (might be from backend)
-  return error;
-}
+import { authApi, type LoginRequest } from '../api/auth.api';
+import { useAuthStore, type AuthUser } from '@/store/auth-store';
 
 /**
  * Hook for user login
  *
- * Uses NextAuth signIn under the hood for session management.
+ * Calls backend API directly (no NextAuth).
+ * Updates Zustand auth store on success.
  *
  * @param options - React Query mutation options
  * @returns Mutation object with login function
@@ -73,33 +40,20 @@ function mapNextAuthError(error: string | null | undefined): string {
  * }
  */
 export function useLogin(
-  options?: Omit<UseMutationOptions<AuthResponse, Error, LoginRequest>, 'mutationFn'>
+  options?: Omit<UseMutationOptions<AuthUser, Error, LoginRequest>, 'mutationFn'>
 ) {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
 
-  return useMutation<AuthResponse, Error, LoginRequest>({
-    mutationFn: async (request: LoginRequest) => {
-      // Use NextAuth signIn for session management
-      const result = await signIn('credentials', {
-        email: request.email,
-        password: request.password,
-        redirect: false,
-      });
+  return useMutation<AuthUser, Error, LoginRequest>({
+    mutationFn: authApi.login,
+    onSuccess: (user, variables, context) => {
+      // Update Zustand store
+      setUser(user);
 
-      // CRITICAL: NextAuth does NOT throw errors - it returns { ok: false, error: string }
-      // We must check result.ok and throw manually for React Query to catch
-      if (!result?.ok) {
-        // Map NextAuth errors to user-friendly messages
-        const errorMessage = mapNextAuthError(result?.error);
-        throw new Error(errorMessage);
-      }
-
-      // Also call backend API to get full response with tokens
-      return authApi.login(request);
-    },
-    onSuccess: (data, variables, context) => {
       // Call user's onSuccess if provided
-      options?.onSuccess?.(data, variables, context);
+      // @ts-expect-error - TanStack Query signature mismatch
+      options?.onSuccess?.(user, variables, context);
 
       // Default behavior: redirect to dashboard
       if (!options?.onSuccess) {
@@ -113,7 +67,8 @@ export function useLogin(
 /**
  * Hook for user logout
  *
- * Uses NextAuth signOut under the hood for session cleanup.
+ * Calls backend API directly (no NextAuth).
+ * Clears Zustand auth store on success.
  *
  * @param options - React Query mutation options
  * @returns Mutation object with logout function
@@ -130,20 +85,19 @@ export function useLogin(
  * }
  */
 export function useLogout(
-  options?: Omit<UseMutationOptions<void, Error, LogoutRequest | undefined>, 'mutationFn'>
+  options?: Omit<UseMutationOptions<void, Error, void>, 'mutationFn'>
 ) {
   const router = useRouter();
+  const logout = useAuthStore((state) => state.logout);
 
-  return useMutation<void, Error, LogoutRequest | undefined>({
-    mutationFn: async (request?: LogoutRequest) => {
-      // Call backend to blacklist token
-      await authApi.logout(request);
-
-      // Use NextAuth signOut for session cleanup
-      await signOut({ redirect: false });
-    },
+  return useMutation<void, Error, void>({
+    mutationFn: authApi.logout,
     onSuccess: (data, variables, context) => {
+      // Clear Zustand store
+      logout();
+
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
 
       // Default behavior: redirect to login
@@ -156,32 +110,79 @@ export function useLogout(
 }
 
 /**
- * Hook for refreshing access token
+ * Hook for getting current user
  *
- * @param options - React Query mutation options
- * @returns Mutation object with refresh function
+ * Fetches current user from backend /verify endpoint.
+ * Automatically updates Zustand store.
+ *
+ * @param options - React Query options
+ * @returns Query object with user data
  *
  * @example
- * function TokenRefresh() {
- *   const { mutate: refresh } = useRefreshToken({
- *     onSuccess: (data) => {
- *       // Update stored tokens
- *       console.log('New access token:', data.token);
- *     },
- *   });
+ * function UserProfile() {
+ *   const { data: user, isLoading } = useCurrentUser();
  *
- *   return (
- *     <button onClick={() => refresh({ refreshToken: 'token' })}>
- *       Refresh Token
- *     </button>
- *   );
+ *   if (isLoading) return <div>Loading...</div>;
+ *   if (!user) return <div>Not authenticated</div>;
+ *
+ *   return <div>Hello {user.name}</div>;
  * }
  */
-export function useRefreshToken(
-  options?: Omit<UseMutationOptions<AuthResponse, Error, RefreshTokenRequest>, 'mutationFn'>
+export function useCurrentUser(
+  options?: Omit<UseQueryOptions<AuthUser | null, Error>, 'queryKey' | 'queryFn'>
 ) {
-  return useMutation<AuthResponse, Error, RefreshTokenRequest>({
-    mutationFn: authApi.refresh,
+  const setUser = useAuthStore((state) => state.setUser);
+  const setLoading = useAuthStore((state) => state.setLoading);
+
+  return useQuery<AuthUser | null, Error>({
+    queryKey: ['auth', 'currentUser'],
+    queryFn: async () => {
+      setLoading(true);
+      const user = await authApi.getCurrentUser();
+      setUser(user);
+      return user;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: false, // Don't retry on 401
     ...options,
   });
+}
+
+/**
+ * Hook to check if user is authenticated
+ *
+ * Simple selector for auth state.
+ * Doesn't make API calls - just reads from Zustand store.
+ *
+ * @example
+ * function ProtectedPage() {
+ *   const isAuthenticated = useIsAuthenticated();
+ *
+ *   if (!isAuthenticated) {
+ *     return <Navigate to="/login" />;
+ *   }
+ *
+ *   return <div>Protected content</div>;
+ * }
+ */
+export function useIsAuthenticated() {
+  return useAuthStore((state) => state.isAuthenticated);
+}
+
+/**
+ * Hook to get user from store (no API call)
+ *
+ * Returns user from Zustand store without making API calls.
+ * Use useCurrentUser() if you need to fetch fresh data.
+ *
+ * @example
+ * function UserMenu() {
+ *   const user = useUser();
+ *
+ *   return <div>{user?.name}</div>;
+ * }
+ */
+export function useUser() {
+  return useAuthStore((state) => state.user);
 }

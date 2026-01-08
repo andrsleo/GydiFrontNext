@@ -11,11 +11,10 @@ import { propertyKeys } from '@/lib/constants/query-keys';
 import { toast } from 'sonner';
 import type { ImportPropertyFromAirbnbRequest, PropertyDetailResponse } from '../types';
 
-interface UseImportFromAirbnbOptions
-  extends Omit<
-    UseMutationOptions<PropertyDetailResponse, Error, ImportPropertyFromAirbnbRequest>,
-    'mutationFn'
-  > {}
+type UseImportFromAirbnbOptions = Omit<
+  UseMutationOptions<PropertyDetailResponse, Error, ImportPropertyFromAirbnbRequest>,
+  'mutationFn'
+>;
 
 /**
  * Hook to import a property from Airbnb
@@ -62,6 +61,7 @@ export function useImportFromAirbnb(options?: UseImportFromAirbnbOptions) {
       });
 
       // Call custom onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error: any, variables, context) => {
@@ -100,6 +100,7 @@ export function useImportFromAirbnb(options?: UseImportFromAirbnbOptions) {
       });
 
       // Call custom onError if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onError?.(error, variables, context);
     },
     ...options,

@@ -1,6 +1,8 @@
 'use client';
 
+import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 import {
   TrendingUp,
   DollarSign,
@@ -10,6 +12,9 @@ import {
   ArrowDownRight,
 } from 'lucide-react';
 import { useProfileByUserId } from '@/features/auth/hooks/use-profile';
+import { useSubscription } from '@/features/subscriptions/hooks/use-subscription';
+import { UpgradeModal } from '@/features/subscriptions/components/upgrade-modal';
+import type { PlanCode } from '@/lib/utils/plan-selection';
 
 // Mock data - replace with real API calls
 const stats = [
@@ -88,17 +93,38 @@ const statusConfig = {
   paid: { label: 'Pagado', color: 'bg-green-100 text-green-800' },
 };
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const userId = session?.user?.id ? Number(session.user.id) : null;
+
   const { data: profile } = useProfileByUserId(userId!, {
     enabled: !!userId,
   });
+
+  const { data: subscription } = useSubscription();
+
+  // State for upgrade modal
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [selectedUpgradePlan, setSelectedUpgradePlan] = useState<PlanCode | null>(null);
 
   // Get name from profile, fallback to session, then to 'Usuario'
   const displayName = profile
     ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || session?.user?.name || 'Usuario'
     : session?.user?.name || 'Usuario';
+
+  // Auto-open upgrade modal when ?upgrade=XXX query param is present
+  useEffect(() => {
+    const upgradePlan = searchParams.get('upgrade')?.toUpperCase() as PlanCode | null;
+
+    if (upgradePlan && ['PRO', 'ELITE'].includes(upgradePlan)) {
+      setSelectedUpgradePlan(upgradePlan);
+      setShowUpgradeModal(true);
+
+      // Clean URL after opening modal
+      window.history.replaceState({}, '', '/dashboard');
+    }
+  }, [searchParams]);
 
   return (
     <div className="space-y-8">
@@ -232,6 +258,31 @@ export default function DashboardPage() {
           </p>
         </div>
       </div>
+
+      {/* Upgrade Modal - Auto-opens when ?upgrade=XXX is detected */}
+      {subscription && selectedUpgradePlan && (
+        <UpgradeModal
+          open={showUpgradeModal}
+          onOpenChange={setShowUpgradeModal}
+          currentPlanCode={subscription.planCode}
+          targetPlanCode={selectedUpgradePlan}
+        />
+      )}
     </div>
+  );
+}
+
+// Wrapper with Suspense boundary
+export default function DashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-muted-foreground">Cargando...</div>
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
   );
 }

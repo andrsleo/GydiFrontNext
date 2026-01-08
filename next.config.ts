@@ -61,7 +61,8 @@ const nextConfig: NextConfig = {
 
               // Scripts: Allow Next.js inline scripts + eval (required for dev)
               // In production, Next.js uses nonces for inline scripts
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              // Allow Stripe.js for payment processing
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
 
               // Styles: Allow inline styles (Tailwind generates inline styles)
               "style-src 'self' 'unsafe-inline'",
@@ -75,11 +76,13 @@ const nextConfig: NextConfig = {
               // Fonts: Only from same origin
               "font-src 'self'",
 
-              // API/AJAX: Allow backend API
-              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}`,
+              // API/AJAX: Allow backend API and Stripe API
+              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'} https://api.stripe.com`,
 
               // Frames: Deny all iframes from loading this site
+              // Allow Stripe iframes for secure payment elements
               "frame-ancestors 'none'",
+              "frame-src 'self' https://js.stripe.com",
 
               // Base URI: Restrict base tag
               "base-uri 'self'",
@@ -153,7 +156,7 @@ const nextConfig: NextConfig = {
               'camera=()',        // Disable camera access
               'microphone=()',    // Disable microphone access
               'geolocation=()',   // Disable geolocation
-              'payment=()',       // Disable payment API
+              'payment=(self)',   // Allow Payment Request API (Apple Pay, Google Pay, etc.)
               'usb=()',          // Disable USB access
               'magnetometer=()',  // Disable magnetometer
               'gyroscope=()',    // Disable gyroscope

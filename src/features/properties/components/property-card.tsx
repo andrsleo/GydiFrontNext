@@ -77,7 +77,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
 
   return (
     <Card className="group overflow-hidden transition-shadow hover:shadow-lg">
-      <Link href={linkHref}>
+      <Link href={linkHref as any}>
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           <Image
