@@ -16,7 +16,7 @@ Modern React 19 + Next.js 15 application with Server Components, bounded context
 - React 19 + TypeScript 5.8+
 - TailwindCSS 4 + shadcn/ui
 - TanStack Query v5 + Zustand
-- NextAuth.js v5
+- Backend-only Authentication (JWT)
 - Vitest + Playwright
 
 **Port:** http://localhost:3000
@@ -143,9 +143,6 @@ src/
 │   ├── api/
 │   │   ├── client.ts            # Axios instance
 │   │   └── endpoints.ts         # API endpoints
-│   │
-│   ├── auth/
-│   │   └── auth-config.ts       # NextAuth configuration
 │   │
 │   ├── utils/
 │   │   ├── cn.ts                # className utility
@@ -455,126 +452,121 @@ export function UpgradeModal() {
 
 ---
 
-## Authentication (NextAuth.js v5)
+## Authentication (Backend-Only)
 
-### Configuration
-```typescript
-// lib/auth/auth-config.ts
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
+**Note:** This project uses **backend-only authentication** (no NextAuth.js). Authentication is handled entirely by the Spring Boot backend with JWT tokens.
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [
-    CredentialsProvider({
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-          method: 'POST',
-          body: JSON.stringify(credentials),
-          headers: { 'Content-Type': 'application/json' },
-        });
+### Authentication Flow
 
-        const user = await res.json();
-
-        if (res.ok && user) {
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            accessToken: user.accessToken,
-          };
-        }
-
-        return null;
-      },
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.accessToken = user.accessToken;
-        token.role = user.role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      session.accessToken = token.accessToken;
-      session.user.role = token.role;
-      return session;
-    },
-  },
-  pages: {
-    signIn: '/login',
-    error: '/login',
-  },
-});
+```
+1. User submits login form
+   ↓
+2. Frontend calls backend /api/v1/auth/login
+   ↓
+3. Backend validates credentials, returns JWT token
+   ↓
+4. Frontend stores token (localStorage/cookies)
+   ↓
+5. Frontend includes token in Authorization header for all requests
+   ↓
+6. Backend validates JWT on each request
 ```
 
 ### Middleware (Route Protection)
+
+The middleware protects routes by calling the backend `/api/v1/auth/verify` endpoint:
+
 ```typescript
-// middleware.ts
-import { auth } from '@/lib/auth/auth-config';
-import { NextResponse } from 'next/server';
+// middleware.ts (simplified)
+import { NextRequest, NextResponse } from 'next/server';
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  const isAuthenticated = !!req.auth;
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-  // Protect dashboard routes
-  if (pathname.startsWith('/dashboard') && !isAuthenticated) {
-    const loginUrl = new URL('/login', req.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+  // Public routes (allow without authentication)
+  const publicRoutes = ['/', '/propiedades', '/login', '/register'];
+  const isPublicRoute = publicRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + '/')
+  );
+
+  if (isPublicRoute) {
+    return NextResponse.next();
   }
 
-  // Protect admin routes
-  if (pathname.startsWith('/admin') && req.auth?.user.role !== 'ADMIN') {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
+  // Protected routes - verify authentication with backend
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    // Call backend /verify endpoint
+    const response = await fetch(`${apiUrl}/api/v1/auth/verify`, {
+      method: 'GET',
+      headers: {
+        'Authorization': request.headers.get('authorization'),
+        'Cookie': request.headers.get('cookie'),
+      },
+      credentials: 'include',
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      // Check role for admin routes
+      if (pathname.startsWith('/admin') && data.user?.role !== 'ADMIN') {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
+
+      return NextResponse.next();
+    } else {
+      // Redirect to login
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  } catch (error) {
+    console.error('Auth verification error:', error);
+    return NextResponse.next(); // Let app handle the error
   }
-
-  return NextResponse.next();
-});
-
-export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-};
+}
 ```
 
 ### Usage in Components
 
-**Server Component:**
-```typescript
-import { auth } from '@/lib/auth/auth-config';
-import { redirect } from 'next/navigation';
-
-export default async function DashboardPage() {
-  const session = await auth();
-
-  if (!session) {
-    redirect('/login');
-  }
-
-  return <div>Hello {session.user.name}</div>;
-}
-```
-
-**Client Component:**
+**Login Component:**
 ```typescript
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useLogin } from '@/features/auth/hooks/use-login';
 
-export function UserProfile() {
-  const { data: session, status } = useSession();
+export function LoginForm() {
+  const { mutate: login, isPending } = useLogin();
 
-  if (status === 'loading') return <div>Loading...</div>;
-  if (!session) return <div>Not authenticated</div>;
+  const onSubmit = (data: LoginFormData) => {
+    login(data, {
+      onSuccess: (response) => {
+        // Token is stored automatically by the hook
+        router.push('/dashboard');
+      },
+    });
+  };
 
-  return <div>Hello {session.user.name}</div>;
+  return <form onSubmit={handleSubmit(onSubmit)}>...</form>;
+}
+```
+
+**Protected Page:**
+```typescript
+// app/(dashboard)/dashboard/page.tsx
+'use client';
+
+import { useAuth } from '@/features/auth/hooks/use-auth';
+
+export default function DashboardPage() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (!user) return null; // Middleware redirects to login
+
+  return <div>Hello {user.name}</div>;
 }
 ```
 
@@ -596,7 +588,7 @@ export const apiClient = axios.create({
 
 // Add auth token to requests
 apiClient.interceptors.request.use((config) => {
-  const token = getToken(); // Get from NextAuth session
+  const token = localStorage.getItem('auth_token'); // Or from cookies
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -795,18 +787,27 @@ export default function PropertyDetailPage({ params }: Props) {
 Required in `.env.local`:
 
 ```bash
-# NextAuth
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-key-here
-
 # Backend API
 NEXT_PUBLIC_API_URL=http://localhost:8080
 
-# App
+# App Config
 NEXT_PUBLIC_APP_NAME=GYDI
+NEXT_PUBLIC_ENV=local
+
+# Optional - Cloudinary
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloud-name
+
+# Optional - Stripe (Test Keys)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+
+# Optional - Feature Flags
+NEXT_PUBLIC_FEATURE_REFERRALS=true
+NEXT_PUBLIC_FEATURE_SUBSCRIPTIONS=true
 
 # Optional - Analytics
-NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_GA_TRACKING_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_HOTJAR_ID=123456
+NEXT_PUBLIC_SENTRY_DSN=https://...
 ```
 
 ---
@@ -883,7 +884,7 @@ npm run build
 - **React 19**: https://react.dev
 - **TanStack Query**: https://tanstack.com/query/latest
 - **shadcn/ui**: https://ui.shadcn.com
-- **NextAuth.js v5**: https://authjs.dev
+- **Axios**: https://axios-http.com/docs/intro
 
 ---
 
