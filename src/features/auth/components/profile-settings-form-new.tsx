@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, Loader2 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
@@ -46,31 +45,33 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
     enabled: !!userId,
   });
   const { mutate: updateProfile, isPending } = useUpdateProfile();
-  const { update: updateSession } = useSession();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Determine effective default values based on profile if available
+  const defaultValues: ProfileFormData = {
+    firstName: profile?.firstName || '',
+    lastName: profile?.lastName || '',
+    phoneNumber: profile?.phoneNumber || '',
+    dateOfBirth: profile?.dateOfBirth || '',
+    gender: profile?.gender ?? undefined,
+    bio: profile?.bio || '',
+    country: profile?.country || '',
+    city: profile?.city || '',
+    address: profile?.address || '',
+    postalCode: profile?.postalCode || '',
+    websiteUrl: profile?.websiteUrl || '',
+    preferredLanguage: profile?.preferredLanguage || '',
+    coverImageUrl: profile?.coverImageUrl || '',
+    profileVisibility: profile?.profileVisibility || 'public',
+    emailNotificationsEnabled: profile?.emailNotificationsEnabled ?? true,
+    smsNotificationsEnabled: profile?.smsNotificationsEnabled ?? false,
+    socialLinks: profile?.socialLinks || {},
+    preferences: profile?.preferences || {},
+  };
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      phoneNumber: '',
-      dateOfBirth: '',
-      gender: undefined,
-      bio: '',
-      country: '',
-      city: '',
-      address: '',
-      postalCode: '',
-      websiteUrl: '',
-      preferredLanguage: '',
-      coverImageUrl: '',
-      profileVisibility: 'public',
-      emailNotificationsEnabled: true,
-      smsNotificationsEnabled: false,
-      socialLinks: {},
-      preferences: {},
-    },
+    defaultValues,
   });
 
   // Track isDirty changes and notify parent
@@ -87,7 +88,7 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
         lastName: profile.lastName || '',
         phoneNumber: profile.phoneNumber || '',
         dateOfBirth: profile.dateOfBirth || '',
-        gender: profile.gender,
+        gender: profile.gender ?? undefined,
         bio: profile.bio || '',
         country: profile.country || '',
         city: profile.city || '',
@@ -105,33 +106,17 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
       setImagePreview(profile.coverImageUrl || null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile]); // Only reset when profile data changes, not when form changes
+  }, [profile]);
 
   const { showDialog, setShowDialog, handleConfirm } = useUnsavedChanges(form.formState.isDirty);
 
   function onSubmit(data: ProfileFormData) {
-    console.log('=== FORM SUBMIT CALLED ===');
-    console.log('Form data:', data);
-    console.log('User ID:', userId);
-    console.log('Is form dirty:', form.formState.isDirty);
-    console.log('Is pending:', isPending);
-
     updateProfile(
       { userId, data },
       {
         onSuccess: async () => {
-          console.log('Profile updated successfully');
           toast.success('Perfil actualizado correctamente');
-          form.reset(data); // Reset form with new data to clear dirty state
-
-          // Update session to refresh user name in UI
-          if (updateSession) {
-            await updateSession({
-              user: {
-                name: `${data.firstName} ${data.lastName}`.trim() || undefined,
-              },
-            });
-          }
+          form.reset(data);
         },
         onError: (error) => {
           console.error('Error updating profile:', error);
@@ -141,7 +126,9 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
     );
   }
 
-  if (isLoadingProfile) {
+  // Show loader only if we have NO profile data and are loading
+  // This prevents unmounting the form during background refreshes
+  if (isLoadingProfile && !profile) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -160,8 +147,6 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
         onSubmit={form.handleSubmit(
           onSubmit,
           (errors) => {
-            console.log('=== FORM VALIDATION ERRORS ===');
-            console.log('Validation errors:', errors);
             toast.error('Por favor corrige los errores en el formulario');
           }
         )}
@@ -293,34 +278,20 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
         <div className="space-y-4 rounded-lg border p-6">
           <h3 className="text-lg font-semibold">Ubicación</h3>
 
-          <Controller
-            name="country"
-            control={form.control}
-            render={({ field: countryField }) => (
-              <Controller
-                name="city"
-                control={form.control}
-                render={({ field: cityField }) => (
-                  <CountryCitySelector
-                    countryValue={countryField.value || ''}
-                    cityValue={cityField.value || ''}
-                    onCountryChange={(value) => {
-                      countryField.onChange(value);
-                      form.trigger('country'); // Trigger validation
-                    }}
-                    onCityChange={(value) => {
-                      cityField.onChange(value);
-                      form.trigger('city'); // Trigger validation
-                    }}
-                    disabled={isPending}
-                    required={false}
-                    countryError={form.formState.errors.country?.message}
-                    cityError={form.formState.errors.city?.message}
-                    showLabels
-                  />
-                )}
-              />
-            )}
+          <CountryCitySelector
+            countryValue={form.watch('country') || ''}
+            cityValue={form.watch('city') || ''}
+            onCountryChange={(value) => {
+              form.setValue('country', value, { shouldDirty: true, shouldValidate: true });
+            }}
+            onCityChange={(value) => {
+              form.setValue('city', value, { shouldDirty: true, shouldValidate: true });
+            }}
+            disabled={isPending}
+            required={false}
+            countryError={form.formState.errors.country?.message}
+            cityError={form.formState.errors.city?.message}
+            showLabels
           />
 
           <div className="grid gap-4 md:grid-cols-2 mt-4">
@@ -381,9 +352,9 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
             value={form.watch('socialLinks') || {}}
             onChange={(value) => form.setValue('socialLinks', value, { shouldDirty: true })}
           />
-          {form.formState.errors.socialLinks && (
+          {form.formState.errors.socialLinks?.message && (
             <p className="text-sm text-destructive">
-              {form.formState.errors.socialLinks.message}
+              {String(form.formState.errors.socialLinks.message)}
             </p>
           )}
         </div>
@@ -397,9 +368,9 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
             value={form.watch('preferences') || {}}
             onChange={(value) => form.setValue('preferences', value, { shouldDirty: true })}
           />
-          {form.formState.errors.preferences && (
+          {form.formState.errors.preferences?.message && (
             <p className="text-sm text-destructive">
-              {form.formState.errors.preferences.message}
+              {String(form.formState.errors.preferences.message)}
             </p>
           )}
 
@@ -509,16 +480,6 @@ export function ProfileSettingsFormNew({ userId, onDirtyChange }: ProfileSetting
             type="submit"
             disabled={isPending || !form.formState.isDirty}
             className="gap-2"
-            onClick={(e) => {
-              console.log('=== BUTTON CLICKED ===');
-              console.log('Button type:', e.currentTarget.type);
-              console.log('Is pending:', isPending);
-              console.log('Is dirty:', form.formState.isDirty);
-              console.log('Is button disabled:', isPending || !form.formState.isDirty);
-              console.log('Form values:', form.getValues());
-              console.log('Form errors:', form.formState.errors);
-              console.log('Will submit form...');
-            }}
           >
             {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
             <Save className="h-4 w-4" />

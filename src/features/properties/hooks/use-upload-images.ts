@@ -16,11 +16,10 @@ interface UploadImagesVariables {
   files: File[];
 }
 
-interface UseUploadImagesOptions
-  extends Omit<
-    UseMutationOptions<MediaUploadResponse[], Error, UploadImagesVariables>,
-    'mutationFn'
-  > {}
+type UseUploadImagesOptions = Omit<
+  UseMutationOptions<MediaUploadResponse[], Error, UploadImagesVariables>,
+  'mutationFn'
+>;
 
 /**
  * Hook to upload images to a property
@@ -31,7 +30,6 @@ interface UseUploadImagesOptions
  * ```tsx
  * const { mutate, isPending } = useUploadImages({
  *   onSuccess: (data) => {
- *     console.log(`Uploaded ${data.length} images`);
  *   }
  * });
  *
@@ -66,6 +64,7 @@ export function useUploadImages(options?: UseUploadImagesOptions) {
       });
 
       // Call custom onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
@@ -75,6 +74,7 @@ export function useUploadImages(options?: UseUploadImagesOptions) {
       });
 
       // Call custom onError if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onError?.(error, variables, context);
     },
     ...options,

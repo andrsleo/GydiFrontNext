@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@/features/auth/hooks/use-auth';
 import {
   MousePointerClick,
   Users,
@@ -28,14 +28,14 @@ const statusConfig = {
 };
 
 export default function ReferidosPage() {
-  const { data: session } = useSession();
+  const user = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Fetch real data from API
   const { data: links, isLoading: linksLoading, error: linksError } = useReferralLinks();
   const { data: stats, isLoading: statsLoading, error: statsError } = useReferralStats(
-    session?.user?.id ? parseInt(session.user.id) : undefined
+    user?.id ? parseInt(user.id) : undefined
   );
 
   // Prepare stats data
@@ -58,16 +58,16 @@ export default function ReferidosPage() {
     },
     {
       name: 'Tasa de Conversión',
-      value: `${stats.conversionRate.toFixed(2)}%`,
-      change: stats.conversionRate > 3 ? 'Excelente' : 'Promedio',
+      value: `${stats.overallConversionRate.toFixed(2)}%`,
+      change: stats.overallConversionRate > 3 ? 'Excelente' : 'Promedio',
       icon: TrendingUp,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
     {
       name: 'Enlaces Activos',
-      value: formatNumber(stats.activeLinksCount),
-      change: `${stats.totalLinksCreated} totales`,
+      value: formatNumber(stats.activeLinks),
+      change: `${stats.totalLinks} totales`,
       icon: Calendar,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',

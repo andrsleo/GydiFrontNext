@@ -21,7 +21,6 @@ import { profileKeys } from './use-profile';
  *   const { mutate: upload, isPending } = useUploadProfileImage({
  *     onSuccess: (data) => {
  *       toast.success('Image uploaded successfully');
- *       console.log('Uploaded to:', data.imageUrl);
  *     },
  *     onError: (error) => {
  *       toast.error(`Upload failed: ${error.message}`);
@@ -50,6 +49,7 @@ export function useUploadProfileImage(
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,
@@ -89,6 +89,7 @@ export function useDeleteProfileImage(
       queryClient.invalidateQueries({ queryKey: profileKeys.all });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,

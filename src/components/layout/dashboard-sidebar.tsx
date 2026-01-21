@@ -17,7 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { useLogout } from '@/features/auth/hooks/use-auth';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useSidebarStore } from '@/store/use-sidebar-store';
@@ -59,12 +59,13 @@ const navigation = [
     href: '/dashboard/configuracion',
     icon: Settings,
   },
-];
+] as const;
 
 export function DashboardSidebar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isCollapsed, toggleSidebar } = useSidebarStore();
+  const { mutate: logout } = useLogout();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -75,8 +76,8 @@ export function DashboardSidebar() {
     return null; // Avoid hydration mismatch
   }
 
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: '/login' });
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -159,7 +160,7 @@ export function DashboardSidebar() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Link
-                            href={item.href || '/dashboard'}
+                            href={item.href as any}
                             onClick={() => setMobileMenuOpen(false)}
                             className={cn(
                               'flex items-center justify-center rounded-lg py-3 transition-all duration-300',
@@ -178,7 +179,7 @@ export function DashboardSidebar() {
                       </Tooltip>
                     ) : (
                       <Link
-                        href={item.href || '/dashboard'}
+                        href={item.href as any}
                         onClick={() => setMobileMenuOpen(false)}
                         className={cn(
                           'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300',

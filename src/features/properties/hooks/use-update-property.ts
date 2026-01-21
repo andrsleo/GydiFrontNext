@@ -16,11 +16,10 @@ interface UpdatePropertyVariables {
   data: UpdatePropertyRequest;
 }
 
-interface UseUpdatePropertyOptions
-  extends Omit<
-    UseMutationOptions<PropertyResponse, Error, UpdatePropertyVariables>,
-    'mutationFn'
-  > { }
+type UseUpdatePropertyOptions = Omit<
+  UseMutationOptions<PropertyResponse, Error, UpdatePropertyVariables>,
+  'mutationFn'
+>;
 
 /**
  * Hook to update an existing property
@@ -30,7 +29,6 @@ interface UseUpdatePropertyOptions
  * ```tsx
  * const { mutate, isPending } = useUpdateProperty({
  *   onSuccess: (data) => {
- *     console.log('Property updated:', data.id);
  *   }
  * });
  *

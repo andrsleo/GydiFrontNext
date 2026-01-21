@@ -5,7 +5,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@/features/auth/hooks/use-auth';
 import { useQuery } from '@tanstack/react-query';
 import { propertiesApi } from '../api/properties.api';
 import { PropertyCard } from './property-card';
@@ -18,7 +18,7 @@ import { propertyKeys } from '@/lib/constants/query-keys';
 import type { PropertyResponse } from '../types';
 
 export function ReferPropertiesTab() {
-  const { data: session } = useSession();
+  const user = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -34,7 +34,7 @@ export function ReferPropertiesTab() {
   });
 
   const handleGenerateAndCopyLink = async (property: PropertyResponse) => {
-    if (!session?.user?.id) {
+    if (!user?.id) {
       alert('Debes iniciar sesión para generar links de referido');
       return;
     }

@@ -11,11 +11,10 @@ import { propertyKeys } from '@/lib/constants/query-keys';
 import { toast } from 'sonner';
 import type { CreatePropertyRequest, PropertyResponse } from '../types';
 
-interface UseCreatePropertyOptions
-  extends Omit<
-    UseMutationOptions<PropertyResponse, Error, CreatePropertyRequest>,
-    'mutationFn'
-  > { }
+type UseCreatePropertyOptions = Omit<
+  UseMutationOptions<PropertyResponse, Error, CreatePropertyRequest>,
+  'mutationFn'
+>;
 
 /**
  * Hook to create a new property
@@ -25,7 +24,6 @@ interface UseCreatePropertyOptions
  * ```tsx
  * const { mutate, isPending } = useCreateProperty({
  *   onSuccess: (data) => {
- *     console.log('Property created:', data.id);
  *     router.push(`/dashboard/properties/${data.id}`);
  *   }
  * });

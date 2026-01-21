@@ -67,7 +67,6 @@ export const permissionsApi = {
    *
    * @example
    * const result = await permissionsApi.checkResourceLimit('123', 'PROPERTY');
-   * console.log(`You can create ${result.remainingCapacity} more properties`);
    */
   async checkResourceLimit(
     userId: string,
@@ -161,7 +160,6 @@ export async function canCreateResource(
  *
  * @example
  * const remaining = await getRemainingCapacity('123', 'REFERRAL');
- * console.log(`You can create ${remaining} more referrals`);
  */
 export async function getRemainingCapacity(
   userId: string,

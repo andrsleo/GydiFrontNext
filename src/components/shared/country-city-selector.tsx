@@ -59,36 +59,58 @@ export function CountryCitySelector({
   className = '',
 }: CountryCitySelectorProps) {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
+  const [internalCountry, setInternalCountry] = useState(countryValue);
+  const [internalCity, setInternalCity] = useState(cityValue);
+
+  // Sync internal state with external props whenever they provide a valid value
+  // This allows the component to react to late-loading data or parent updates
+  useEffect(() => {
+    if (countryValue && countryValue !== internalCountry) {
+      setInternalCountry(countryValue);
+    }
+  }, [countryValue, internalCountry]);
+
+  useEffect(() => {
+    if (cityValue && cityValue !== internalCity) {
+      setInternalCity(cityValue);
+    }
+  }, [cityValue, internalCity]);
 
   // Update available cities when country changes
   useEffect(() => {
-    if (countryValue) {
-      const cities = getCitiesByCountry(countryValue);
+    if (internalCountry) {
+      const cities = getCitiesByCountry(internalCountry);
       setAvailableCities(cities);
-
-      // If the current city is not in the new country's cities, reset it
-      if (cityValue && !cities.includes(cityValue)) {
-        onCityChange('');
-      }
     } else {
       setAvailableCities([]);
-      onCityChange('');
     }
-  }, [countryValue]);
+  }, [internalCountry]);
 
   const handleCountryChange = (value: string) => {
     if (value === 'ALL') {
+      setInternalCountry('');
+      setInternalCity('');
       onCountryChange('');
       onCityChange('');
     } else {
+      setInternalCountry(value);
       onCountryChange(value);
+      // When user manually changes country, reset city
+      // Check if current city exists in new country's cities
+      const newCities = getCitiesByCountry(value);
+      if (internalCity && !newCities.includes(internalCity)) {
+        setInternalCity('');
+        onCityChange('');
+      }
     }
   };
 
   const handleCityChange = (value: string) => {
     if (value === 'ALL') {
+      setInternalCity('');
       onCityChange('');
     } else {
+      setInternalCity(value);
       onCityChange(value);
     }
   };
@@ -103,7 +125,7 @@ export function CountryCitySelector({
           </Label>
         )}
         <Select
-          value={countryValue || 'ALL'}
+          value={internalCountry && internalCountry.trim() !== '' ? internalCountry : 'ALL'}
           onValueChange={handleCountryChange}
           disabled={disabled}
         >
@@ -135,14 +157,14 @@ export function CountryCitySelector({
           </Label>
         )}
         <Select
-          value={cityValue || 'ALL'}
+          value={internalCity && internalCity.trim() !== '' ? internalCity : 'ALL'}
           onValueChange={handleCityChange}
-          disabled={disabled || !countryValue}
+          disabled={disabled || !internalCountry}
         >
           <SelectTrigger className="h-10">
             <SelectValue
               placeholder={
-                countryValue
+                internalCountry
                   ? 'Selecciona una ciudad'
                   : 'Primero selecciona un país'
               }
@@ -157,7 +179,7 @@ export function CountryCitySelector({
                 </SelectItem>
               ))
             ) : (
-              countryValue && (
+              internalCountry && (
                 <SelectItem value="no-cities" disabled>
                   No hay ciudades disponibles
                 </SelectItem>

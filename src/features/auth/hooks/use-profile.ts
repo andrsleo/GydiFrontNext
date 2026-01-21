@@ -13,7 +13,7 @@ import {
   type UseQueryOptions,
   type UseMutationOptions,
 } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { useUser } from './use-auth';
 import { profilesApi, getCurrentUserProfile, upsertUserProfile } from '@/lib/api/users.api';
 import type {
   UserProfileResponse,
@@ -122,8 +122,8 @@ export function useCurrentUserProfile(
     'queryKey' | 'queryFn'
   >
 ) {
-  const { data: session } = useSession();
-  const userId = session?.user?.id ? Number(session.user.id) : null;
+  const user = useUser();
+  const userId = user?.id ? Number(user.id) : null;
 
   return useQuery<UserProfileResponse | null, Error>({
     queryKey: profileKeys.current(),
@@ -176,6 +176,7 @@ export function useCreateProfile(
       queryClient.invalidateQueries({ queryKey: profileKeys.current() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,
@@ -230,6 +231,7 @@ export function useUpdateProfile(
       queryClient.invalidateQueries({ queryKey: profileKeys.current() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,
@@ -270,6 +272,7 @@ export function useDeleteProfile(
       queryClient.invalidateQueries({ queryKey: profileKeys.current() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, userId, context);
     },
     ...options,
@@ -326,6 +329,7 @@ export function useUpsertProfile(
       queryClient.invalidateQueries({ queryKey: profileKeys.current() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
     ...options,

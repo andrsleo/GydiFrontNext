@@ -34,9 +34,6 @@ export function ProfileSettingsForm({ userId }: ProfileSettingsFormProps) {
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       bio: '',
-      avatarUrl: '',
-      countryCode: 'USA',
-      timezone: 'America/New_York',
       preferredLanguage: 'en',
       profileVisibility: 'public',
       emailNotificationsEnabled: true,
@@ -49,9 +46,6 @@ export function ProfileSettingsForm({ userId }: ProfileSettingsFormProps) {
     if (profile) {
       form.reset({
         bio: profile.bio || '',
-        avatarUrl: profile.coverImageUrl || '', // Use coverImageUrl as avatar
-        countryCode: profile.country || 'USA', // Use country field
-        timezone: '', // Removed field
         preferredLanguage: (profile.preferredLanguage as 'en' | 'es' | 'pt') || 'en',
         profileVisibility: (profile.profileVisibility as 'public' | 'private') || 'public',
         emailNotificationsEnabled: profile.emailNotificationsEnabled,
@@ -102,49 +96,9 @@ export function ProfileSettingsForm({ userId }: ProfileSettingsFormProps) {
         </p>
       </div>
 
-      {/* Avatar URL */}
-      <div className="space-y-2">
-        <Label htmlFor="avatarUrl">URL de Avatar</Label>
-        <Input
-          id="avatarUrl"
-          {...form.register('avatarUrl')}
-          placeholder="https://ejemplo.com/avatar.jpg"
-          type="url"
-        />
-        {form.formState.errors.avatarUrl && (
-          <p className="text-sm text-destructive">{form.formState.errors.avatarUrl.message}</p>
-        )}
-      </div>
+      {/* Avatar URL field removed - not in schema */}
 
-      {/* Country & Timezone */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="countryCode">País (Código ISO)</Label>
-          <Input
-            id="countryCode"
-            {...form.register('countryCode')}
-            placeholder="USA"
-            maxLength={3}
-            className="uppercase"
-          />
-          {form.formState.errors.countryCode && (
-            <p className="text-sm text-destructive">{form.formState.errors.countryCode.message}</p>
-          )}
-          <p className="text-xs text-muted-foreground">Ej: USA, MEX, CAN</p>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="timezone">Zona Horaria</Label>
-          <Input
-            id="timezone"
-            {...form.register('timezone')}
-            placeholder="America/New_York"
-          />
-          {form.formState.errors.timezone && (
-            <p className="text-sm text-destructive">{form.formState.errors.timezone.message}</p>
-          )}
-        </div>
-      </div>
+      {/* Country & Timezone fields removed - not in schema */}
 
       {/* Language */}
       <div className="space-y-2">

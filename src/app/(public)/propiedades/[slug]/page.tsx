@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, useEffect } from 'react';
+import { use, useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { usePropertyDetail } from '@/features/properties';
 import { PropertyGallery } from '@/features/properties/components';
@@ -13,7 +13,7 @@ import { formatCurrency, formatDate } from '@/lib/utils/format';
 import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/types';
 import { apiClient } from '@/lib/api/client';
 
-export default function PropertyDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const searchParams = useSearchParams();
   const refParam = searchParams.get('ref');
@@ -232,5 +232,18 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ slug:
         referralLinkId={referralLinkId}
       />
     </div>
+  );
+}
+
+export default function PropertyDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  return (
+    <Suspense fallback={
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <Skeleton className="h-[500px] mb-6 sm:mb-8" />
+        <Skeleton className="h-[200px]" />
+      </div>
+    }>
+      <PropertyDetailContent params={params} />
+    </Suspense>
   );
 }

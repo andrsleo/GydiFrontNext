@@ -2,21 +2,28 @@
 
 import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
 import { registerSchema, type RegisterFormData } from '@/features/auth/schemas/auth.schema';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { PasswordStrengthIndicator } from '@/features/auth/components/password-strength-indicator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ProgressBar } from '@/components/shared/progress-bar';
+import type { PlanCode } from '@/lib/utils/plan-selection';
+import { PLAN_FEATURES } from '@/lib/constants/plans';
 
-export default function RegisterPage() {
+function RegisterForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { register: registerUser, isLoading } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<PlanCode | null>(null);
 
   const {
     register,
@@ -28,18 +35,47 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   });
 
+  // Detect selected plan from query param only
+  useEffect(() => {
+    const planFromQuery = searchParams.get('plan')?.toUpperCase() as PlanCode | null;
+
+    if (planFromQuery && ['FREE', 'PRO', 'ELITE'].includes(planFromQuery)) {
+      setSelectedPlan(planFromQuery);
+    }
+  }, [searchParams]);
+
   const onSubmit = async (data: RegisterFormData) => {
     setErrorMessage(null);
-    const result = await registerUser(data);
+
+    // Pass selectedPlan to backend so it knows whether to create FREE subscription or not
+    const result = await registerUser(data, selectedPlan || undefined);
 
     if (!result.success) {
       setErrorMessage(result.error || 'Error al registrar usuario');
+      return;
     }
+
+    // Registration successful!
+    // Redirect based on selected plan
+    if (selectedPlan && selectedPlan !== 'FREE') {
+      // For paid plans, redirect to payment wizard
+      const paymentUrl = `/onboarding/payment?plan=${selectedPlan}`;
+      router.push(paymentUrl as any); // Type assertion needed for dynamic route
+    }
+    // For FREE plan or no plan, useAuth hook handles redirect to dashboard
   };
+
+  const planDetails = selectedPlan ? PLAN_FEATURES[selectedPlan] : null;
+  const isPaidPlan = selectedPlan && selectedPlan !== 'FREE';
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
+        {/* Progress Bar */}
+        {selectedPlan && (
+          <ProgressBar currentStep={1} totalSteps={isPaidPlan ? 3 : 1} />
+        )}
+
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
             Crea tu cuenta en GYDI
@@ -51,6 +87,40 @@ export default function RegisterPage() {
             </Link>
           </p>
         </div>
+
+        {/* Plan Badge - Only for paid plans */}
+        {isPaidPlan && planDetails && (
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Plan {planDetails.name}
+                  </h3>
+                  {planDetails.badge && (
+                    <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-white">
+                      {planDetails.badge}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-sm text-gray-600">
+                  {planDetails.priceDisplay} • Comisión: {planDetails.commissionDisplay}
+                </p>
+              </div>
+              <CheckCircle2 className="h-8 w-8 text-primary" />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {planDetails.features.slice(0, 3).map((feature, index) => (
+                <span
+                  key={index}
+                  className="rounded-md bg-white px-2 py-1 text-xs text-gray-700"
+                >
+                  ✓ {feature}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {errorMessage && (
@@ -185,11 +255,37 @@ export default function RegisterPage() {
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creando cuenta...
+              </>
+            ) : isPaidPlan ? (
+              <>
+                Continuar al Pago
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            ) : (
+              'Crear Cuenta'
+            )}
           </Button>
         </form>
       </div>
     </div>
+  );
+}
+
+// Wrapper component with Suspense boundary
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gray-50">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <RegisterForm />
+    </Suspense>
   );
 }

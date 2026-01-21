@@ -49,7 +49,6 @@ export const authApi = {
    *   email: 'user@example.com',
    *   password: 'password123'
    * });
-   * console.log(response.token); // JWT access token
    */
   async login(request: LoginRequest): Promise<AuthResponse> {
     return post<AuthResponse>(`${AUTH_BASE_URL}/login`, request);
@@ -78,7 +77,6 @@ export const authApi = {
    * const response = await authApi.refresh({
    *   refreshToken: 'refresh_token_here'
    * });
-   * console.log(response.token); // New access token
    */
   async refresh(request: RefreshTokenRequest): Promise<AuthResponse> {
     return post<AuthResponse>(`${AUTH_BASE_URL}/refresh`, request);
@@ -122,7 +120,6 @@ export const usersApi = {
    *
    * @example
    * const user = await usersApi.getById(123);
-   * console.log(user.email);
    */
   async getById(id: number): Promise<UserResponse> {
     return get<UserResponse>(`${USERS_BASE_URL}/${id}`);
@@ -231,7 +228,6 @@ export const profilesApi = {
    *
    * @example
    * const profile = await profilesApi.getByUserId(123);
-   * console.log(profile.bio);
    */
   async getByUserId(userId: number): Promise<UserProfileResponse> {
     return get<UserProfileResponse>(`${PROFILES_BASE_URL}/user/${userId}`);
@@ -286,7 +282,6 @@ export const profilesApi = {
  * @example
  * const profile = await getCurrentUserProfile(session.user.id);
  * if (profile) {
- *   console.log(profile.avatarUrl);
  * }
  */
 export async function getCurrentUserProfile(

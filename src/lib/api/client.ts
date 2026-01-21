@@ -3,11 +3,20 @@
  *
  * Axios instance configured with interceptors for authentication,
  * error handling, and request/response transformation.
+ *
+ * BACKEND-ONLY AUTHENTICATION:
+ * - Production: Backend creates httpOnly cookies (XSS-proof)
+ * - Development: Backend returns JSON, frontend stores in localStorage
+ * - Backend controls 100% of authentication flow
  */
 
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
-import { getSession } from 'next-auth/react';
 import { getCsrfToken } from '@/lib/utils/csrf';
+
+/**
+ * Detect environment
+ */
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 /**
  * Base API client
@@ -17,17 +26,17 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Send cookies automatically (for same-origin)
+  withCredentials: true, // CRITICAL: Send cookies automatically in production
   timeout: 30000,
 });
 
 /**
  * Request interceptor - Add authentication token and CSRF protection
  *
- * SECURITY STRATEGY:
+ * BACKEND-ONLY AUTHENTICATION STRATEGY:
  * 1. JWT Authentication:
- *    - Development (localhost): Use Authorization header (cookies don't work cross-origin)
- *    - Production (same domain): Use httpOnly cookies ONLY (more secure, XSS-proof)
+ *    - Development: Use Authorization header with token from localStorage
+ *    - Production: httpOnly cookies sent automatically via withCredentials
  *
  * 2. CSRF Protection:
  *    - For state-changing requests (POST, PUT, PATCH, DELETE), include CSRF token
@@ -35,8 +44,8 @@ export const apiClient = axios.create({
  *    - Token is sent in X-XSRF-TOKEN header (Spring Security convention)
  *    - Read-only requests (GET, HEAD, OPTIONS) don't need CSRF protection
  *
- * In production, backend sets httpOnly cookie and this interceptor does NOTHING.
- * The cookie is sent automatically by the browser with withCredentials: true.
+ * In production: backend sets httpOnly cookie, interceptor does NOTHING
+ * In development: interceptor reads token from localStorage
  */
 apiClient.interceptors.request.use(
   async (config) => {
@@ -46,27 +55,22 @@ apiClient.interceptors.request.use(
       '/api/v1/auth/register',
       '/api/v1/users/register', // User registration endpoint
       '/api/csrf', // CSRF token endpoint
+      '/api/v1/auth/refresh', // Refresh token endpoint
     ];
     const isPublicEndpoint = publicEndpoints.some((endpoint) =>
       config.url?.startsWith(endpoint)
     );
 
     if (!isPublicEndpoint && typeof window !== 'undefined') {
-      const isDevelopment = process.env.NODE_ENV === 'development';
-
-      // ONLY in development: use Authorization header (cross-origin workaround)
+      // ONLY in development: use Authorization header with token from localStorage
       if (isDevelopment) {
-        try {
-          const session = await getSession();
-          if (session?.accessToken) {
-            config.headers.Authorization = `Bearer ${session.accessToken}`;
-          }
-        } catch (error) {
-          console.error('Error getting session for API request:', error);
+        const token = localStorage.getItem('access_token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
       }
       // In production: httpOnly cookies are sent automatically via withCredentials
-      // No need to add Authorization header - this prevents XSS attacks
+      // No need to add Authorization header - backend extracts token from cookie
     }
 
     // Add CSRF token for state-changing requests
@@ -106,12 +110,59 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as any;
 
-    // Handle token expiration (401) - NextAuth auto-refresh handles this
+    // Handle token expiration (401) - Attempt refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
       if (typeof window !== 'undefined') {
-        // Session expired or invalid - redirect to login
-        // NextAuth will attempt refresh before this happens
-        window.location.href = '/login?error=SessionExpired';
+        try {
+          if (isDevelopment) {
+            // DEVELOPMENT: Send refresh_token from localStorage
+            const refreshToken = localStorage.getItem('refresh_token');
+
+            if (!refreshToken) {
+              // No refresh token available - redirect to login
+              window.location.href = '/login?error=SessionExpired';
+              return Promise.reject(error);
+            }
+
+            // Call refresh endpoint
+            const { data } = await axios.post(
+              `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/auth/refresh`,
+              { refreshToken },
+              { withCredentials: true }
+            );
+
+            // Store new tokens
+            localStorage.setItem('access_token', data.token);
+            if (data.refreshToken) {
+              localStorage.setItem('refresh_token', data.refreshToken);
+            }
+
+            // Update Authorization header for retry
+            originalRequest.headers.Authorization = `Bearer ${data.token}`;
+          } else {
+            // PRODUCTION: Backend reads refresh_token from httpOnly cookie
+            await axios.post(
+              `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/auth/refresh`,
+              {},
+              { withCredentials: true }
+            );
+            // Backend automatically updates cookies
+            // No need to store anything in frontend
+          }
+
+          // Retry the original request
+          return apiClient(originalRequest);
+        } catch (refreshError) {
+          // Refresh failed - clear tokens and redirect to login
+          if (isDevelopment) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+          }
+          window.location.href = '/login?error=SessionExpired';
+          return Promise.reject(refreshError);
+        }
       }
       return Promise.reject(error);
     }
@@ -123,7 +174,7 @@ apiClient.interceptors.response.use(
       switch (status) {
         case 403:
           // Could be CSRF error or permission error
-          const errorMessage = error.response.data?.message || '';
+          const errorMessage = (error.response.data as any)?.message || '';
           const isCsrfError = errorMessage.toLowerCase().includes('csrf') ||
                              errorMessage.toLowerCase().includes('invalid csrf token');
 

@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Outfit } from 'next/font/google';
-import { SessionProvider } from 'next-auth/react';
 import { Toaster } from 'sonner';
 import './globals.css';
 import { Providers } from './providers';
+import { AuthProvider } from '@/features/auth/providers/auth-provider';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -54,9 +54,9 @@ export default function RootLayout({
         className={`${plusJakarta.variable} ${outfit.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <SessionProvider>
-          <Providers>{children}</Providers>
-        </SessionProvider>
+        <Providers>
+          <AuthProvider>{children}</AuthProvider>
+        </Providers>
         <Toaster richColors position="top-right" />
       </body>
     </html>

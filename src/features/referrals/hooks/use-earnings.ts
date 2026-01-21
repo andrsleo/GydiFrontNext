@@ -4,7 +4,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { useIsAuthenticated } from '@/features/auth/hooks/use-auth';
 import { getEarnings } from '../api/referrals-api';
 import { referralKeys } from './use-referral-links';
 
@@ -12,14 +12,16 @@ import { referralKeys } from './use-referral-links';
  * Hook to fetch earnings data
  */
 export function useEarnings(currentPlan?: string) {
-  const { data: session } = useSession();
-  const token = session?.accessToken as string | undefined;
+  const isAuthenticated = useIsAuthenticated();
 
   return useQuery({
     queryKey: [...referralKeys.earnings(), currentPlan],
-    queryFn: () => getEarnings(currentPlan, token),
+    queryFn: () => {
+      const token = localStorage.getItem('access_token') || undefined;
+      return getEarnings(currentPlan, token);
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
-    enabled: !!session, // Only fetch when authenticated
+    enabled: isAuthenticated, // Only fetch when authenticated
   });
 }
 

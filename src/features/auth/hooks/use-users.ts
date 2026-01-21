@@ -37,7 +37,7 @@ export const userKeys = {
  *
  * @example
  * function UserProfile({ userId }: { userId: number }) {
- *   const { data: user, isLoading } = useUser(userId);
+ *   const { data: user, isLoading } = useUserById(userId);
  *
  *   if (isLoading) return <Skeleton />;
  *   if (!user) return <div>User not found</div>;
@@ -45,7 +45,7 @@ export const userKeys = {
  *   return <div>{user.name}</div>;
  * }
  */
-export function useUser(
+export function useUserById(
   id: number,
   options?: Omit<UseQueryOptions<UserResponse, Error>, 'queryKey' | 'queryFn'>
 ) {
@@ -125,6 +125,7 @@ export function useCreateUser(
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
 
       // Call user's onSuccess if provided (React Query handles this automatically)
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
   });
@@ -170,6 +171,7 @@ export function useUpdateUser(
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, variables, context);
     },
   });
@@ -212,6 +214,7 @@ export function useDeleteUser(
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
 
       // Call user's onSuccess if provided
+      // @ts-expect-error - TanStack Query signature mismatch
       options?.onSuccess?.(data, userId, context);
     },
   });

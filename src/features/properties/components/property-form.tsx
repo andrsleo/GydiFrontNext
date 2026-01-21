@@ -147,7 +147,10 @@ export function PropertyForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-6"
+    >
       {/* Title */}
       <div className="space-y-2">
         <Label htmlFor="title">
@@ -180,7 +183,7 @@ export function PropertyForm({
           placeholder="Describe your property..."
           rows={5}
           disabled={isSubmitting}
-          error={!!errors.description}
+          className={errors.description ? 'border-red-600' : ''}
           aria-describedby={errors.description ? 'description-error' : undefined}
         />
         {errors.description && (

@@ -1,14 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { useUser } from '@/features/auth/hooks/use-auth';
+import { useAuthStore } from '@/store/auth-store';
 
 export function Header() {
-  const { data: session } = useSession();
+  const user = useUser();
+  const isLoading = useAuthStore((state) => state.isLoading);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Don't show user until auth verification is complete
+  // This prevents showing stale data from localStorage while checking if token is valid
+  const showUser = user && !isLoading;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-gradient-to-r from-background via-background/98 to-primary/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
@@ -68,11 +74,11 @@ export function Header() {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden items-center space-x-3 md:flex">
-          {session ? (
+          {showUser ? (
             <>
               <div className="group relative overflow-hidden rounded-full bg-gradient-to-br from-primary/10 to-blue-500/10 px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20">
                 <span className="text-sm font-semibold text-foreground">
-                  Hola, <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">{session.user.name}</span>
+                  Hola, <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">{user?.name}</span>
                 </span>
               </div>
               <Button asChild className="group relative overflow-hidden shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">
@@ -145,11 +151,11 @@ export function Header() {
             </Link>
 
             <div className="space-y-3 border-t border-border/40 pt-4">
-              {session ? (
+              {showUser ? (
                 <>
                   <div className="rounded-lg bg-gradient-to-br from-primary/10 to-blue-500/10 px-4 py-3 text-center">
                     <span className="text-sm font-semibold text-foreground">
-                      Hola, <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">{session.user.name}</span>
+                      Hola, <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">{user?.name}</span>
                     </span>
                   </div>
                   <Button asChild className="w-full shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">

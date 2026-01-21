@@ -30,12 +30,7 @@ export default function NewPropertyPage() {
   });
 
   const handleCreateProperty = async (data: CreatePropertyFormData) => {
-    console.log('=== FORM SUBMISSION STARTED ===');
-    console.log('Form data:', data);
-
-    console.log('Calling createProperty.mutateAsync...');
     const property = await createProperty.mutateAsync(data);
-    console.log('Property created successfully:', property);
     setPropertyId(property.id);
     setStep('images');
     return property;

@@ -24,8 +24,7 @@ export const createReferralLinkFormSchema = z.object({
   expirationDays: z.coerce
     .number()
     .min(1, 'Minimum 1 day')
-    .max(365, 'Maximum 365 days')
-    .default(90),
+    .max(365, 'Maximum 365 days'),
 });
 
 export type GenerateReferralLinkFormData = z.infer<typeof createReferralLinkFormSchema>;
