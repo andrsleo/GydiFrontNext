@@ -30,7 +30,12 @@ export default function NewPropertyPage() {
   });
 
   const handleCreateProperty = async (data: CreatePropertyFormData) => {
-    const property = await createProperty.mutateAsync(data);
+    // Sanitize data: convert nulls to undefined for optional fields
+    const sanitizedData = {
+      ...data,
+      salePrice: data.salePrice ?? undefined,
+    };
+    const property = await createProperty.mutateAsync(sanitizedData);
     setPropertyId(property.id);
     setStep('images');
     return property;

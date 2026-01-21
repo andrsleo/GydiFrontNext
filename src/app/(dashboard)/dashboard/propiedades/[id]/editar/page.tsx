@@ -46,8 +46,12 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
   } : undefined;
 
   const handleUpdateProperty = async (data: UpdatePropertyFormData) => {
-    // Return the promise so the form can handle errors
-    return updateProperty.mutateAsync({ id, data });
+    // Sanitize data: convert nulls to undefined for optional fields
+    const sanitizedData = {
+      ...data,
+      salePrice: data.salePrice ?? undefined,
+    };
+    return updateProperty.mutateAsync({ id, data: sanitizedData });
   };
 
   const handlePublishProperty = async () => {
