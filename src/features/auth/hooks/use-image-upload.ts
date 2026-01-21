@@ -21,7 +21,6 @@ import { profileKeys } from './use-profile';
  *   const { mutate: upload, isPending } = useUploadProfileImage({
  *     onSuccess: (data) => {
  *       toast.success('Image uploaded successfully');
- *       console.log('Uploaded to:', data.imageUrl);
  *     },
  *     onError: (error) => {
  *       toast.error(`Upload failed: ${error.message}`);

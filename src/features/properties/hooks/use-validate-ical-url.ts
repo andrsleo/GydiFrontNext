@@ -24,10 +24,7 @@ interface ValidateICalUrlResponse {
  * const { mutate: validateICalUrl, isPending, data } = useValidateICalUrl();
  * 
  * validateICalUrl({ icalUrl: 'https://...' });
- * 
- * if (data) {
- *   console.log(data.valid ? 'Valid!' : 'Invalid: ' + data.message);
- * }
+ *  
  * ```
  */
 export function useValidateICalUrl() {

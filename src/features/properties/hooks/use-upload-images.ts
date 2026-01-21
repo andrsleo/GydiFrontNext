@@ -30,7 +30,6 @@ type UseUploadImagesOptions = Omit<
  * ```tsx
  * const { mutate, isPending } = useUploadImages({
  *   onSuccess: (data) => {
- *     console.log(`Uploaded ${data.length} images`);
  *   }
  * });
  *

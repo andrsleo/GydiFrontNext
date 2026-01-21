@@ -4,7 +4,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { useIsAuthenticated } from '@/features/auth/hooks/use-auth';
 import { generateReferralLink, getReferralLinks, getReferralLinkById } from '../api/referrals-api';
 import type { GenerateReferralLinkRequest, ReferralLink, GenerateReferralLinkResponse } from '../types';
 import { toast } from 'sonner';
@@ -22,14 +22,16 @@ export const referralKeys = {
  * Hook to fetch all referral links
  */
 export function useReferralLinks() {
-  const { data: session } = useSession();
-  const token = session?.accessToken as string | undefined;
+  const isAuthenticated = useIsAuthenticated();
 
   return useQuery({
     queryKey: referralKeys.links(),
-    queryFn: () => getReferralLinks(token),
+    queryFn: () => {
+      const token = localStorage.getItem('access_token') || undefined;
+      return getReferralLinks(token);
+    },
     staleTime: 1000 * 60, // 1 minute
-    enabled: !!session, // Only fetch when authenticated
+    enabled: isAuthenticated, // Only fetch when authenticated
   });
 }
 
@@ -37,13 +39,15 @@ export function useReferralLinks() {
  * Hook to fetch a single referral link by ID
  */
 export function useReferralLink(id: string) {
-  const { data: session } = useSession();
-  const token = session?.accessToken as string | undefined;
+  const isAuthenticated = useIsAuthenticated();
 
   return useQuery({
     queryKey: referralKeys.link(id),
-    queryFn: () => getReferralLinkById(id, token),
-    enabled: !!id && !!session,
+    queryFn: () => {
+      const token = localStorage.getItem('access_token') || undefined;
+      return getReferralLinkById(id, token);
+    },
+    enabled: !!id && isAuthenticated,
     staleTime: 1000 * 60,
   });
 }
@@ -53,11 +57,12 @@ export function useReferralLink(id: string) {
  */
 export function useGenerateReferralLink() {
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
-  const token = session?.accessToken as string | undefined;
 
   return useMutation({
-    mutationFn: (request: GenerateReferralLinkRequest) => generateReferralLink(request, token),
+    mutationFn: (request: GenerateReferralLinkRequest) => {
+      const token = localStorage.getItem('access_token') || undefined;
+      return generateReferralLink(request, token);
+    },
     onSuccess: (data: GenerateReferralLinkResponse) => {
       // Invalidate links query to refetch
       queryClient.invalidateQueries({ queryKey: referralKeys.links() });

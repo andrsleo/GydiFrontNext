@@ -5,11 +5,11 @@
  */
 
 // Authentication hooks
-export { useLogin, useLogout, useRefreshToken } from './use-auth';
+export { useLogin, useLogout, useUser, useIsAuthenticated } from './use-auth';
 
 // User management hooks
 export {
-  useUser,
+  useUserById,
   useUsers,
   useCreateUser,
   useUpdateUser,

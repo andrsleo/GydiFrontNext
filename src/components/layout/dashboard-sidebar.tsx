@@ -17,7 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { useLogout } from '@/features/auth/hooks/use-auth';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useSidebarStore } from '@/store/use-sidebar-store';
@@ -65,6 +65,7 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isCollapsed, toggleSidebar } = useSidebarStore();
+  const { mutate: logout } = useLogout();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -75,8 +76,8 @@ export function DashboardSidebar() {
     return null; // Avoid hydration mismatch
   }
 
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: '/login' });
+  const handleLogout = () => {
+    logout();
   };
 
   return (

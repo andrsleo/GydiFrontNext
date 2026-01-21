@@ -113,6 +113,28 @@ export const paymentMethodsApi = {
     );
     return data;
   },
+
+  /**
+   * Delete a payment method
+   * DELETE /api/payment-methods/:id
+   *
+   * NOTE: Cannot delete the only payment method if user has a paid subscription.
+   * Cannot delete the default payment method without setting another as default first.
+   */
+  async delete(id: number): Promise<void> {
+    await apiClient.delete(`/api/payment-methods/${id}`);
+  },
+
+  /**
+   * Set a payment method as default
+   * PUT /api/payment-methods/:id/default
+   */
+  async setAsDefault(id: number): Promise<PaymentMethodResponse> {
+    const { data } = await apiClient.put<PaymentMethodResponse>(
+      `/api/payment-methods/${id}/default`
+    );
+    return data;
+  },
 };
 
 /**

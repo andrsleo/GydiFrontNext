@@ -108,6 +108,105 @@ export function useCreatePaymentMethod() {
 }
 
 /**
+ * Hook to delete (soft delete) a payment method
+ *
+ * NOTE: This performs a soft delete. The payment method is not physically removed
+ * from the database. Instead, its status is changed to INACTIVE and deletedAt is set.
+ * The card will no longer appear in active payment methods lists.
+ *
+ * @returns Mutation function and state
+ *
+ * @example
+ * ```tsx
+ * function PaymentMethodCard({ method }) {
+ *   const { mutate: deleteMethod, isPending } = useDeletePaymentMethod();
+ *
+ *   const handleDelete = () => {
+ *     deleteMethod(method.id);
+ *   };
+ *
+ *   return (
+ *     <button onClick={handleDelete} disabled={isPending}>
+ *       Remove
+ *     </button>
+ *   );
+ * }
+ * ```
+ */
+export function useDeletePaymentMethod() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => paymentMethodsApi.delete(id),
+    onSuccess: () => {
+      // Invalidate queries to refetch data
+      queryClient.invalidateQueries({ queryKey: paymentMethodKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['subscription'] });
+
+      toast.success('Payment method removed', {
+        description: 'Your payment method has been deactivated successfully.',
+      });
+    },
+    onError: (error: any) => {
+      // Handle specific error messages from backend
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Failed to remove payment method. Please try again.';
+
+      toast.error('Error removing payment method', {
+        description: message,
+        duration: 5000,
+      });
+    },
+  });
+}
+
+/**
+ * Hook to set a payment method as default
+ *
+ * @returns Mutation function and state
+ *
+ * @example
+ * ```tsx
+ * function PaymentMethodCard({ method }) {
+ *   const { mutate: setDefault, isPending } = useSetDefaultPaymentMethod();
+ *
+ *   const handleSetDefault = () => {
+ *     setDefault(method.id);
+ *   };
+ *
+ *   return (
+ *     <button onClick={handleSetDefault} disabled={isPending || method.isDefault}>
+ *       Set as Default
+ *     </button>
+ *   );
+ * }
+ * ```
+ */
+export function useSetDefaultPaymentMethod() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => paymentMethodsApi.setAsDefault(id),
+    onSuccess: (data) => {
+      // Invalidate queries to refetch data
+      queryClient.invalidateQueries({ queryKey: paymentMethodKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['subscription'] });
+
+      toast.success('Default payment method updated', {
+        description: `${data.cardBrand} ending in ${data.cardLastFour} is now your default.`,
+      });
+    },
+    onError: (error: any) => {
+      toast.error('Failed to set default payment method', {
+        description: error?.response?.data?.message || 'Please try again later.',
+      });
+    },
+  });
+}
+
+/**
  * Helper hook to get the default payment method
  *
  * @returns The default payment method or undefined

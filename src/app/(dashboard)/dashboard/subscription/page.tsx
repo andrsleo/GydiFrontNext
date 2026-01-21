@@ -6,42 +6,42 @@
 
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { Loader2, CreditCard, Settings, TrendingUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LoadingSpinner } from '@/components/shared/loading-spinner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { SubscriptionStatus } from '@/features/subscriptions/components/subscription-status';
-import { PaymentMethodCard } from '@/features/subscriptions/components/payment-method-card';
+import { SubscriptionActions } from '@/features/subscriptions/components/subscription-actions';
+import { PaymentMethodsSection } from '@/features/subscriptions/components/payment-methods-section';
+import { BillingInfo } from '@/features/subscriptions/components/billing-info';
 import { ChangePlanDialog } from '@/features/subscriptions/components/change-plan-dialog';
 import { CancelSubscriptionDialog } from '@/features/subscriptions/components/cancel-subscription-dialog';
 import { AddPaymentMethodDialog } from '@/features/subscriptions/components/add-payment-method-dialog';
-import { useSubscription } from '@/features/subscriptions/hooks/use-subscription';
-import { usePaymentMethods } from '@/features/subscriptions/hooks/use-payment-methods';
+import { DeletePaymentMethodDialog } from '@/features/subscriptions/components/delete-payment-method-dialog';
+import { useSubscriptionPage } from '@/features/subscriptions/hooks/use-subscription-page';
+import { getRecommendedUpgradePlan } from '@/lib/utils/subscription';
 
 export default function SubscriptionPage() {
-  const [showChangePlanDialog, setShowChangePlanDialog] = useState(false);
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
-
   const {
-    data: subscription,
-    isLoading: subscriptionLoading,
-    error: subscriptionError,
-  } = useSubscription();
-
-  const {
-    data: paymentMethods,
-    isLoading: paymentMethodsLoading,
-  } = usePaymentMethods();
+    dialogs,
+    methodToDelete,
+    methodIdToSetDefault,
+    subscription,
+    subscriptionLoading,
+    subscriptionError,
+    paymentMethods,
+    paymentMethodsLoading,
+    plans,
+    isDeleting,
+    isSettingDefault,
+    openDialog,
+    closeDialog,
+    handleDeleteClick,
+    handleConfirmDelete,
+    handleSetDefault,
+  } = useSubscriptionPage();
 
   if (subscriptionLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <LoadingSpinner size="lg" variant="centered" />;
   }
 
   if (subscriptionError || !subscription) {
@@ -63,153 +63,84 @@ export default function SubscriptionPage() {
     );
   }
 
+  const recommendedPlan = plans
+    ? getRecommendedUpgradePlan(plans, subscription.planCode)
+    : undefined;
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Subscription Management
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your subscription plan and payment methods
-        </p>
-      </div>
+      <PageHeader />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Left Column - Subscription Status */}
+        {/* Left Column - Subscription Status & Actions */}
         <div className="space-y-6">
           <SubscriptionStatus subscription={subscription} />
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Manage Subscription
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button
-                className="w-full"
-                variant="default"
-                onClick={() => setShowChangePlanDialog(true)}
-              >
-                <TrendingUp className="mr-2 h-4 w-4" />
-                Change Plan
-              </Button>
-
-              <Button
-                className="w-full"
-                variant="outline"
-                asChild
-              >
-                <Link href="/dashboard/subscription/plans">
-                  View All Plans
-                </Link>
-              </Button>
-
-              {subscription.status === 'ACTIVE' && !subscription.canceledAt && subscription.planCode !== 'FREE' && (
-                <Button
-                  className="w-full"
-                  variant="destructive"
-                  onClick={() => setShowCancelDialog(true)}
-                >
-                  Cancel Subscription
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+          <SubscriptionActions
+            subscription={subscription}
+            onChangePlan={() => openDialog('changePlan')}
+            onCancel={() => openDialog('cancel')}
+          />
         </div>
 
-        {/* Right Column - Payment Methods */}
+        {/* Right Column - Payment Methods & Billing Info */}
         <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5" />
-                  Payment Methods
-                </CardTitle>
-                <Button
-                  size="sm"
-                  onClick={() => setShowAddPaymentDialog(true)}
-                >
-                  Add Card
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {paymentMethodsLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              ) : paymentMethods && paymentMethods.length > 0 ? (
-                paymentMethods.map((method) => (
-                  <PaymentMethodCard
-                    key={method.id}
-                    paymentMethod={method}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    No payment methods added yet
-                  </p>
-                  <Button
-                    size="sm"
-                    onClick={() => setShowAddPaymentDialog(true)}
-                  >
-                    Add Your First Card
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Billing Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Billing Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">User ID</span>
-                <span className="font-medium">#{subscription.userId}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Subscription ID</span>
-                <span className="font-medium">#{subscription.id}</span>
-              </div>
-              {subscription.stripeCustomerId && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Stripe Customer</span>
-                  <span className="font-mono text-xs">
-                    {subscription.stripeCustomerId}
-                  </span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <PaymentMethodsSection
+            paymentMethods={paymentMethods}
+            isLoading={paymentMethodsLoading}
+            onAdd={() => openDialog('addPayment')}
+            onDelete={handleDeleteClick}
+            onSetDefault={handleSetDefault}
+            deletingMethodId={methodToDelete?.id}
+            settingDefaultMethodId={methodIdToSetDefault ?? undefined}
+            isDeleting={isDeleting}
+            isSettingDefault={isSettingDefault}
+          />
+          <BillingInfo subscription={subscription} />
         </div>
       </div>
 
       {/* Dialogs */}
-      <ChangePlanDialog
-        open={showChangePlanDialog}
-        onOpenChange={setShowChangePlanDialog}
-        currentPlanCode={subscription.planCode}
-      />
+      {dialogs.changePlan && (
+        <ChangePlanDialog
+          open={dialogs.changePlan}
+          onOpenChange={(open) => !open && closeDialog('changePlan')}
+          currentPlanCode={subscription.planCode}
+          initialPlanCode={recommendedPlan}
+        />
+      )}
 
       <CancelSubscriptionDialog
-        open={showCancelDialog}
-        onOpenChange={setShowCancelDialog}
+        open={dialogs.cancel}
+        onOpenChange={(open) => !open && closeDialog('cancel')}
         planName={subscription.planName}
       />
 
       <AddPaymentMethodDialog
-        open={showAddPaymentDialog}
-        onOpenChange={setShowAddPaymentDialog}
+        open={dialogs.addPayment}
+        onOpenChange={(open) => !open && closeDialog('addPayment')}
       />
+
+      <DeletePaymentMethodDialog
+        paymentMethod={methodToDelete}
+        open={dialogs.deletePayment}
+        onOpenChange={(open) => !open && closeDialog('deletePayment')}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
+    </div>
+  );
+}
+
+function PageHeader() {
+  return (
+    <div>
+      <h1 className="text-3xl font-bold tracking-tight">
+        Subscription Management
+      </h1>
+      <p className="text-muted-foreground mt-2">
+        Manage your subscription plan and payment methods
+      </p>
     </div>
   );
 }

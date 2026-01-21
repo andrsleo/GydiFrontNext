@@ -24,7 +24,6 @@ export interface DeleteImageResponse {
  * @example
  * const file = event.target.files[0];
  * const { imageUrl } = await uploadProfileImage(file);
- * console.log('Uploaded to:', imageUrl);
  */
 export async function uploadProfileImage(file: File): Promise<UploadImageResponse> {
   const formData = new FormData();

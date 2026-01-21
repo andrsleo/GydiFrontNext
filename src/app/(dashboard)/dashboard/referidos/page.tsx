@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@/features/auth/hooks/use-auth';
 import {
   MousePointerClick,
   Users,
@@ -28,14 +28,14 @@ const statusConfig = {
 };
 
 export default function ReferidosPage() {
-  const { data: session } = useSession();
+  const user = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Fetch real data from API
   const { data: links, isLoading: linksLoading, error: linksError } = useReferralLinks();
   const { data: stats, isLoading: statsLoading, error: statsError } = useReferralStats(
-    session?.user?.id ? parseInt(session.user.id) : undefined
+    user?.id ? parseInt(user.id) : undefined
   );
 
   // Prepare stats data

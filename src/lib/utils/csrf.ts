@@ -77,7 +77,6 @@ export function getCsrfToken(): string | null {
  * // Fetch CSRF token on app initialization
  * useEffect(() => {
  *   fetchCsrfToken().then(token => {
- *     console.log('CSRF token obtained:', token.token);
  *   });
  * }, []);
  * ```

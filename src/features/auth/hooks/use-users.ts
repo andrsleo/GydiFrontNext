@@ -37,7 +37,7 @@ export const userKeys = {
  *
  * @example
  * function UserProfile({ userId }: { userId: number }) {
- *   const { data: user, isLoading } = useUser(userId);
+ *   const { data: user, isLoading } = useUserById(userId);
  *
  *   if (isLoading) return <Skeleton />;
  *   if (!user) return <div>User not found</div>;
@@ -45,7 +45,7 @@ export const userKeys = {
  *   return <div>{user.name}</div>;
  * }
  */
-export function useUser(
+export function useUserById(
   id: number,
   options?: Omit<UseQueryOptions<UserResponse, Error>, 'queryKey' | 'queryFn'>
 ) {

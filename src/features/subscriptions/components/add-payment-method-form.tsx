@@ -40,6 +40,7 @@ export function AddPaymentMethodForm({
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
   const { mutate: createPaymentMethod } = useCreatePaymentMethod();
+  const [stripeError, setStripeError] = useState<string | null>(null);
 
   const form = useForm<PaymentMethodFormData>({
     resolver: zodResolver(paymentMethodSchema),
@@ -114,7 +115,16 @@ export function AddPaymentMethodForm({
 
 
         {/* Stripe Card Element */}
-        <StripeCardElementWrapper />
+        <StripeCardElementWrapper onChange={(e) => {
+          if (e.error) {
+            setStripeError(e.error.message);
+          } else {
+            setStripeError(null);
+          }
+        }} />
+        {stripeError && (
+          <p className="text-sm font-medium text-destructive">{stripeError}</p>
+        )}
 
         {/* Save as Default */}
         <FormField

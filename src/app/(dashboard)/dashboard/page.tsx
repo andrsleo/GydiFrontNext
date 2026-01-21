@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@/features/auth/hooks/use-auth';
 import { useSearchParams } from 'next/navigation';
 import {
   TrendingUp,
@@ -94,9 +94,9 @@ const statusConfig = {
 };
 
 function DashboardContent() {
-  const { data: session } = useSession();
+  const user = useUser();
   const searchParams = useSearchParams();
-  const userId = session?.user?.id ? Number(session.user.id) : null;
+  const userId = user?.id ? Number(user.id) : null;
 
   const { data: profile } = useProfileByUserId(userId!, {
     enabled: !!userId,
@@ -108,10 +108,10 @@ function DashboardContent() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [selectedUpgradePlan, setSelectedUpgradePlan] = useState<PlanCode | null>(null);
 
-  // Get name from profile, fallback to session, then to 'Usuario'
+  // Get name from profile, fallback to user, then to 'Usuario'
   const displayName = profile
-    ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || session?.user?.name || 'Usuario'
-    : session?.user?.name || 'Usuario';
+    ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || user?.name || 'Usuario'
+    : user?.name || 'Usuario';
 
   // Auto-open upgrade modal when ?upgrade=XXX query param is present
   useEffect(() => {

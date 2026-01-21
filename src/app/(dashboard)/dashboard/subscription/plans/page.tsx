@@ -10,6 +10,8 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { PlanCard } from '@/features/subscriptions/components/plan-card';
 import { AddPaymentMethodDialog } from '@/features/subscriptions/components/add-payment-method-dialog';
+import { ChangePlanDialog } from '@/features/subscriptions/components/change-plan-dialog';
+import { type PlanCode } from '@/features/subscriptions/schemas/subscription.schema';
 import { usePlans } from '@/features/subscriptions/hooks/use-plans';
 import { useSubscription, useSubscribeToPlan, useChangePlan } from '@/features/subscriptions/hooks/use-subscription';
 import { usePaymentMethods } from '@/features/subscriptions/hooks/use-payment-methods';
@@ -17,76 +19,31 @@ import { toast } from 'sonner';
 
 export default function SubscriptionPlansPage() {
   const [selectedPlanCode, setSelectedPlanCode] = useState<string | null>(null);
+  const [showChangePlanDialog, setShowChangePlanDialog] = useState(false);
   const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
 
   const { data: plans, isLoading: plansLoading } = usePlans();
   const { data: subscription } = useSubscription();
   const { data: paymentMethods } = usePaymentMethods();
-  const { mutate: subscribe, isPending: isSubscribing } = useSubscribeToPlan();
-  const { mutate: changePlan, isPending: isChangingPlan } = useChangePlan();
 
   const handleSelectPlan = (planCode: string) => {
+    // If the user already has this plan, do nothing
+    if (subscription?.planCode === planCode) return;
+
     setSelectedPlanCode(planCode);
 
     const plan = plans?.find((p) => p.planCode === planCode);
 
-    if (!plan) return;
-
-    // Check if user has an active subscription
-    const hasActiveSubscription = subscription && subscription.status === 'ACTIVE';
-
-    // Check if plan requires payment
-    if (plan.monthlyPrice > 0) {
-      // Check if user has payment methods
-      if (!paymentMethods || paymentMethods.length === 0) {
-        toast.info('Add a payment method', {
-          description: 'You need to add a payment method before upgrading to a paid plan.',
-        });
-        setShowAddPaymentDialog(true);
-        return;
-      }
-
-      // Find default payment method
-      const defaultPaymentMethod = paymentMethods.find((pm) => pm.isDefault);
-
-      if (!defaultPaymentMethod) {
-        toast.error('No default payment method', {
-          description: 'Please set a default payment method first.',
-        });
-        return;
-      }
-
-      if (hasActiveSubscription) {
-        // Change Plan
-        changePlan({
-          newPlanCode: planCode,
-          paymentMethodId: defaultPaymentMethod.id,
-        });
-      } else {
-        // New Subscription
-        subscribe({
-          planCode,
-          paymentMethodId: defaultPaymentMethod.id,
-          autoRenew: true,
-        });
-      }
-    } else {
-      // Free plan
-      if (hasActiveSubscription) {
-        // Change Plan (Downgrade)
-        changePlan({
-          newPlanCode: planCode,
-          paymentMethodId: null,
-        });
-      } else {
-        // New Subscription
-        subscribe({
-          planCode,
-          paymentMethodId: null,
-          autoRenew: true,
-        });
-      }
+    // If plan is paid and user has no payment methods, prompt to add one
+    if (plan && plan.monthlyPrice > 0 && (!paymentMethods || paymentMethods.length === 0)) {
+      toast.info('Add a payment method', {
+        description: 'You need to add a payment method before upgrading to a paid plan.',
+      });
+      setShowAddPaymentDialog(true);
+      return;
     }
+
+    setShowChangePlanDialog(true);
   };
 
   if (plansLoading) {
@@ -126,13 +83,13 @@ export default function SubscriptionPlansPage() {
             plan={plan}
             currentPlanCode={subscription?.planCode}
             onSelect={handleSelectPlan}
-            isLoading={(isSubscribing || isChangingPlan) && selectedPlanCode === plan.planCode}
+            isLoading={false} // Loading state is now handled in the dialog
             recommended={index === 1} // Middle plan (PRO) is recommended
           />
         ))}
       </div>
 
-      {/* Features Comparison (Optional) */}
+      {/* Features Comparison */}
       <div className="mt-16 max-w-4xl mx-auto">
         <h2 className="text-2xl font-bold text-center mb-8">
           Compare Features
@@ -190,11 +147,20 @@ export default function SubscriptionPlansPage() {
         </div>
       </div>
 
-      {/* Add Payment Method Dialog */}
+      {/* Dialogs */}
       <AddPaymentMethodDialog
         open={showAddPaymentDialog}
         onOpenChange={setShowAddPaymentDialog}
       />
+
+      {selectedPlanCode && (
+        <ChangePlanDialog
+          open={showChangePlanDialog}
+          onOpenChange={setShowChangePlanDialog}
+          currentPlanCode={subscription?.planCode || 'FREE'}
+          initialPlanCode={selectedPlanCode as PlanCode}
+        />
+      )}
     </div>
   );
 }

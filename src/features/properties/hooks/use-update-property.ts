@@ -29,7 +29,6 @@ type UseUpdatePropertyOptions = Omit<
  * ```tsx
  * const { mutate, isPending } = useUpdateProperty({
  *   onSuccess: (data) => {
- *     console.log('Property updated:', data.id);
  *   }
  * });
  *

@@ -10,9 +10,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useIsAuthenticated } from '@/features/auth/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { savePlanSelection, type PlanCode } from '@/lib/utils/plan-selection';
+import type { PlanCode } from '@/lib/utils/plan-selection';
 import type { ButtonProps } from '@/components/ui/button';
 
 interface PlanSelectButtonProps extends ButtonProps {
@@ -27,8 +27,7 @@ export function PlanSelectButton({
   ...props
 }: PlanSelectButtonProps) {
   const router = useRouter();
-  const { data: session, status } = useSession();
-  const isAuthenticated = status === 'authenticated';
+  const isAuthenticated = useIsAuthenticated();
 
   const handleSelectPlan = () => {
     // Case 1: Authenticated user selecting paid plan (PRO/ELITE)
@@ -39,19 +38,17 @@ export function PlanSelectButton({
     }
 
     // Case 2: Non-authenticated user selecting FREE plan
-    // → Redirect directly to registration
+    // → Redirect to registration with query param only
     if (!isAuthenticated && planCode === 'FREE') {
-      router.push('/register');
+      // Redirect with query param for explicit FREE plan context
+      router.push('/register?plan=FREE');
       return;
     }
 
     // Case 3: Non-authenticated user selecting paid plan (PRO/ELITE)
-    // → Save selection and redirect to registration with plan context
+    // → Redirect to registration with query param only
     if (!isAuthenticated && planCode !== 'FREE') {
-      // 1. Save to localStorage with 7-day expiration
-      savePlanSelection(planCode);
-
-      // 2. Redirect with query param for immediate context
+      // Redirect with query param
       router.push(`/register?plan=${planCode}`);
       return;
     }

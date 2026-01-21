@@ -147,7 +147,10 @@ export function PropertyForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-6"
+    >
       {/* Title */}
       <div className="space-y-2">
         <Label htmlFor="title">

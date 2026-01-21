@@ -17,7 +17,21 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Rutas públicas (allow without authentication)
-  const publicRoutes = ['/', '/propiedades', '/login', '/register', '/forgot-password', '/reset-password'];
+  const publicRoutes = [
+    '/',
+    '/propiedades',
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+    '/about',
+    '/contact',
+    '/privacy',
+    '/terms',
+    '/cookies',
+    '/ref', // Referral landing pages
+  ];
+
   const isPublicRoute = publicRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + '/')
   );
@@ -29,20 +43,16 @@ export async function middleware(request: NextRequest) {
   // Protected routes - verify authentication with backend
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-    const isDevelopment = process.env.NODE_ENV === 'development';
 
     // Prepare headers for backend /verify call
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
 
-    // In development: send Authorization header if available
-    // In production: cookies sent automatically
-    if (isDevelopment && typeof window !== 'undefined') {
-      const token = localStorage?.getItem('access_token');
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
+    // Forward Authorization header if present (for development mode)
+    const authHeader = request.headers.get('authorization');
+    if (authHeader) {
+      headers['Authorization'] = authHeader;
     }
 
     // Forward cookies to backend (critical for production)
@@ -70,18 +80,22 @@ export async function middleware(request: NextRequest) {
 
       // User is authenticated - allow access
       return NextResponse.next();
-    } else {
-      // Authentication failed - redirect to login
+    } else if (response.status === 401 || response.status === 403) {
+      // Authentication/authorization failed - redirect to login
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(loginUrl);
+    } else {
+      // Server error (500, etc.) - log and allow through (let error boundary handle it)
+      console.error(`Backend /verify returned ${response.status} for ${pathname}`);
+      // Don't redirect on server errors - let the app handle it
+      return NextResponse.next();
     }
   } catch (error) {
     console.error('Middleware auth verification error:', error);
-    // On error, redirect to login
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+    // Network error - allow through (backend might be down temporarily)
+    // Let the app handle the error instead of redirecting
+    return NextResponse.next();
   }
 }
 

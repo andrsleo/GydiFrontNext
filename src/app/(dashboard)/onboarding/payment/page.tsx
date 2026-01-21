@@ -14,6 +14,7 @@ import { useSubscribeToPlan } from '@/features/subscriptions/hooks/use-subscript
 import { paymentMethodsApi } from '@/features/subscriptions/api/payment-methods.api';
 import { PLAN_FEATURES } from '@/lib/constants/plans';
 import type { PlanCode } from '@/lib/utils/plan-selection';
+import { useCurrentUser } from '@/features/auth/hooks/use-auth';
 import { toast } from 'sonner';
 
 function PaymentWizardContent() {
@@ -25,9 +26,9 @@ function PaymentWizardContent() {
   const [selectedPlan, setSelectedPlan] = useState<PlanCode | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [cardComplete, setCardComplete] = useState(false);
-  const [billingEmail, setBillingEmail] = useState('');
 
   const { mutate: subscribeToPlan } = useSubscribeToPlan();
+  const { data: currentUser } = useCurrentUser();
 
   // Detect plan from query params
   useEffect(() => {
@@ -60,9 +61,9 @@ function PaymentWizardContent() {
       return;
     }
 
-    if (!billingEmail) {
-      toast.error('Email requerido', {
-        description: 'Por favor ingresa tu email de facturación.',
+    if (!currentUser?.email) {
+      toast.error('Error de autenticación', {
+        description: 'No se pudo obtener tu información de usuario.',
       });
       return;
     }
@@ -85,7 +86,7 @@ function PaymentWizardContent() {
         type: 'card',
         card: cardElement,
         billing_details: {
-          email: billingEmail,
+          email: currentUser.email,
         },
       });
 
@@ -104,7 +105,7 @@ function PaymentWizardContent() {
 
       const savedPaymentMethod = await paymentMethodsApi.create({
         stripePaymentMethodId: paymentMethod.id,
-        billingEmail: billingEmail,
+        billingEmail: currentUser.email,
         isDefault: true,
       });
 
@@ -202,22 +203,18 @@ function PaymentWizardContent() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Billing Email */}
-                  <div>
-                    <Label htmlFor="billingEmail">Email de Facturación</Label>
-                    <Input
-                      id="billingEmail"
-                      type="email"
-                      placeholder="tu@email.com"
-                      value={billingEmail}
-                      onChange={(e) => setBillingEmail(e.target.value)}
-                      required
-                      className="mt-1"
-                    />
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Enviaremos tus recibos a este email
-                    </p>
-                  </div>
+                  {/* User Email Display */}
+                  {currentUser?.email && (
+                    <div className="rounded-lg bg-blue-50 p-3">
+                      <p className="text-sm text-blue-900">
+                        <span className="font-medium">Email de facturación:</span>{' '}
+                        {currentUser.email}
+                      </p>
+                      <p className="mt-1 text-xs text-blue-700">
+                        Los recibos serán enviados a este correo
+                      </p>
+                    </div>
+                  )}
 
                   {/* Stripe Card Element */}
                   <StripeCardElementWrapper

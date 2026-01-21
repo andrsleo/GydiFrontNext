@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { useUser, useLogout } from '@/features/auth/hooks/use-auth';
 import { Bell, Settings, LogOut } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -26,25 +26,26 @@ import {
 import { useProfileByUserId } from '@/features/auth/hooks/use-profile';
 
 export function DashboardHeader() {
-  const { data: session } = useSession();
+  const user = useUser();
+  const { mutate: logout } = useLogout();
   const router = useRouter();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-  const userId = session?.user?.id ? Number(session.user.id) : null;
+  const userId = user?.id ? Number(user.id) : null;
   const { data: profile } = useProfileByUserId(userId!, {
     enabled: !!userId,
   });
 
-  // Get name from profile, fallback to session, then to 'Usuario'
+  // Get name from profile, fallback to user, then to 'Usuario'
   const displayName = profile
-    ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || session?.user?.name || 'Usuario'
-    : session?.user?.name || 'Usuario';
+    ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || user?.name || 'Usuario'
+    : user?.name || 'Usuario';
 
   const handleLogout = () => {
     setShowLogoutDialog(true);
   };
 
   const confirmLogout = async () => {
-    await signOut({ redirect: true, callbackUrl: '/login' });
+    logout();
   };
 
   return (
@@ -68,7 +69,7 @@ export function DashboardHeader() {
                 <div className="hidden text-right sm:block">
                   <p className="text-sm font-medium">{displayName}</p>
                   <p className="text-xs text-muted-foreground">
-                    {session?.user?.email || ''}
+                    {user?.email || ''}
                   </p>
                 </div>
                 <div className="h-10 w-10 overflow-hidden rounded-full bg-primary transition-all duration-200 hover:ring-2 hover:ring-primary hover:ring-offset-2 cursor-pointer">

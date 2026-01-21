@@ -37,6 +37,7 @@ interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  _hasHydrated: boolean;
 }
 
 /**
@@ -70,6 +71,7 @@ export const useAuthStore = create<AuthStore>()(
         user: null,
         isAuthenticated: false,
         isLoading: true, // Start as loading (will check session on mount)
+        _hasHydrated: false,
 
         // Actions
         setUser: (user) =>
@@ -100,6 +102,12 @@ export const useAuthStore = create<AuthStore>()(
           user: state.user,
           isAuthenticated: state.isAuthenticated,
         }),
+        onRehydrateStorage: () => (state) => {
+          // Mark as hydrated when done
+          if (state) {
+            state._hasHydrated = true;
+          }
+        },
       }
     ),
     {
@@ -107,6 +115,9 @@ export const useAuthStore = create<AuthStore>()(
     }
   )
 );
+
+// Hook to check if store has hydrated from localStorage
+export const useHasHydrated = () => useAuthStore((state) => state._hasHydrated);
 
 /**
  * Selectors for better performance (avoid re-renders)

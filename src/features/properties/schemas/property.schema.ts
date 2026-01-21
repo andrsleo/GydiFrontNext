@@ -38,7 +38,7 @@ export const createPropertySchema = z.object({
     .positive('Sale price must be positive')
     .min(1, 'Sale price must be at least 1')
     .max(999999999999.99, 'Sale price is too high')
-    .optional(),
+    .nullish(),
 
   country: z
     .string()
@@ -235,7 +235,7 @@ export const updatePropertySchema = z.object({
     .positive('Sale price must be positive')
     .min(1, 'Sale price must be at least 1')
     .max(999999999999.99, 'Sale price is too high')
-    .optional(),
+    .nullish(),
 
   country: z
     .string()

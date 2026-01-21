@@ -55,12 +55,13 @@ export function useAuth() {
     }
   };
 
-  const register = async (data: RegisterFormData) => {
+  const register = async (data: RegisterFormData, selectedPlanCode?: string) => {
     try {
       setError(null);
 
       // Create user with USER role by default (no role selection)
       // Send firstName and lastName separately to backend
+      // Include selectedPlanCode if provided (for subscription flow)
       await createUserMutation.mutateAsync({
         firstName: data.firstName,
         lastName: data.lastName,
@@ -68,6 +69,7 @@ export function useAuth() {
         password: data.password,
         phoneNumber: data.phoneNumber,
         roleNames: ['USER'], // All users start as USER
+        selectedPlanCode: selectedPlanCode || undefined, // Plan selected during registration (e.g., "PRO", "ELITE")
       });
 
       // After registration, auto-login

@@ -33,10 +33,6 @@ export default async function PropertyImagesPage({ params }: Props) {
         propertyId={id}
         images={mockImages}
         coverImageId="1"
-        onSuccess={() => {
-          // Optional: Add success callback
-          console.log('Images reordered successfully');
-        }}
       />
     </div>
   );

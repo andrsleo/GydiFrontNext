@@ -22,10 +22,7 @@ type UseValidateAirbnbUrlOptions = Omit<
  * ```tsx
  * const { mutate, isPending, data } = useValidateAirbnbUrl({
  *   onSuccess: (data) => {
- *     if (data.valid) {
- *       console.log('Listing ID:', data.listingId);
- *       console.log('Title:', data.title);
- *     }
+ *     
  *   }
  * });
  *

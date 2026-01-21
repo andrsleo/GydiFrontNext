@@ -26,6 +26,7 @@ export interface CreateUserRequest {
   lastName?: string;
   phoneNumber?: string;
   roleNames?: string[];
+  selectedPlanCode?: string; // Plan code selected during registration (e.g., "FREE", "PRO", "ELITE")
 }
 
 /**

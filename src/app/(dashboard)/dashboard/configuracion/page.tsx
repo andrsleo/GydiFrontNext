@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@/features/auth/hooks/use-auth';
 import { User, CreditCard, Bell, Shield, Camera, Save, Crown } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,7 +16,7 @@ import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { toast } from 'sonner';
 
 export default function ConfiguracionPage() {
-  const { data: session, status } = useSession();
+  const user = useUser();
   const [activeTab, setActiveTab] = useState<'profile' | 'membership' | 'payment' | 'notifications' | 'security'>('profile');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
@@ -26,7 +26,7 @@ export default function ConfiguracionPage() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const userId = session?.user?.id ? Number(session.user.id) : null;
+  const userId = user?.id ? Number(user.id) : null;
   const { data: profile } = useProfileByUserId(userId!, {
     enabled: !!userId,
   });
@@ -163,28 +163,8 @@ export default function ConfiguracionPage() {
     { id: 'security', label: 'Seguridad', icon: Shield },
   ];
 
-  // Mostrar loading mientras la sesión carga
-  if (status === 'loading') {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Cargando configuración...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirigir si no hay sesión (aunque el middleware debería evitar esto)
-  if (status === 'unauthenticated') {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <p className="text-destructive">No autenticado. Redirigiendo...</p>
-        </div>
-      </div>
-    );
-  }
+  // No need for loading/auth checks - middleware handles authentication
+  // and useUser() returns data from Zustand store immediately
 
   return (
     <div className="space-y-6">
@@ -238,7 +218,7 @@ export default function ConfiguracionPage() {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-primary-foreground">
-                      {session?.user?.name?.charAt(0) || 'U'}
+                      {user?.name?.charAt(0) || 'U'}
                     </div>
                   )}
                 </div>
@@ -278,9 +258,9 @@ export default function ConfiguracionPage() {
             </div>
 
             {/* Profile Form (Backend Integration) */}
-            {session?.user?.id && (
+            {user?.id && (
               <ProfileSettingsFormNew
-                userId={Number(session.user.id)}
+                userId={Number(user.id)}
                 onDirtyChange={handleDirtyChange}
               />
             )}

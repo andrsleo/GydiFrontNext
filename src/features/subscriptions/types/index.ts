@@ -44,6 +44,11 @@ export type PaymentMethodType =
   | 'STRIPE'
   | 'OTHER';
 
+/**
+ * Payment method status (matches backend PaymentMethodStatus enum)
+ */
+export type PaymentMethodStatus = 'ACTIVE' | 'INACTIVE' | 'EXPIRED' | 'FAILED' | 'REPLACED';
+
 // ==================== Response DTOs ====================
 
 /**
@@ -105,7 +110,10 @@ export interface PaymentMethodResponse {
   cardExpYear: number | null;
   billingEmail: string | null;
   isDefault: boolean;
+  /** @deprecated Use status field instead. Kept for backward compatibility. */
   isActive: boolean;
+  status: PaymentMethodStatus;
+  deletedAt: string | null;
   createdAt: string;
   updatedAt: string | null;
 }

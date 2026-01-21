@@ -1,55 +1,62 @@
 /**
  * Payment Method Card Component
  *
- * Displays a saved payment method (credit/debit card).
+ * Displays a saved payment method (credit/debit card) with actions.
  */
 
 'use client';
 
-import { CreditCard, Check } from 'lucide-react';
+import { CreditCard, Check, Trash2, Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { getCardBrandColor } from '@/lib/constants/card-brands';
+import {
+  isCardExpired,
+  formatCardExpiry,
+  getStatusLabel,
+  getStatusBadgeVariant,
+  isPaymentMethodUsable,
+} from '@/lib/utils/payment-methods';
 import type { PaymentMethodResponse } from '../types';
 
 interface PaymentMethodCardProps {
   paymentMethod: PaymentMethodResponse;
   className?: string;
+  /** Callback when delete button is clicked */
+  onDelete?: (id: number) => void;
+  /** Callback when set default button is clicked */
+  onSetDefault?: (id: number) => void;
+  /** Whether a delete operation is in progress for this card */
+  isDeleting?: boolean;
+  /** Whether a set default operation is in progress for this card */
+  isSettingDefault?: boolean;
 }
-
-const CARD_BRAND_COLORS = {
-  visa: 'bg-blue-600',
-  mastercard: 'bg-orange-600',
-  amex: 'bg-teal-600',
-  discover: 'bg-purple-600',
-  default: 'bg-gray-600',
-};
 
 export function PaymentMethodCard({
   paymentMethod,
   className,
+  onDelete,
+  onSetDefault,
+  isDeleting = false,
+  isSettingDefault = false,
 }: PaymentMethodCardProps) {
-  const brandLower = paymentMethod.cardBrand?.toLowerCase() || 'default';
-  const brandColor =
-    CARD_BRAND_COLORS[brandLower as keyof typeof CARD_BRAND_COLORS] ||
-    CARD_BRAND_COLORS.default;
-
-  const isExpired = () => {
-    if (!paymentMethod.cardExpMonth || !paymentMethod.cardExpYear) {
-      return false;
-    }
-
-    const now = new Date();
-    const expDate = new Date(
-      paymentMethod.cardExpYear,
-      paymentMethod.cardExpMonth - 1
-    );
-
-    return expDate < now;
-  };
+  const brandColor = getCardBrandColor(paymentMethod.cardBrand);
+  const cardIsExpired = isCardExpired(
+    paymentMethod.cardExpMonth,
+    paymentMethod.cardExpYear
+  );
+  const expiryDisplay = formatCardExpiry(
+    paymentMethod.cardExpMonth,
+    paymentMethod.cardExpYear
+  );
+  const isUsable = isPaymentMethodUsable(paymentMethod.status);
+  const statusLabel = getStatusLabel(paymentMethod.status);
+  const statusVariant = getStatusBadgeVariant(paymentMethod.status);
 
   return (
-    <Card className={cn('relative', className)}>
+    <Card className={cn('relative', !isUsable && 'opacity-60', className)}>
       {/* Default Badge */}
       {paymentMethod.isDefault && (
         <div className="absolute -top-2 -right-2">
@@ -78,9 +85,14 @@ export function PaymentMethodCard({
               <p className="font-semibold capitalize">
                 {paymentMethod.cardBrand || 'Card'}
               </p>
-              {isExpired() && (
-                <Badge variant="destructive" className="text-xs">
-                  Expired
+              {/* Status Badge - Primary indicator */}
+              <Badge variant={statusVariant} className="text-xs">
+                {statusLabel}
+              </Badge>
+              {/* Expiration warning - Only show if card is active but expired */}
+              {cardIsExpired && paymentMethod.status === 'ACTIVE' && (
+                <Badge variant="warning" className="text-xs">
+                  Card Expired
                 </Badge>
               )}
             </div>
@@ -89,11 +101,37 @@ export function PaymentMethodCard({
               •••• •••• •••• {paymentMethod.cardLastFour}
             </p>
 
-            {paymentMethod.cardExpMonth && paymentMethod.cardExpYear && (
+            {expiryDisplay && (
               <p className="text-xs text-muted-foreground mt-1">
-                Expires {paymentMethod.cardExpMonth.toString().padStart(2, '0')}
-                /{paymentMethod.cardExpYear.toString().slice(-2)}
+                Expires {expiryDisplay}
               </p>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            {!paymentMethod.isDefault && onSetDefault && isUsable && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onSetDefault(paymentMethod.id)}
+                disabled={isSettingDefault || isDeleting}
+                title="Set as default"
+              >
+                <Star className="h-4 w-4" />
+              </Button>
+            )}
+            {onDelete && isUsable && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onDelete(paymentMethod.id)}
+                disabled={isDeleting || isSettingDefault}
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                title="Remove payment method"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             )}
           </div>
         </div>

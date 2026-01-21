@@ -28,7 +28,8 @@ export interface PaymentMethodResponse {
   cardExpYear: number | null;
   billingEmail: string | null;
   isDefault: boolean;
-  isActive: boolean;
+  status: 'ACTIVE' | 'INACTIVE' | 'EXPIRED' | 'FAILED' | 'REPLACED';
+  deletedAt: string | null;
   createdAt: string;
   updatedAt: string | null;
 }

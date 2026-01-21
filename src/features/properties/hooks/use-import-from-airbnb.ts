@@ -24,7 +24,6 @@ type UseImportFromAirbnbOptions = Omit<
  * ```tsx
  * const { mutate, isPending } = useImportFromAirbnb({
  *   onSuccess: (data) => {
- *     console.log('Property imported:', data.id);
  *     router.push(`/dashboard/properties/${data.id}`);
  *   }
  * });

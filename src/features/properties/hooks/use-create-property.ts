@@ -24,7 +24,6 @@ type UseCreatePropertyOptions = Omit<
  * ```tsx
  * const { mutate, isPending } = useCreateProperty({
  *   onSuccess: (data) => {
- *     console.log('Property created:', data.id);
  *     router.push(`/dashboard/properties/${data.id}`);
  *   }
  * });

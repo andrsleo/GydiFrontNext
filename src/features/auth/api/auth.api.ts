@@ -32,9 +32,7 @@ export interface LoginResponse {
   user: {
     id: number;
     email: string;
-    name: string;
-    firstName: string;
-    lastName: string;
+    name: string; // Backend returns single name field (not firstName/lastName)
     phoneNumber?: string;
     roleNames: string[];
     accountVerified: boolean;
@@ -45,11 +43,19 @@ export interface LoginResponse {
 }
 
 /**
- * Verify response (from backend)
+ * Verify response (from backend /api/v1/auth/verify)
+ * Backend returns AuthResponse structure
  */
 export interface VerifyResponse {
-  valid: boolean;
-  user?: AuthUser;
+  tokenType: string;
+  user: {
+    id: number;
+    email: string;
+    name: string; // Single name field from JWT
+    phoneNumber?: string;
+    roleNames: string[];
+    createdAt?: string;
+  };
 }
 
 /**
@@ -79,7 +85,7 @@ export const authApi = {
     return {
       id: data.user.id.toString(),
       email: data.user.email,
-      name: `${data.user.firstName} ${data.user.lastName}`.trim() || data.user.email,
+      name: data.user.name || data.user.email, // Use name directly from backend
       role: (data.user.roleNames?.[0] as any) || 'USER',
       activePlan: 'FREE', // Default plan, should be fetched from backend
       capabilities: {
@@ -115,30 +121,45 @@ export const authApi = {
    * Verify current session
    *
    * Calls backend /verify endpoint to check if token is still valid
+   * Returns null if token is invalid or expired
    */
-  async verify(): Promise<VerifyResponse> {
+  async verify(): Promise<VerifyResponse | null> {
     try {
       const { data } = await apiClient.get<VerifyResponse>('/api/v1/auth/verify');
       return data;
     } catch (error) {
-      return { valid: false };
+      // Token is invalid, expired, or not present
+      return null;
     }
   },
 
   /**
    * Get current user from backend
    *
-   * Fetches fresh user data from backend
+   * Fetches fresh user data from backend and transforms it to AuthUser format
    */
   async getCurrentUser(): Promise<AuthUser | null> {
     try {
       const verifyResponse = await this.verify();
 
-      if (!verifyResponse.valid || !verifyResponse.user) {
+      if (!verifyResponse || !verifyResponse.user) {
         return null;
       }
 
-      return verifyResponse.user;
+      // Transform backend user to AuthUser format (same as login)
+      return {
+        id: verifyResponse.user.id.toString(),
+        email: verifyResponse.user.email,
+        name: verifyResponse.user.name || verifyResponse.user.email, // Use name directly from backend
+        role: (verifyResponse.user.roleNames?.[0] as any) || 'USER',
+        activePlan: 'FREE', // Default plan, should be fetched from backend
+        capabilities: {
+          canPublish: true,
+          canRefer: true,
+          canRent: true,
+        },
+        accountVerified: true, // JWT tokens are only issued to verified users
+      };
     } catch (error) {
       console.error('Error fetching current user:', error);
       return null;

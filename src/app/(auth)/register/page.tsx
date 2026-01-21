@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ProgressBar } from '@/components/shared/progress-bar';
-import { getPlanSelection, clearPlanSelection, type PlanCode } from '@/lib/utils/plan-selection';
+import type { PlanCode } from '@/lib/utils/plan-selection';
 import { PLAN_FEATURES } from '@/lib/constants/plans';
 
 function RegisterForm() {
@@ -35,23 +35,20 @@ function RegisterForm() {
     resolver: zodResolver(registerSchema),
   });
 
-  // Detect selected plan from query param (priority 1) or localStorage (priority 2)
+  // Detect selected plan from query param only
   useEffect(() => {
     const planFromQuery = searchParams.get('plan')?.toUpperCase() as PlanCode | null;
 
     if (planFromQuery && ['FREE', 'PRO', 'ELITE'].includes(planFromQuery)) {
       setSelectedPlan(planFromQuery);
-    } else {
-      const planFromStorage = getPlanSelection();
-      if (planFromStorage) {
-        setSelectedPlan(planFromStorage);
-      }
     }
   }, [searchParams]);
 
   const onSubmit = async (data: RegisterFormData) => {
     setErrorMessage(null);
-    const result = await registerUser(data);
+
+    // Pass selectedPlan to backend so it knows whether to create FREE subscription or not
+    const result = await registerUser(data, selectedPlan || undefined);
 
     if (!result.success) {
       setErrorMessage(result.error || 'Error al registrar usuario');
@@ -59,9 +56,6 @@ function RegisterForm() {
     }
 
     // Registration successful!
-    // Clear localStorage selection
-    clearPlanSelection();
-
     // Redirect based on selected plan
     if (selectedPlan && selectedPlan !== 'FREE') {
       // For paid plans, redirect to payment wizard

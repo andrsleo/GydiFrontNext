@@ -30,7 +30,6 @@ type UseUploadVideosOptions = Omit<
  * ```tsx
  * const { mutate, isPending } = useUploadVideos({
  *   onSuccess: (data) => {
- *     console.log(`Uploaded ${data.length} videos`);
  *   }
  * });
  *
