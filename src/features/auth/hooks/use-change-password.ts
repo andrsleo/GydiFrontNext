@@ -20,7 +20,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
-import { fetchCsrfToken } from '@/lib/utils/csrf';
 
 export interface ChangePasswordRequest {
   currentPassword: string;
@@ -35,12 +34,9 @@ export interface ChangePasswordResponse {
 /**
  * Changes user password by verifying current password
  *
- * SECURITY: Refreshes CSRF token before making the request to ensure validity
+ * SECURITY: Uses JWT authentication (no CSRF tokens needed)
  */
 async function changePassword(data: ChangePasswordRequest): Promise<ChangePasswordResponse> {
-  // Refresh CSRF token before sensitive operation
-  await fetchCsrfToken();
-
   const response = await apiClient.put<ChangePasswordResponse>(
     '/api/v1/users/password',
     data

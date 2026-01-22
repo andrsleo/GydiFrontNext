@@ -3,8 +3,15 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
-import { useCsrfToken } from '@/hooks/use-csrf-token';
 
+/**
+ * Providers Component
+ *
+ * Sets up React Query for server state management.
+ *
+ * NOTE: This app uses JWT stateless authentication (not CSRF).
+ * The backend has CSRF protection disabled in SecurityConfig.
+ */
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -18,14 +25,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
       })
   );
-
-  // Initialize CSRF token on app load
-  useCsrfToken({
-    fetchOnMount: true,
-    onError: (error) => {
-      console.error('Failed to initialize CSRF token:', error);
-    },
-  });
 
   return (
     <QueryClientProvider client={queryClient}>
