@@ -8,10 +8,14 @@
  * - Production: Backend creates httpOnly cookies (XSS-proof)
  * - Development: Backend returns JSON, frontend stores in localStorage
  * - Backend controls 100% of authentication flow
+ *
+ * SECURITY NOTE:
+ * - Backend uses JWT stateless authentication (NO CSRF tokens needed)
+ * - CSRF protection is DISABLED in backend SecurityConfig
+ * - Authentication via Authorization header (dev) or httpOnly cookies (prod)
  */
 
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
-import { getCsrfToken } from '@/lib/utils/csrf';
 
 /**
  * Detect environment
@@ -31,21 +35,15 @@ export const apiClient = axios.create({
 });
 
 /**
- * Request interceptor - Add authentication token and CSRF protection
+ * Request interceptor - Add JWT authentication token
  *
  * BACKEND-ONLY AUTHENTICATION STRATEGY:
- * 1. JWT Authentication:
- *    - Development: Use Authorization header with token from localStorage
- *    - Production: httpOnly cookies sent automatically via withCredentials
+ * - Development: Use Authorization header with JWT token from localStorage
+ * - Production: httpOnly cookies sent automatically via withCredentials
  *
- * 2. CSRF Protection:
- *    - For state-changing requests (POST, PUT, PATCH, DELETE), include CSRF token
- *    - Token is read from XSRF-TOKEN cookie (set by backend)
- *    - Token is sent in X-XSRF-TOKEN header (Spring Security convention)
- *    - Read-only requests (GET, HEAD, OPTIONS) don't need CSRF protection
- *
- * In production: backend sets httpOnly cookie, interceptor does NOTHING
- * In development: interceptor reads token from localStorage
+ * NO CSRF TOKENS:
+ * - Backend uses JWT stateless authentication
+ * - CSRF protection is disabled in backend SecurityConfig
  */
 apiClient.interceptors.request.use(
   async (config) => {
@@ -54,7 +52,6 @@ apiClient.interceptors.request.use(
       '/api/v1/auth/login',
       '/api/v1/auth/register',
       '/api/v1/users/register', // User registration endpoint
-      '/api/csrf', // CSRF token endpoint
       '/api/v1/auth/refresh', // Refresh token endpoint
     ];
     const isPublicEndpoint = publicEndpoints.some((endpoint) =>
@@ -71,30 +68,6 @@ apiClient.interceptors.request.use(
       }
       // In production: httpOnly cookies are sent automatically via withCredentials
       // No need to add Authorization header - backend extracts token from cookie
-    }
-
-    // Add CSRF token for state-changing requests
-    // CSRF protection is only needed for requests that modify data
-    const methodsRequiringCsrf = ['POST', 'PUT', 'PATCH', 'DELETE'];
-    const method = config.method?.toUpperCase();
-
-    if (method && methodsRequiringCsrf.includes(method) && !isPublicEndpoint) {
-      if (typeof window !== 'undefined') {
-        // Get CSRF token from cookie
-        const csrfToken = getCsrfToken();
-
-        if (csrfToken) {
-          // Add CSRF token to request header
-          config.headers['X-XSRF-TOKEN'] = csrfToken;
-        } else {
-          // Log warning if CSRF token is missing for protected endpoint
-          console.warn(
-            `CSRF token not found for ${method} request to ${config.url}. ` +
-            'The request may be rejected by the server. ' +
-            'Call fetchCsrfToken() to obtain a token.'
-          );
-        }
-      }
     }
 
     return config;
@@ -173,18 +146,7 @@ apiClient.interceptors.response.use(
 
       switch (status) {
         case 403:
-          // Could be CSRF error or permission error
-          const errorMessage = (error.response.data as any)?.message || '';
-          const isCsrfError = errorMessage.toLowerCase().includes('csrf') ||
-                             errorMessage.toLowerCase().includes('invalid csrf token');
-
-          if (isCsrfError) {
-            console.error('CSRF token validation failed:', error.response.data);
-            // You could automatically retry the request with a new token here
-            // For now, just log the error - the user should call fetchCsrfToken() manually
-          } else {
-            console.error('Permission denied:', error.response.data);
-          }
+          console.error('Permission denied:', error.response.data);
           break;
         case 404:
           console.error('Resource not found:', error.response.data);
