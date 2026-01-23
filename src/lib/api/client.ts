@@ -35,15 +35,16 @@ export const apiClient = axios.create({
 });
 
 /**
- * Request interceptor - Add JWT authentication token
+ * Request interceptor - Add JWT authentication token and CSRF token
  *
  * BACKEND-ONLY AUTHENTICATION STRATEGY:
  * - Development: Use Authorization header with JWT token from localStorage
  * - Production: httpOnly cookies sent automatically via withCredentials
  *
- * NO CSRF TOKENS:
- * - Backend uses JWT stateless authentication
- * - CSRF protection is disabled in backend SecurityConfig
+ * CSRF PROTECTION:
+ * - Backend uses CSRF tokens for cross-domain requests (Vercel → Railway)
+ * - CSRF tokens sent in X-XSRF-TOKEN header for POST/PUT/PATCH/DELETE
+ * - GET requests don't need CSRF tokens (safe methods)
  */
 apiClient.interceptors.request.use(
   async (config) => {
@@ -53,6 +54,7 @@ apiClient.interceptors.request.use(
       '/api/v1/auth/register',
       '/api/v1/users/register', // User registration endpoint
       '/api/v1/auth/refresh', // Refresh token endpoint
+      '/api/v1/auth/csrf', // CSRF token endpoint
     ];
     const isPublicEndpoint = publicEndpoints.some((endpoint) =>
       config.url?.startsWith(endpoint)
@@ -70,13 +72,64 @@ apiClient.interceptors.request.use(
       // No need to add Authorization header - backend extracts token from cookie
     }
 
+    // ✅ Add CSRF token for state-changing requests
+    const method = config.method?.toUpperCase();
+    const requiresCsrf = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method || '');
+
+    if (requiresCsrf && !isPublicEndpoint && typeof window !== 'undefined') {
+      const csrfToken = getCsrfTokenFromCookie();
+
+      if (csrfToken) {
+        config.headers['X-XSRF-TOKEN'] = csrfToken;
+      } else {
+        console.warn(
+          `[API Client] CSRF token not found for ${method} request to ${config.url}. ` +
+          'Request may be rejected by server. Call /api/v1/auth/csrf to obtain token.'
+        );
+      }
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
 )
 
 /**
- * Response interceptor - Handle errors and token refresh
+ * Extract CSRF token from cookie (XSRF-TOKEN)
+ *
+ * The CSRF token is set by the backend in a non-httpOnly cookie
+ * so that JavaScript can read it and send it in the X-XSRF-TOKEN header.
+ */
+function getCsrfTokenFromCookie(): string | null {
+  if (typeof document === 'undefined') return null; // SSR safety
+
+  const csrfCookie = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('XSRF-TOKEN='));
+
+  if (!csrfCookie) return null;
+
+  const token = csrfCookie.split('=')[1];
+  return decodeURIComponent(token);
+}
+
+/**
+ * Fetch CSRF token from backend
+ *
+ * Call this on app initialization to ensure CSRF token cookie is set.
+ * The backend will automatically set the XSRF-TOKEN cookie in the response.
+ */
+export async function fetchCsrfToken(): Promise<void> {
+  try {
+    await apiClient.get('/api/v1/auth/csrf');
+  } catch (error) {
+    console.error('[API Client] Failed to fetch CSRF token:', error);
+    // Don't throw - app can still work without CSRF token for GET requests
+  }
+}
+
+/**
+ * Response interceptor - Handle errors, token refresh, and CSRF retries
  */
 apiClient.interceptors.response.use(
   (response) => response,
@@ -140,13 +193,34 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Handle CSRF token validation failure (403) - Retry once with new token
+    if (error.response?.status === 403 && !originalRequest._csrfRetry) {
+      originalRequest._csrfRetry = true;
+
+      try {
+        // Re-fetch CSRF token
+        await fetchCsrfToken();
+
+        // Retry original request with new CSRF token
+        const newCsrfToken = getCsrfTokenFromCookie();
+        if (newCsrfToken && originalRequest.method?.toUpperCase() !== 'GET') {
+          originalRequest.headers['X-XSRF-TOKEN'] = newCsrfToken;
+        }
+
+        return apiClient(originalRequest);
+      } catch (csrfError) {
+        console.error('[API Client] CSRF token refresh failed:', csrfError);
+        return Promise.reject(error);
+      }
+    }
+
     // Handle other errors
     if (error.response) {
       const status = error.response.status;
 
       switch (status) {
         case 403:
-          console.error('Permission denied:', error.response.data);
+          console.error('Permission denied (possibly CSRF validation failed):', error.response.data);
           break;
         case 404:
           console.error('Resource not found:', error.response.data);
