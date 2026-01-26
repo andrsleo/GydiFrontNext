@@ -115,12 +115,12 @@ describe('subscription utils', () => {
       });
 
       it('should return undefined when plans is null', () => {
-        const result = getRecommendedUpgradePlan(null as any, 'FREE');
+        const result = getRecommendedUpgradePlan(null as unknown as PlanResponse[], 'FREE');
         expect(result).toBeUndefined();
       });
 
       it('should return undefined when plans is undefined', () => {
-        const result = getRecommendedUpgradePlan(undefined as any, 'FREE');
+        const result = getRecommendedUpgradePlan(undefined as unknown as PlanResponse[], 'FREE');
         expect(result).toBeUndefined();
       });
 
@@ -132,7 +132,7 @@ describe('subscription utils', () => {
 
       it('should return undefined for unknown plan code (not FREE)', () => {
         const plans = [freePlan, proPlan, plusPlan];
-        const result = getRecommendedUpgradePlan(plans, 'UNKNOWN' as any);
+        const result = getRecommendedUpgradePlan(plans, 'UNKNOWN' as string);
         // Unknown plan not found in list and not 'FREE', so no recommendation
         expect(result).toBeUndefined();
       });

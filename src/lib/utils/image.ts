@@ -29,7 +29,7 @@ export function getImagePath(url: string | undefined | null): string {
   if (!url) return '/images/property-placeholder.jpg';
 
   try {
-    const urlObj = new URL(url);
+    const _urlObj = new URL(url);
 
     // In development, return full URL for backend images
     if (process.env.NODE_ENV === 'development' && url.includes('localhost:8080')) {
