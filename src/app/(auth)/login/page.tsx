@@ -186,6 +186,11 @@ function LoginContent() {
         description: 'Iniciaste sesión correctamente. Redirigiendo...',
         duration: 3000,
       });
+
+      // ✅ FIX: Redirect to dashboard after successful login
+      // Get callbackUrl from query params or default to /dashboard
+      const callbackUrl = searchParams?.get('callbackUrl') || '/dashboard';
+      router.push(callbackUrl);
     }
   };
 

@@ -4,15 +4,16 @@
  * Axios instance configured with interceptors for authentication,
  * error handling, and request/response transformation.
  *
- * BACKEND-ONLY AUTHENTICATION:
- * - Production: Backend creates httpOnly cookies (XSS-proof)
- * - Development: Backend returns JSON, frontend stores in localStorage
- * - Backend controls 100% of authentication flow
+ * COOKIES-ONLY AUTHENTICATION (All Environments):
+ * - Backend always sets httpOnly cookies (local, dev, prod)
+ * - Cookies sent automatically via withCredentials: true
+ * - Next.js middleware requires cookies (can't read localStorage server-side)
  *
- * SECURITY NOTE:
- * - Backend uses JWT stateless authentication (NO CSRF tokens needed)
- * - CSRF protection is DISABLED in backend SecurityConfig
- * - Authentication via Authorization header (dev) or httpOnly cookies (prod)
+ * SECURITY NOTES:
+ * - httpOnly cookies prevent XSS attacks (JavaScript cannot access)
+ * - SameSite=Lax for localhost (same-origin protection)
+ * - SameSite=None + Secure for production (cross-domain with HTTPS)
+ * - CSRF protection required for cross-domain requests
  */
 
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
@@ -30,16 +31,17 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // CRITICAL: Send cookies automatically in production
+  withCredentials: true, // CRITICAL: Send httpOnly cookies automatically
   timeout: 30000,
 });
 
 /**
- * Request interceptor - Add JWT authentication token and CSRF token
+ * Request interceptor - Add CSRF token for state-changing requests
  *
- * BACKEND-ONLY AUTHENTICATION STRATEGY:
- * - Development: Use Authorization header with JWT token from localStorage
- * - Production: httpOnly cookies sent automatically via withCredentials
+ * COOKIES-ONLY AUTHENTICATION STRATEGY:
+ * - httpOnly cookies sent automatically via withCredentials: true
+ * - Backend extracts token from cookie (priority) or Authorization header (fallback)
+ * - No need to manually add Authorization header
  *
  * CSRF PROTECTION:
  * - Backend uses CSRF tokens for cross-domain requests (Vercel → Railway)
@@ -48,7 +50,7 @@ export const apiClient = axios.create({
  */
 apiClient.interceptors.request.use(
   async (config) => {
-    // Skip adding token for public endpoints (exact matches only)
+    // Skip adding CSRF token for public endpoints
     const publicEndpoints = [
       '/api/v1/auth/login',
       '/api/v1/auth/register',
@@ -60,17 +62,10 @@ apiClient.interceptors.request.use(
       config.url?.startsWith(endpoint)
     );
 
-    if (!isPublicEndpoint && typeof window !== 'undefined') {
-      // ONLY in development: use Authorization header with token from localStorage
-      if (isDevelopment) {
-        const token = localStorage.getItem('access_token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-      }
-      // In production: httpOnly cookies are sent automatically via withCredentials
-      // No need to add Authorization header - backend extracts token from cookie
-    }
+    // ✅ COOKIES-ONLY STRATEGY (All Environments)
+    // httpOnly cookies are sent automatically via withCredentials: true
+    // Backend extracts token from cookie (priority) or Authorization header (fallback)
+    // No need to manually add Authorization header - cookies handle everything
 
     // ✅ Add CSRF token for state-changing requests
     const method = config.method?.toUpperCase();
@@ -81,11 +76,25 @@ apiClient.interceptors.request.use(
 
       if (csrfToken) {
         config.headers['X-XSRF-TOKEN'] = csrfToken;
+        // console.log(`[API Client] ✅ CSRF token added for ${method} ${config.url}`); // Commented to reduce console noise
       } else {
         console.warn(
-          `[API Client] CSRF token not found for ${method} request to ${config.url}. ` +
-          'Request may be rejected by server. Call /api/v1/auth/csrf to obtain token.'
+          `[API Client] ⚠️ CSRF token NOT FOUND for ${method} request to ${config.url}`
         );
+        console.warn('[API Client] Available cookies:', document.cookie);
+        console.warn('[API Client] Attempting to fetch CSRF token...');
+
+        // Try to fetch CSRF token immediately
+        await fetchCsrfToken();
+
+        // Retry getting the token
+        const retryToken = getCsrfTokenFromCookie();
+        if (retryToken) {
+          config.headers['X-XSRF-TOKEN'] = retryToken;
+          // console.log('[API Client] ✅ CSRF token fetched and added successfully'); // Commented to reduce console noise
+        } else {
+          console.error('[API Client] ❌ Failed to obtain CSRF token. Request will likely fail with 403.');
+        }
       }
     }
 
@@ -142,47 +151,22 @@ apiClient.interceptors.response.use(
 
       if (typeof window !== 'undefined') {
         try {
-          if (isDevelopment) {
-            // DEVELOPMENT: Send refresh_token from localStorage
-            const refreshToken = localStorage.getItem('refresh_token');
+          // ✅ COOKIES-ONLY REFRESH STRATEGY (All Environments)
+          // Backend reads refresh_token from httpOnly cookie
+          // Backend validates, generates new tokens, sets new cookies automatically
+          await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/auth/refresh`,
+            {}, // No body needed - refresh_token is in cookie
+            { withCredentials: true }
+          );
 
-            if (!refreshToken) {
-              // No refresh token available - redirect to login
-              window.location.href = '/login?error=SessionExpired';
-              return Promise.reject(error);
-            }
-
-            // Call refresh endpoint
-            const { data } = await axios.post(
-              `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/auth/refresh`,
-              { refreshToken },
-              { withCredentials: true }
-            );
-
-            // Store new tokens
-            localStorage.setItem('access_token', data.token);
-            if (data.refreshToken) {
-              localStorage.setItem('refresh_token', data.refreshToken);
-            }
-
-            // Update Authorization header for retry
-            originalRequest.headers.Authorization = `Bearer ${data.token}`;
-          } else {
-            // PRODUCTION: Backend reads refresh_token from httpOnly cookie
-            await axios.post(
-              `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/auth/refresh`,
-              {},
-              { withCredentials: true }
-            );
-            // Backend automatically updates cookies
-            // No need to store anything in frontend
-          }
-
-          // Retry the original request
+          // Retry the original request (cookies automatically sent)
           return apiClient(originalRequest);
         } catch (refreshError) {
-          // Refresh failed - clear tokens and redirect to login
-          if (isDevelopment) {
+          // Refresh failed - clean up any old tokens from storage
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('access_token');
+            sessionStorage.removeItem('refresh_token');
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
           }

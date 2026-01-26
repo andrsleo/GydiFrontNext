@@ -65,8 +65,8 @@ export const authApi = {
   /**
    * Login
    *
-   * Development: Backend returns { user, token, refreshToken }
-   * Production: Backend returns { user }, sets httpOnly cookies
+   * All environments: Backend sets httpOnly cookies
+   * Cookies are sent automatically via withCredentials: true
    */
   async login(credentials: LoginRequest): Promise<AuthUser> {
     const { data } = await apiClient.post<LoginResponse>(
@@ -74,12 +74,29 @@ export const authApi = {
       credentials
     );
 
-    // In development, store tokens in localStorage
-    if (isDevelopment && data.token && data.refreshToken) {
-      localStorage.setItem('access_token', data.token);
-      localStorage.setItem('refresh_token', data.refreshToken);
+    // ✅ COOKIES-ONLY STRATEGY
+    // Backend always sets httpOnly cookies (local, dev, prod)
+    // No need to store tokens manually - cookies are sent automatically
+
+    // ✅ CRITICAL: Fetch CSRF token after successful login
+    // CSRF token is required for all state-changing requests (POST, PUT, PATCH, DELETE)
+    try {
+      await apiClient.get('/api/v1/auth/csrf');
+      console.log('[Auth] ✅ CSRF token fetched successfully after login');
+
+      // Verify the cookie was set
+      if (typeof document !== 'undefined') {
+        const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='));
+        if (csrfCookie) {
+          console.log('[Auth] ✅ CSRF token cookie confirmed:', csrfCookie.substring(0, 30) + '...');
+        } else {
+          console.warn('[Auth] ⚠️ CSRF token cookie NOT found after fetch');
+        }
+      }
+    } catch (error) {
+      console.error('[Auth] ❌ Failed to fetch CSRF token after login:', error);
+      // Don't throw - login was successful, CSRF token fetch can fail
     }
-    // In production, backend has already set httpOnly cookies
 
     // Transform backend user to AuthUser format
     return {
@@ -108,12 +125,14 @@ export const authApi = {
       // Call backend logout endpoint
       await apiClient.post('/api/v1/auth/logout');
     } finally {
-      // Always clear localStorage in development
-      if (isDevelopment) {
+      // ✅ Clean up any old tokens from storage (migration from old strategy)
+      // Backend clears cookies automatically
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('refresh_token');
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
       }
-      // In production, backend has already cleared cookies
     }
   },
 
@@ -169,29 +188,14 @@ export const authApi = {
   /**
    * Refresh token
    *
-   * Development: Send refresh_token from localStorage
-   * Production: Backend reads refresh_token from httpOnly cookie
+   * All environments: Backend reads refresh_token from httpOnly cookie
+   * Backend returns new tokens and sets new cookies automatically
    */
   async refresh(): Promise<void> {
-    if (isDevelopment) {
-      const refreshToken = localStorage.getItem('refresh_token');
-
-      if (!refreshToken) {
-        throw new Error('No refresh token available');
-      }
-
-      const { data } = await apiClient.post('/api/v1/auth/refresh', {
-        refreshToken,
-      });
-
-      // Store new tokens
-      localStorage.setItem('access_token', data.token);
-      if (data.refreshToken) {
-        localStorage.setItem('refresh_token', data.refreshToken);
-      }
-    } else {
-      // Production: Backend handles everything via cookies
-      await apiClient.post('/api/v1/auth/refresh', {});
-    }
+    // ✅ COOKIES-ONLY STRATEGY
+    // Backend reads refresh_token from cookie, validates it,
+    // generates new tokens, and sets new cookies automatically
+    // No need to send refresh_token in body - it's in the cookie
+    await apiClient.post('/api/v1/auth/refresh', {});
   },
 };

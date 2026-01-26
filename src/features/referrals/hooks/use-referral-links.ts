@@ -26,10 +26,7 @@ export function useReferralLinks() {
 
   return useQuery({
     queryKey: referralKeys.links(),
-    queryFn: () => {
-      const token = localStorage.getItem('access_token') || undefined;
-      return getReferralLinks(token);
-    },
+    queryFn: getReferralLinks,
     staleTime: 1000 * 60, // 1 minute
     enabled: isAuthenticated, // Only fetch when authenticated
   });
@@ -43,10 +40,7 @@ export function useReferralLink(id: string) {
 
   return useQuery({
     queryKey: referralKeys.link(id),
-    queryFn: () => {
-      const token = localStorage.getItem('access_token') || undefined;
-      return getReferralLinkById(id, token);
-    },
+    queryFn: () => getReferralLinkById(id),
     enabled: !!id && isAuthenticated,
     staleTime: 1000 * 60,
   });
@@ -59,10 +53,7 @@ export function useGenerateReferralLink() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: GenerateReferralLinkRequest) => {
-      const token = localStorage.getItem('access_token') || undefined;
-      return generateReferralLink(request, token);
-    },
+    mutationFn: generateReferralLink,
     onSuccess: (data: GenerateReferralLinkResponse) => {
       // Invalidate links query to refetch
       queryClient.invalidateQueries({ queryKey: referralKeys.links() });
