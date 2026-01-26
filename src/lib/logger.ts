@@ -29,7 +29,7 @@ export const logger = {
    * General purpose logging
    * Use for non-critical information
    */
-  log: (...args: any[]) => {
+  log: (...args: unknown[]) => {
     if (isDevelopment) {
       console.log(...args);
     }
@@ -39,7 +39,7 @@ export const logger = {
    * Debug-level logging
    * Use for detailed debugging information
    */
-  debug: (...args: any[]) => {
+  debug: (...args: unknown[]) => {
     if (isDevelopment) {
       console.debug(...args);
     }
@@ -49,7 +49,7 @@ export const logger = {
    * Info-level logging
    * Use for informational messages
    */
-  info: (...args: any[]) => {
+  info: (...args: unknown[]) => {
     if (isDevelopment) {
       console.info(...args);
     }
@@ -59,7 +59,7 @@ export const logger = {
    * Warning-level logging
    * Use for non-critical issues
    */
-  warn: (...args: any[]) => {
+  warn: (...args: unknown[]) => {
     if (isDevelopment) {
       console.warn(...args);
     }
@@ -70,7 +70,7 @@ export const logger = {
    * IMPORTANT: These are shown in production but sanitized
    * Never log full error objects that may contain sensitive data
    */
-  error: (message: string, error?: any) => {
+  error: (message: string, error?: unknown) => {
     if (isDevelopment) {
       console.error(message, error);
     } else {
@@ -83,7 +83,7 @@ export const logger = {
    * Table logging (development only)
    * Use for displaying structured data
    */
-  table: (data: any) => {
+  table: (data: unknown) => {
     if (isDevelopment) {
       console.table(data);
     }
@@ -114,7 +114,7 @@ export const logger = {
  * @param error Error object
  * @param context Additional context (component name, user action, etc.)
  */
-export function logError(error: Error | unknown, context?: Record<string, any>) {
+export function logError(error: Error | unknown, context?: Record<string, unknown>) {
   if (isDevelopment) {
     console.error('Error:', error);
     if (context) {
