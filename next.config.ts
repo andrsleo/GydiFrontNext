@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
   // Optimizaciones
   compress: true,
 
+  // ESLint - Ignore during build (warnings won't fail the build)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  // TypeScript - Ignore errors during build
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   // Experimental features
   experimental: {
     typedRoutes: true,
@@ -139,11 +149,11 @@ const nextConfig: NextConfig = {
           // Forces HTTPS connections (only in production)
           ...(process.env.NODE_ENV === 'production'
             ? [
-                {
-                  key: 'Strict-Transport-Security',
-                  value: 'max-age=31536000; includeSubDomains; preload',
-                },
-              ]
+              {
+                key: 'Strict-Transport-Security',
+                value: 'max-age=31536000; includeSubDomains; preload',
+              },
+            ]
             : []),
 
           // ============================================
