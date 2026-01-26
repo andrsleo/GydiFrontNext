@@ -51,12 +51,15 @@ export function useLogin(
       // Update Zustand store
       setUser(user);
 
-      // Call user's onSuccess if provided
-      // @ts-expect-error - TanStack Query signature mismatch
-      options?.onSuccess?.(user, variables, context);
+      // Check if user provided custom onSuccess handler
+      const hasCustomSuccess = options?.onSuccess !== undefined && options.onSuccess !== null;
 
-      // Default behavior: redirect to dashboard
-      if (!options?.onSuccess) {
+      if (hasCustomSuccess && options?.onSuccess) {
+        // Call user's custom onSuccess handler
+        // @ts-expect-error - TanStack Query v5 type signature issue with context parameter
+        options.onSuccess(user, variables, context);
+      } else {
+        // Default behavior: redirect to dashboard
         router.push('/dashboard');
       }
     },
@@ -96,12 +99,15 @@ export function useLogout(
       // Clear Zustand store
       logout();
 
-      // Call user's onSuccess if provided
-      // @ts-expect-error - TanStack Query signature mismatch
-      options?.onSuccess?.(data, variables, context);
+      // Check if user provided custom onSuccess handler
+      const hasCustomSuccess = options?.onSuccess !== undefined && options.onSuccess !== null;
 
-      // Default behavior: redirect to login
-      if (!options?.onSuccess) {
+      if (hasCustomSuccess && options?.onSuccess) {
+        // Call user's custom onSuccess handler
+        // @ts-expect-error - TanStack Query v5 type signature issue with context parameter
+        options.onSuccess(data, variables, context);
+      } else {
+        // Default behavior: redirect to login
         router.push('/login');
       }
     },

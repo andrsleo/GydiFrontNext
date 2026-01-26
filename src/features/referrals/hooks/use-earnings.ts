@@ -16,10 +16,7 @@ export function useEarnings(currentPlan?: string) {
 
   return useQuery({
     queryKey: [...referralKeys.earnings(), currentPlan],
-    queryFn: () => {
-      const token = localStorage.getItem('access_token') || undefined;
-      return getEarnings(currentPlan, token);
-    },
+    queryFn: () => getEarnings(currentPlan),
     staleTime: 1000 * 60 * 5, // 5 minutes
     enabled: isAuthenticated, // Only fetch when authenticated
   });

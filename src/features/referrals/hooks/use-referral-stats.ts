@@ -16,10 +16,7 @@ export function useReferralStats(affiliateId?: number) {
 
   return useQuery({
     queryKey: [...referralKeys.stats(), affiliateId],
-    queryFn: () => {
-      const token = localStorage.getItem('access_token') || undefined;
-      return getReferralStats(affiliateId, token);
-    },
+    queryFn: () => getReferralStats(affiliateId),
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchInterval: 1000 * 60 * 5, // Auto-refresh every 5 minutes
     enabled: isAuthenticated, // Only fetch when authenticated
