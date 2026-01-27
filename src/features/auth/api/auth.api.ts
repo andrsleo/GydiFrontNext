@@ -13,6 +13,36 @@ import { apiClient } from '@/lib/api/client';
 import type { AuthUser } from '@/store/auth-store';
 
 /**
+ * Set a session marker cookie on the frontend domain (Vercel).
+ *
+ * In cross-origin setups (Vercel frontend → Railway backend), httpOnly auth cookies
+ * are set on the backend domain and are NOT accessible from the frontend domain.
+ * The Next.js middleware runs on Vercel's server and can only read Vercel-domain cookies.
+ *
+ * This marker cookie allows the middleware to know the user is authenticated
+ * without needing to access the Railway-domain auth cookies.
+ * Actual auth verification happens client-side via API calls to Railway.
+ */
+function setSessionMarker(user: { id: number; name: string; email: string }) {
+  if (typeof document === 'undefined') return;
+  // Encode minimal user info for middleware (NOT a security token)
+  const value = encodeURIComponent(JSON.stringify({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  }));
+  document.cookie = `gydi_session=${value}; path=/; max-age=86400; SameSite=Lax; Secure`;
+}
+
+/**
+ * Clear the session marker cookie (logout).
+ */
+function clearSessionMarker() {
+  if (typeof document === 'undefined') return;
+  document.cookie = 'gydi_session=; path=/; max-age=0; SameSite=Lax; Secure';
+}
+
+/**
  * Detect environment
  */
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -78,24 +108,17 @@ export const authApi = {
     // Backend always sets httpOnly cookies (local, dev, prod)
     // No need to store tokens manually - cookies are sent automatically
 
-    // ✅ CRITICAL: Fetch CSRF token after successful login
-    // CSRF token is required for all state-changing requests (POST, PUT, PATCH, DELETE)
+    // ✅ Set session marker on frontend domain (for middleware route protection)
+    // Cross-origin: httpOnly cookies are on Railway domain, middleware needs a Vercel-domain cookie
+    setSessionMarker(data.user);
+    console.log('[Auth] ✅ Session marker set on frontend domain');
+
+    // Fetch CSRF token (best-effort, won't be readable cross-origin but browser sends it)
     try {
       await apiClient.get('/api/v1/auth/csrf');
       console.log('[Auth] ✅ CSRF token fetched successfully after login');
-
-      // Verify the cookie was set
-      if (typeof document !== 'undefined') {
-        const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='));
-        if (csrfCookie) {
-          console.log('[Auth] ✅ CSRF token cookie confirmed:', csrfCookie.substring(0, 30) + '...');
-        } else {
-          console.warn('[Auth] ⚠️ CSRF token cookie NOT found after fetch');
-        }
-      }
     } catch (error) {
       console.error('[Auth] ❌ Failed to fetch CSRF token after login:', error);
-      // Don't throw - login was successful, CSRF token fetch can fail
     }
 
     // Transform backend user to AuthUser format
@@ -125,8 +148,10 @@ export const authApi = {
       // Call backend logout endpoint
       await apiClient.post('/api/v1/auth/logout');
     } finally {
-      // ✅ Clean up any old tokens from storage (migration from old strategy)
-      // Backend clears cookies automatically
+      // ✅ Clear session marker on frontend domain
+      clearSessionMarker();
+
+      // Clean up any old tokens from storage (migration from old strategy)
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem('access_token');
         sessionStorage.removeItem('refresh_token');

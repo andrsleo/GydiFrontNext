@@ -163,8 +163,10 @@ apiClient.interceptors.response.use(
           // Retry the original request (cookies automatically sent)
           return apiClient(originalRequest);
         } catch (refreshError) {
-          // Refresh failed - clean up any old tokens from storage
+          // Refresh failed - clean up session marker and old tokens
           if (typeof window !== 'undefined') {
+            // Clear session marker cookie (cross-origin auth)
+            document.cookie = 'gydi_session=; path=/; max-age=0; SameSite=Lax; Secure';
             sessionStorage.removeItem('access_token');
             sessionStorage.removeItem('refresh_token');
             localStorage.removeItem('access_token');
