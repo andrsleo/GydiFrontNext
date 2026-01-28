@@ -9,7 +9,7 @@
  * - Production: Backend creates httpOnly cookies, returns user data only
  */
 
-import { apiClient } from '@/lib/api/client';
+import { apiClient, fetchCsrfToken, clearCsrfToken } from '@/lib/api/client';
 import type { AuthUser } from '@/store/auth-store';
 
 /**
@@ -41,11 +41,6 @@ function clearSessionMarker() {
   if (typeof document === 'undefined') return;
   document.cookie = 'gydi_session=; path=/; max-age=0; SameSite=Lax; Secure';
 }
-
-/**
- * Detect environment
- */
-const isDevelopment = process.env.NODE_ENV === 'development';
 
 /**
  * Login request payload
@@ -113,12 +108,11 @@ export const authApi = {
     setSessionMarker(data.user);
     console.log('[Auth] ✅ Session marker set on frontend domain');
 
-    // Fetch CSRF token (best-effort, won't be readable cross-origin but browser sends it)
+    // Fetch CSRF token from response body and store in memory (Option B)
     try {
-      await apiClient.get('/api/v1/auth/csrf');
-      console.log('[Auth] ✅ CSRF token fetched successfully after login');
+      await fetchCsrfToken();
     } catch (error) {
-      console.error('[Auth] ❌ Failed to fetch CSRF token after login:', error);
+      console.error('[Auth] Failed to fetch CSRF token after login:', error);
     }
 
     // Transform backend user to AuthUser format
@@ -148,8 +142,10 @@ export const authApi = {
       // Call backend logout endpoint
       await apiClient.post('/api/v1/auth/logout');
     } finally {
-      // ✅ Clear session marker on frontend domain
+      // Clear session marker on frontend domain
       clearSessionMarker();
+      // Clear in-memory CSRF token
+      clearCsrfToken();
 
       // Clean up any old tokens from storage (migration from old strategy)
       if (typeof window !== 'undefined') {
