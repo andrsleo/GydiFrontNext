@@ -9,19 +9,30 @@
  * - Cookies sent automatically via withCredentials: true
  * - Next.js middleware requires cookies (can't read localStorage server-side)
  *
+ * CSRF PROTECTION (Option B+D):
+ * - Option B: CSRF token fetched from response body (not cookie) and stored in memory
+ *   Required for cross-origin (Vercel → Railway) where document.cookie can't read
+ *   cookies set by a different domain.
+ * - Option D: X-Requested-With: XMLHttpRequest header on all state-changing requests
+ *   Defense in depth - custom headers require CORS preflight, blocking simple CSRF attacks.
+ *
  * SECURITY NOTES:
  * - httpOnly cookies prevent XSS attacks (JavaScript cannot access)
  * - SameSite=Lax for localhost (same-origin protection)
  * - SameSite=None + Secure for production (cross-domain with HTTPS)
- * - CSRF protection required for cross-domain requests
+ * - CSRF token stored in memory (not accessible to XSS via cookies)
  */
 
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
 
 /**
- * Detect environment
+ * In-memory CSRF token storage (Option B: Synchronizer Token Pattern)
+ *
+ * Token is fetched from the backend response body and stored here.
+ * This avoids the cross-origin cookie problem where document.cookie
+ * cannot read cookies set by a different domain (Railway).
  */
-const isDevelopment = process.env.NODE_ENV === 'development';
+let csrfToken: string | null = null;
 
 /**
  * Base API client
@@ -36,64 +47,48 @@ export const apiClient = axios.create({
 });
 
 /**
- * Request interceptor - Add CSRF token for state-changing requests
+ * Request interceptor - Add CSRF token and X-Requested-With for state-changing requests
  *
- * COOKIES-ONLY AUTHENTICATION STRATEGY:
- * - httpOnly cookies sent automatically via withCredentials: true
- * - Backend extracts token from cookie (priority) or Authorization header (fallback)
- * - No need to manually add Authorization header
- *
- * CSRF PROTECTION:
- * - Backend uses CSRF tokens for cross-domain requests (Vercel → Railway)
- * - CSRF tokens sent in X-XSRF-TOKEN header for POST/PUT/PATCH/DELETE
- * - GET requests don't need CSRF tokens (safe methods)
+ * CSRF PROTECTION (Option B+D):
+ * - B: Send CSRF token from memory in X-XSRF-TOKEN header
+ * - D: Send X-Requested-With: XMLHttpRequest header (defense in depth)
+ * - Both headers required for POST/PUT/PATCH/DELETE on non-public endpoints
  */
 apiClient.interceptors.request.use(
   async (config) => {
-    // Skip adding CSRF token for public endpoints
+    // Public endpoints exempt from CSRF protection
     const publicEndpoints = [
       '/api/v1/auth/login',
       '/api/v1/auth/register',
-      '/api/v1/users/register', // User registration endpoint
-      '/api/v1/auth/refresh', // Refresh token endpoint
-      '/api/v1/auth/csrf', // CSRF token endpoint
+      '/api/v1/users/register',
+      '/api/v1/auth/refresh',
+      '/api/v1/auth/csrf',
+      '/api/v1/referrals/resolve',
     ];
     const isPublicEndpoint = publicEndpoints.some((endpoint) =>
       config.url?.startsWith(endpoint)
     );
 
-    // ✅ COOKIES-ONLY STRATEGY (All Environments)
-    // httpOnly cookies are sent automatically via withCredentials: true
-    // Backend extracts token from cookie (priority) or Authorization header (fallback)
-    // No need to manually add Authorization header - cookies handle everything
-
-    // ✅ Add CSRF token for state-changing requests
+    // Add CSRF token + X-Requested-With for state-changing requests
     const method = config.method?.toUpperCase();
     const requiresCsrf = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method || '');
 
-    if (requiresCsrf && !isPublicEndpoint && typeof window !== 'undefined') {
-      const csrfToken = getCsrfTokenFromCookie();
+    if (requiresCsrf && !isPublicEndpoint) {
+      // Option D: Always send X-Requested-With header
+      config.headers['X-Requested-With'] = 'XMLHttpRequest';
 
+      // Option B: Send CSRF token from memory
       if (csrfToken) {
         config.headers['X-XSRF-TOKEN'] = csrfToken;
-        // console.log(`[API Client] ✅ CSRF token added for ${method} ${config.url}`); // Commented to reduce console noise
-      } else {
-        console.warn(
-          `[API Client] ⚠️ CSRF token NOT FOUND for ${method} request to ${config.url}`
-        );
-        console.warn('[API Client] Available cookies:', document.cookie);
-        console.warn('[API Client] Attempting to fetch CSRF token...');
-
-        // Try to fetch CSRF token immediately
+      } else if (typeof window !== 'undefined') {
+        // Token not in memory - fetch it (first request scenario)
         await fetchCsrfToken();
-
-        // Retry getting the token
-        const retryToken = getCsrfTokenFromCookie();
-        if (retryToken) {
-          config.headers['X-XSRF-TOKEN'] = retryToken;
-          // console.log('[API Client] ✅ CSRF token fetched and added successfully'); // Commented to reduce console noise
+        if (csrfToken) {
+          config.headers['X-XSRF-TOKEN'] = csrfToken;
         } else {
-          console.error('[API Client] ❌ Failed to obtain CSRF token. Request will likely fail with 403.');
+          console.warn(
+            `[API Client] CSRF token not available for ${method} ${config.url}`
+          );
         }
       }
     }
@@ -101,40 +96,35 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
-)
+);
 
 /**
- * Extract CSRF token from cookie (XSRF-TOKEN)
+ * Fetch CSRF token from backend response body (Option B)
  *
- * The CSRF token is set by the backend in a non-httpOnly cookie
- * so that JavaScript can read it and send it in the X-XSRF-TOKEN header.
- */
-function getCsrfTokenFromCookie(): string | null {
-  if (typeof document === 'undefined') return null; // SSR safety
-
-  const csrfCookie = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('XSRF-TOKEN='));
-
-  if (!csrfCookie) return null;
-
-  const token = csrfCookie.split('=')[1];
-  return decodeURIComponent(token);
-}
-
-/**
- * Fetch CSRF token from backend
+ * The backend returns the CSRF token in the JSON response body:
+ * { "token": "...", "headerName": "X-XSRF-TOKEN" }
  *
- * Call this on app initialization to ensure CSRF token cookie is set.
- * The backend will automatically set the XSRF-TOKEN cookie in the response.
+ * This works cross-origin because we read the token from the Axios response,
+ * not from document.cookie (which can't access cookies from a different domain).
  */
 export async function fetchCsrfToken(): Promise<void> {
   try {
-    await apiClient.get('/api/v1/auth/csrf');
+    const { data } = await apiClient.get<{ token?: string; headerName?: string }>(
+      '/api/v1/auth/csrf'
+    );
+    if (data.token) {
+      csrfToken = data.token;
+    }
   } catch (error) {
     console.error('[API Client] Failed to fetch CSRF token:', error);
-    // Don't throw - app can still work without CSRF token for GET requests
   }
+}
+
+/**
+ * Clear the in-memory CSRF token (call on logout)
+ */
+export function clearCsrfToken(): void {
+  csrfToken = null;
 }
 
 /**
@@ -151,22 +141,19 @@ apiClient.interceptors.response.use(
 
       if (typeof window !== 'undefined') {
         try {
-          // ✅ COOKIES-ONLY REFRESH STRATEGY (All Environments)
-          // Backend reads refresh_token from httpOnly cookie
-          // Backend validates, generates new tokens, sets new cookies automatically
           await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/auth/refresh`,
-            {}, // No body needed - refresh_token is in cookie
+            {},
             { withCredentials: true }
           );
 
           // Retry the original request (cookies automatically sent)
           return apiClient(originalRequest);
         } catch (refreshError) {
-          // Refresh failed - clean up session marker and old tokens
+          // Refresh failed - clean up session
           if (typeof window !== 'undefined') {
-            // Clear session marker cookie (cross-origin auth)
             document.cookie = 'gydi_session=; path=/; max-age=0; SameSite=Lax; Secure';
+            clearCsrfToken();
             sessionStorage.removeItem('access_token');
             sessionStorage.removeItem('refresh_token');
             localStorage.removeItem('access_token');
@@ -184,13 +171,13 @@ apiClient.interceptors.response.use(
       originalRequest._csrfRetry = true;
 
       try {
-        // Re-fetch CSRF token
+        // Re-fetch CSRF token from response body
         await fetchCsrfToken();
 
-        // Retry original request with new CSRF token
-        const newCsrfToken = getCsrfTokenFromCookie();
-        if (newCsrfToken && originalRequest.method?.toUpperCase() !== 'GET') {
-          originalRequest.headers['X-XSRF-TOKEN'] = newCsrfToken;
+        // Retry original request with new CSRF token + X-Requested-With
+        if (csrfToken && originalRequest.method?.toUpperCase() !== 'GET') {
+          originalRequest.headers['X-XSRF-TOKEN'] = csrfToken;
+          originalRequest.headers['X-Requested-With'] = 'XMLHttpRequest';
         }
 
         return apiClient(originalRequest);
@@ -206,7 +193,7 @@ apiClient.interceptors.response.use(
 
       switch (status) {
         case 403:
-          console.error('Permission denied (possibly CSRF validation failed):', error.response.data);
+          console.error('Permission denied:', error.response.data);
           break;
         case 404:
           console.error('Resource not found:', error.response.data);
