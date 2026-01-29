@@ -8,6 +8,7 @@ export { PropertyGallery } from './property-gallery';
 export { PropertyForm } from './property-form';
 export { PropertyActionsMenu } from './property-actions-menu';
 export { ImageUploader } from './image-uploader';
+export { CloudinaryImageUploader } from './cloudinary-image-uploader';
 export { VideoUploader } from './video-uploader';
 export { ImageOrganizer } from './image-organizer';
 export { VideoOrganizer } from './video-organizer';
