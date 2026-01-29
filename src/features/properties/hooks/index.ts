@@ -9,6 +9,7 @@ export { usePropertyById } from './use-property-by-id';
 export { useCreateProperty } from './use-create-property';
 export { useUpdateProperty } from './use-update-property';
 export { useUploadImages } from './use-upload-images';
+export { useCloudinaryDirectUpload } from './use-cloudinary-direct-upload';
 export { useUploadVideos } from './use-upload-videos';
 export { useAmenities, useAmenitiesByCategory } from './use-amenities';
 export {
