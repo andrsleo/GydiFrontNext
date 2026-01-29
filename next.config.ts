@@ -41,6 +41,10 @@ const nextConfig: NextConfig = {
         hostname: 'images.unsplash.com',
       },
       {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com', // Cloudinary CDN
+      },
+      {
         protocol: 'http',
         hostname: 'localhost', // Desarrollo local
         port: '8080',
