@@ -101,9 +101,9 @@ export function DashboardSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-layout-sidebar transform border-r bg-gray-50 transition-all duration-300 ease-in-out md:translate-x-0',
+          'fixed inset-y-0 left-0 transform border-r bg-gray-50 transition-all duration-300 ease-in-out md:translate-x-0 md:z-layout-sidebar',
           isCollapsed ? 'w-20' : 'w-64',
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          mobileMenuOpen ? 'translate-x-0 z-[60]' : '-translate-x-full z-layout-sidebar'
         )}
       >
         <div className="flex h-full flex-col">
