@@ -4,8 +4,8 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
-// TODO: Move to a shared config or env var
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+// Use proxy for Safari cookie compatibility
+const API_BASE_URL = '/api/proxy';
 
 function ReferralRedirectContent() {
     const searchParams = useSearchParams();

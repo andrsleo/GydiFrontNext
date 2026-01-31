@@ -289,9 +289,9 @@ export function LogoutButton() {
 
   const handleLogout = async () => {
     try {
-      // Call backend logout
+      // Call backend logout (use proxy for Safari compatibility)
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/logout`,
+        '/api/proxy/api/v1/auth/logout',
         {
           method: 'POST',
           credentials: 'include', // Send cookies

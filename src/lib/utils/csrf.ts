@@ -82,7 +82,9 @@ export function getCsrfToken(): string | null {
  * ```
  */
 export async function fetchCsrfToken(
-  apiUrl: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+  apiUrl: string = typeof window === 'undefined'
+    ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080')
+    : '/api/proxy'  // Use proxy in browser for Safari compatibility
 ): Promise<{ token: string; headerName: string; parameterName: string }> {
   const response = await fetch(`${apiUrl}/api/csrf`, {
     method: 'GET',

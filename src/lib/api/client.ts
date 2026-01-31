@@ -35,10 +35,31 @@ import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
 let csrfToken: string | null = null;
 
 /**
+ * Determine the base URL based on environment
+ *
+ * SAFARI COMPATIBILITY:
+ * - In browser: Use /api/proxy to route through Next.js (first-party cookies)
+ * - On server: Use direct backend URL (server-to-server, no cookie restrictions)
+ *
+ * This solves Safari's ITP (Intelligent Tracking Prevention) which blocks
+ * third-party cookies from different domains.
+ */
+function getBaseUrl(): string {
+  // Server-side (SSR, API routes, middleware) - use direct URL
+  if (typeof window === 'undefined') {
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  }
+
+  // Client-side (browser) - use proxy for Safari compatibility
+  // The proxy at /api/proxy forwards to the backend, making cookies first-party
+  return '/api/proxy';
+}
+
+/**
  * Base API client
  */
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
@@ -141,11 +162,9 @@ apiClient.interceptors.response.use(
 
       if (typeof window !== 'undefined') {
         try {
-          await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/auth/refresh`,
-            {},
-            { withCredentials: true }
-          );
+          // Use proxy for Safari compatibility
+          const refreshUrl = '/api/proxy/api/v1/auth/refresh';
+          await axios.post(refreshUrl, {}, { withCredentials: true });
 
           // Retry the original request (cookies automatically sent)
           return apiClient(originalRequest);
