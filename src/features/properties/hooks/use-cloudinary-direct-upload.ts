@@ -38,14 +38,24 @@ import { toast } from 'sonner';
 import type { MediaUploadResponse } from '../types';
 
 /**
- * Cloudinary Upload Signature Response (from backend)
+ * Single upload signature from backend
  */
-interface CloudinarySignature {
+interface UploadSignature {
   signature: string;
   timestamp: number;
-  apiKey: string;
-  cloudName: string;
   folder: string;
+  publicId: string;
+}
+
+/**
+ * Cloudinary Upload Signature Response (from backend)
+ * Backend returns multiple signatures (one per file) plus shared config
+ */
+interface CloudinarySignatureResponse {
+  signatures: UploadSignature[];
+  cloudName: string;
+  apiKey: string;
+  uploadUrl: string;
 }
 
 /**
@@ -100,12 +110,12 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
    * @param fileCount - Number of files to upload
    * @param mediaType - Type of media ('IMAGE' or 'VIDEO')
    */
-  const getUploadSignature = async (
+  const getUploadSignatures = async (
     propertyId: string,
     fileCount: number,
     mediaType: 'IMAGE' | 'VIDEO' = 'IMAGE'
-  ): Promise<CloudinarySignature> => {
-    const { data } = await apiClient.post<CloudinarySignature>(
+  ): Promise<CloudinarySignatureResponse> => {
+    const { data } = await apiClient.post<CloudinarySignatureResponse>(
       `/api/properties/${propertyId}/media/upload-signatures`,
       {
         fileCount,
@@ -117,10 +127,16 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
 
   /**
    * Step 2: Upload single file directly to Cloudinary
+   *
+   * @param file - The file to upload
+   * @param signature - Individual signature for this file
+   * @param config - Shared Cloudinary config (cloudName, apiKey, uploadUrl)
+   * @param retries - Current retry count
    */
   const uploadFileToCloudinary = async (
     file: File,
-    signature: CloudinarySignature,
+    signature: UploadSignature,
+    config: { cloudName: string; apiKey: string; uploadUrl: string },
     retries = 0
   ): Promise<UploadResult> => {
     const fileName = file.name;
@@ -131,11 +147,12 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       formData.append('file', file);
       formData.append('signature', signature.signature);
       formData.append('timestamp', signature.timestamp.toString());
-      formData.append('api_key', signature.apiKey);
+      formData.append('api_key', config.apiKey);
       formData.append('folder', signature.folder);
+      formData.append('public_id', signature.publicId);
 
-      // Upload to Cloudinary with progress tracking
-      const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`;
+      // Upload to Cloudinary with progress tracking (use the uploadUrl from backend)
+      const cloudinaryUrl = config.uploadUrl;
 
       const response = await new Promise<UploadResult>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -191,7 +208,7 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       if (retries < maxRetries && error instanceof Error && error.message.includes('Network')) {
         console.warn(`Retrying upload for ${fileName} (attempt ${retries + 1}/${maxRetries})`);
         await new Promise((resolve) => setTimeout(resolve, 1000 * (retries + 1))); // Exponential backoff
-        return uploadFileToCloudinary(file, signature, retries + 1);
+        return uploadFileToCloudinary(file, signature, config, retries + 1);
       }
 
       return {
@@ -206,19 +223,29 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
 
   /**
    * Step 3: Upload multiple files in parallel (with concurrency limit)
+   *
+   * Each file gets its own signature from the backend response.
    */
   const uploadFilesInParallel = async (
     files: File[],
-    signature: CloudinarySignature
+    signatureResponse: CloudinarySignatureResponse
   ): Promise<UploadResult[]> => {
     const results: UploadResult[] = [];
-    const queue = [...files];
+    const { signatures, cloudName, apiKey, uploadUrl } = signatureResponse;
+    const config = { cloudName, apiKey, uploadUrl };
+
+    // Pair files with their signatures
+    const fileSignaturePairs = files.map((file, index) => ({
+      file,
+      signature: signatures[index],
+    }));
 
     // Upload in batches
+    const queue = [...fileSignaturePairs];
     while (queue.length > 0) {
       const batch = queue.splice(0, maxConcurrent);
       const batchResults = await Promise.all(
-        batch.map((file) => uploadFileToCloudinary(file, signature))
+        batch.map(({ file, signature }) => uploadFileToCloudinary(file, signature, config))
       );
       results.push(...batchResults);
     }
@@ -273,11 +300,11 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       setProgress(initialProgress);
 
       try {
-        // Step 1: Get signature from backend (with file count and media type)
-        const signature = await getUploadSignature(propertyId, files.length, 'IMAGE');
+        // Step 1: Get signatures from backend (one per file)
+        const signatureResponse = await getUploadSignatures(propertyId, files.length, 'IMAGE');
 
-        // Step 2: Upload files to Cloudinary in parallel
-        const results = await uploadFilesInParallel(files, signature);
+        // Step 2: Upload files to Cloudinary in parallel (each file uses its own signature)
+        const results = await uploadFilesInParallel(files, signatureResponse);
 
         // Check for failures
         const failures = results.filter((r) => !r.success);
