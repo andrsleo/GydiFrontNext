@@ -93,10 +93,20 @@ async function proxyRequest(
 
 /**
  * Build response with forwarded headers and cookies
+ *
+ * NOTE: HTTP status 204 (No Content) and 304 (Not Modified) cannot have a body.
+ * The Response constructor will throw an error if we try to create a response
+ * with a body for these status codes.
  */
 function buildResponse(backendResponse: Response, body: ArrayBuffer): NextResponse {
-  const response = new NextResponse(body, {
-    status: backendResponse.status,
+  const status = backendResponse.status;
+
+  // Status codes that must not have a body (RFC 7230)
+  const noBodyStatuses = [204, 304];
+  const hasNoBody = noBodyStatuses.includes(status);
+
+  const response = new NextResponse(hasNoBody ? null : body, {
+    status,
     statusText: backendResponse.statusText,
   });
 
