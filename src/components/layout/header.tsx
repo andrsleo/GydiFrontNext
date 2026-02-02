@@ -10,11 +10,18 @@ import { useAuthStore } from '@/store/auth-store';
 export function Header() {
   const user = useUser();
   const isLoading = useAuthStore((state) => state.isLoading);
+  const hasHydrated = useAuthStore((state) => state._hasHydrated);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Don't show user until auth verification is complete
+  // Don't show user until:
+  // 1. Store has hydrated from localStorage
+  // 2. Auth verification is complete (isLoading = false)
+  // 3. User exists in store
   // This prevents showing stale data from localStorage while checking if token is valid
-  const showUser = user && !isLoading;
+  const showUser = hasHydrated && user && !isLoading;
+
+  // Show loading state while verifying
+  const showLoading = !hasHydrated || isLoading;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-gradient-to-r from-background via-background/98 to-primary/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
@@ -74,7 +81,13 @@ export function Header() {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden items-center space-x-3 md:flex">
-          {showUser ? (
+          {showLoading ? (
+            /* Loading skeleton while verifying session */
+            <>
+              <div className="h-9 w-32 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+              <div className="h-9 w-28 animate-pulse rounded-md bg-gray-200 dark:bg-gray-700" />
+            </>
+          ) : showUser ? (
             <>
               <div className="group relative overflow-hidden rounded-full bg-gradient-to-br from-primary/10 to-blue-500/10 px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20">
                 <span className="text-sm font-semibold text-foreground">
@@ -151,7 +164,13 @@ export function Header() {
             </Link>
 
             <div className="space-y-3 border-t border-border/40 pt-4">
-              {showUser ? (
+              {showLoading ? (
+                /* Loading skeleton for mobile */
+                <>
+                  <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-10 w-full animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+                </>
+              ) : showUser ? (
                 <>
                   <div className="rounded-lg bg-gradient-to-br from-primary/10 to-blue-500/10 px-4 py-3 text-center">
                     <span className="text-sm font-semibold text-foreground">

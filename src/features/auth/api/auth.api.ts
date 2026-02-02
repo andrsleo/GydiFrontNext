@@ -15,6 +15,19 @@ import type { AuthUser } from '@/store/auth-store';
 /**
  * Set a session marker cookie on the frontend domain (Vercel).
  *
+ * SOLUCIÓN PARTE 2: SINCRONIZACIÓN DE EXPIRACIÓN
+ *
+ * Problema anterior:
+ * - Cookie gydi_session tenía max-age fijo de 86400 segundos (24 horas)
+ * - JWT del backend expira típicamente en 1 hora
+ * - Resultado: Cookie válida pero token expirado → bug de sesión inconsistente
+ *
+ * Solución actual:
+ * - Sincroniza la expiración de gydi_session con el JWT
+ * - Si el backend envía expiración del token, usa ese valor
+ * - Si no, usa 1 hora (3600 segundos) como valor seguro
+ * - Esto fuerza re-verificación cuando el JWT expira
+ *
  * In cross-origin setups (Vercel frontend → Railway backend), httpOnly auth cookies
  * are set on the backend domain and are NOT accessible from the frontend domain.
  * The Next.js middleware runs on Vercel's server and can only read Vercel-domain cookies.
@@ -22,23 +35,47 @@ import type { AuthUser } from '@/store/auth-store';
  * This marker cookie allows the middleware to know the user is authenticated
  * without needing to access the Railway-domain auth cookies.
  * Actual auth verification happens client-side via API calls to Railway.
+ *
+ * @param user - User data to encode in the cookie
+ * @param tokenExpiresIn - Seconds until token expires (optional)
  */
-function setSessionMarker(user: { id: number; name: string; email: string }) {
+function setSessionMarker(
+  user: { id: number; name: string; email: string },
+  tokenExpiresIn?: number
+) {
   if (typeof document === 'undefined') return;
+
   // Encode minimal user info for middleware (NOT a security token)
-  const value = encodeURIComponent(JSON.stringify({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-  }));
-  document.cookie = `gydi_session=${value}; path=/; max-age=86400; SameSite=Lax; Secure`;
+  const value = encodeURIComponent(
+    JSON.stringify({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    })
+  );
+
+  // ✅ SINCRONIZACIÓN CON JWT:
+  // Usar la expiración real del token si está disponible,
+  // de lo contrario usar 1 hora (3600 segundos) como valor seguro
+  // Esto es mucho más corto que las 24 horas anteriores
+  const maxAge = tokenExpiresIn || 3600; // Default: 1 hora
+
+  console.log(
+    `[Auth] 🍪 Setting gydi_session cookie with max-age: ${maxAge}s (${maxAge / 60} minutes)`
+  );
+
+  document.cookie = `gydi_session=${value}; path=/; max-age=${maxAge}; SameSite=Lax; Secure`;
 }
 
 /**
  * Clear the session marker cookie (logout).
+ *
+ * NOTA: Esta función ahora es pública (exportada)
+ * para ser usada por AuthVerifier al limpiar sesiones expiradas.
  */
-function clearSessionMarker() {
+export function clearSessionMarker() {
   if (typeof document === 'undefined') return;
+  console.log('[Auth] 🗑️ Clearing gydi_session cookie');
   document.cookie = 'gydi_session=; path=/; max-age=0; SameSite=Lax; Secure';
 }
 
@@ -65,6 +102,8 @@ export interface LoginResponse {
   // Tokens only in development
   token?: string;
   refreshToken?: string;
+  // Token expiration in seconds (if backend provides it)
+  expiresIn?: number;
 }
 
 /**
@@ -105,7 +144,8 @@ export const authApi = {
 
     // ✅ Set session marker on frontend domain (for middleware route protection)
     // Cross-origin: httpOnly cookies are on Railway domain, middleware needs a Vercel-domain cookie
-    setSessionMarker(data.user);
+    // ✅ NUEVA MEJORA: Sincroniza expiración con JWT (si el backend la envía)
+    setSessionMarker(data.user, data.expiresIn);
     console.log('[Auth] ✅ Session marker set on frontend domain');
 
     // Fetch CSRF token from response body and store in memory (Option B)

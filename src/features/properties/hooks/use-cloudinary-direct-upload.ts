@@ -95,10 +95,22 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
 
   /**
    * Step 1: Get signed upload parameters from backend
+   *
+   * @param propertyId - The property ID
+   * @param fileCount - Number of files to upload
+   * @param mediaType - Type of media ('IMAGE' or 'VIDEO')
    */
-  const getUploadSignature = async (propertyId: string): Promise<CloudinarySignature> => {
+  const getUploadSignature = async (
+    propertyId: string,
+    fileCount: number,
+    mediaType: 'IMAGE' | 'VIDEO' = 'IMAGE'
+  ): Promise<CloudinarySignature> => {
     const { data } = await apiClient.post<CloudinarySignature>(
-      `/api/properties/${propertyId}/media/upload-signatures`
+      `/api/properties/${propertyId}/media/upload-signatures`,
+      {
+        fileCount,
+        mediaType,
+      }
     );
     return data;
   };
@@ -261,8 +273,8 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       setProgress(initialProgress);
 
       try {
-        // Step 1: Get signature from backend
-        const signature = await getUploadSignature(propertyId);
+        // Step 1: Get signature from backend (with file count and media type)
+        const signature = await getUploadSignature(propertyId, files.length, 'IMAGE');
 
         // Step 2: Upload files to Cloudinary in parallel
         const results = await uploadFilesInParallel(files, signature);

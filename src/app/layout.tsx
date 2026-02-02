@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 import './globals.css';
 import { Providers } from './providers';
 import { AuthProvider } from '@/features/auth/providers/auth-provider';
+import { AuthVerifier } from '@/features/auth/components/auth-verifier';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -55,7 +56,10 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <Providers>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <AuthVerifier />
+            {children}
+          </AuthProvider>
         </Providers>
         <Toaster richColors position="top-right" />
       </body>
