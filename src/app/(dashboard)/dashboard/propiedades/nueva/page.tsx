@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCreateProperty, useUploadImages, useUploadVideos, usePropertyById } from '@/features/properties';
+import { useCreateProperty, useCloudinaryDirectUpload, useUploadVideos, usePropertyById } from '@/features/properties';
 import { PropertyForm, ImageUploader, VideoUploader, ImageOrganizer } from '@/features/properties/components';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +20,7 @@ export default function NewPropertyPage() {
   const [imagesUploaded, setImagesUploaded] = useState(false);
 
   const createProperty = useCreateProperty();
-  const uploadImages = useUploadImages();
+  const { uploadImagesAsync, isUploading: isUploadingImages } = useCloudinaryDirectUpload();
   const uploadVideos = useUploadVideos();
 
   // Fetch property detail after images are uploaded to get image data
@@ -45,7 +45,8 @@ export default function NewPropertyPage() {
     if (!propertyId || images.length === 0) return;
 
     try {
-      await uploadImages.mutateAsync({ propertyId, files: images });
+      // Use direct Cloudinary upload (bypasses Vercel size limits)
+      await uploadImagesAsync({ propertyId, files: images });
       setImagesUploaded(true);
       setStep('organize');
     } catch (error) {
@@ -155,10 +156,10 @@ export default function NewPropertyPage() {
               </Button>
               <Button
                 onClick={handleUploadImages}
-                disabled={images.length === 0 || uploadImages.isPending}
+                disabled={images.length === 0 || isUploadingImages}
               >
                 <Upload className="h-4 w-4 mr-2" />
-                {uploadImages.isPending ? 'Subiendo...' : `Subir ${images.length} Imágenes`}
+                {isUploadingImages ? 'Subiendo...' : `Subir ${images.length} Imágenes`}
               </Button>
             </div>
           </CardContent>

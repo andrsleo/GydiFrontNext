@@ -70,8 +70,9 @@ async function proxyRequest(
     const contentType = request.headers.get('content-type') || '';
 
     if (contentType.includes('multipart/form-data')) {
-      // For file uploads, pass the raw body
-      body = await request.blob();
+      // For file uploads, use arrayBuffer to preserve exact bytes including boundary
+      // This is more reliable than blob() for multipart data
+      body = await request.arrayBuffer();
     } else if (contentType.includes('application/json')) {
       body = await request.text();
     } else {
@@ -93,10 +94,20 @@ async function proxyRequest(
 
 /**
  * Build response with forwarded headers and cookies
+ *
+ * NOTE: HTTP status 204 (No Content) and 304 (Not Modified) cannot have a body.
+ * The Response constructor will throw an error if we try to create a response
+ * with a body for these status codes.
  */
 function buildResponse(backendResponse: Response, body: ArrayBuffer): NextResponse {
-  const response = new NextResponse(body, {
-    status: backendResponse.status,
+  const status = backendResponse.status;
+
+  // Status codes that must not have a body (RFC 7230)
+  const noBodyStatuses = [204, 304];
+  const hasNoBody = noBodyStatuses.includes(status);
+
+  const response = new NextResponse(hasNoBody ? null : body, {
+    status,
     statusText: backendResponse.statusText,
   });
 
@@ -154,3 +165,8 @@ export const OPTIONS = handler;
 // Configure the route
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+// Allow larger request bodies for file uploads (up to 50MB)
+// Note: Vercel has limits based on plan (4.5MB hobby, 5MB pro)
+// For larger files, consider using direct Cloudinary upload
+export const maxDuration = 60; // 60 seconds timeout for large uploads

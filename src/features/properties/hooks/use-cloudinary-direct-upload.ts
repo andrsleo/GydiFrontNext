@@ -34,6 +34,7 @@ import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
 import { propertyKeys } from '@/lib/constants/query-keys';
+import { isAllowedImageType, IMAGE_FORMATS_LABEL } from '@/lib/utils/media-types';
 import { toast } from 'sonner';
 import type { MediaUploadResponse } from '../types';
 
@@ -285,8 +286,8 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
         if (file.size > 10 * 1024 * 1024) {
           throw new Error(`Image ${file.name} exceeds 10MB limit`);
         }
-        if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'].includes(file.type)) {
-          throw new Error(`Invalid file type for ${file.name}. Only JPG, PNG, WEBP, and HEIC allowed`);
+        if (!isAllowedImageType(file)) {
+          throw new Error(`Invalid file type for ${file.name}. Only ${IMAGE_FORMATS_LABEL} allowed`);
         }
       }
 

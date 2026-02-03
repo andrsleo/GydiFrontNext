@@ -4,6 +4,12 @@
  */
 
 import { apiClient } from '@/lib/api/client';
+import {
+  isAllowedImageType,
+  isAllowedVideoType,
+  IMAGE_FORMATS_LABEL,
+  VIDEO_FORMATS_LABEL,
+} from '@/lib/utils/media-types';
 import type { MediaUploadResponse } from '../types';
 
 /**
@@ -37,9 +43,9 @@ export const mediaApi = {
         throw new Error(`Image ${file.name} exceeds 10MB limit`);
       }
 
-      // Validate file type
-      if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'].includes(file.type)) {
-        throw new Error(`Invalid file type for ${file.name}. Only JPG, PNG, WEBP, and HEIC allowed`);
+      // Validate file type (with extension-based fallback for HEIC/HEIF)
+      if (!isAllowedImageType(file)) {
+        throw new Error(`Invalid file type for ${file.name}. Only ${IMAGE_FORMATS_LABEL} allowed`);
       }
 
       formData.append('files', file);
@@ -81,9 +87,9 @@ export const mediaApi = {
         throw new Error(`Video ${file.name} exceeds 500MB limit`);
       }
 
-      // Validate file type
-      if (!['video/mp4', 'video/webm', 'video/quicktime'].includes(file.type)) {
-        throw new Error(`Invalid file type for ${file.name}. Only MP4, WEBM, and MOV allowed`);
+      // Validate file type (with extension-based fallback)
+      if (!isAllowedVideoType(file)) {
+        throw new Error(`Invalid file type for ${file.name}. Only ${VIDEO_FORMATS_LABEL} allowed`);
       }
 
       formData.append('files', file);

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Upload, X, Video as VideoIcon, Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatFileSize } from '@/lib/utils/format';
+import { isAllowedVideoType, VIDEO_ACCEPT, VIDEO_FORMATS_LABEL } from '@/lib/utils/media-types';
 
 interface VideoUploaderProps {
   maxFiles?: number;
@@ -45,10 +46,10 @@ export function VideoUploader({
   // Validate file
   const validateFile = useCallback(
     (file: File): boolean => {
-      // Check file type
-      if (!['video/mp4', 'video/webm', 'video/quicktime'].includes(file.type)) {
+      // Check file type (with extension-based fallback)
+      if (!isAllowedVideoType(file)) {
         toast.error(`Invalid file type: ${file.name}`, {
-          description: 'Only MP4, WEBM, and MOV formats are allowed',
+          description: `Only ${VIDEO_FORMATS_LABEL} formats are allowed`,
         });
         return false;
       }
@@ -189,7 +190,7 @@ export function VideoUploader({
       >
         <input
           type="file"
-          accept="video/mp4,video/webm,video/quicktime"
+          accept={VIDEO_ACCEPT}
           multiple
           onChange={handleInputChange}
           disabled={disabled}
@@ -202,7 +203,7 @@ export function VideoUploader({
             {isDragging ? 'Drop videos here' : 'Drag & drop videos or click to browse'}
           </p>
           <p className="text-xs text-muted-foreground">
-            MP4, WEBM, or MOV • Max {maxFiles} videos • {formatFileSize(maxSize)} each
+            {VIDEO_FORMATS_LABEL} • Max {maxFiles} videos • {formatFileSize(maxSize)} each
           </p>
         </div>
       </div>
