@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { useReorderImages } from '../hooks/use-reorder-images';
 import { useDeleteImage } from '../hooks/use-delete-image';
 import { toast } from 'sonner';
+import { getImagePath } from '@/lib/utils/image';
 
 interface PropertyImage {
   id: string;
@@ -72,7 +73,7 @@ function SortableImageItem({
         isCover ? 'border-primary ring-2 ring-primary/20' : 'border-border hover:border-primary/50'
       } ${isPending ? 'opacity-50' : ''}`}
     >
-      <img src={image.url} alt="" className="w-full h-full object-cover" />
+      <img src={getImagePath(image.url)} alt="" className="w-full h-full object-cover" />
 
       {/* Overlay on hover - más oscuro para mejor contraste */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />

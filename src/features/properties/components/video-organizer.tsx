@@ -1,6 +1,7 @@
 'use client';
 
 import { Play, Trash2 } from 'lucide-react';
+import { getImagePath } from '@/lib/utils/image';
 import { Button } from '@/components/ui/button';
 import { useDeleteVideo } from '../hooks/use-delete-video';
 import { formatFileSize } from '@/lib/utils/format';
@@ -84,7 +85,7 @@ export function VideoOrganizer({
             <div className="relative aspect-video bg-muted">
               <video
                 src={video.url}
-                poster={video.thumbnailUrl}
+                poster={getImagePath(video.thumbnailUrl)}
                 className="w-full h-full object-cover"
                 preload="metadata"
               />

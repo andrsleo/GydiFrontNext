@@ -106,7 +106,7 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
             src={currentMedia.url}
             controls
             className="h-full w-full object-cover"
-            poster={currentMedia.thumbnailUrl}
+            poster={getImagePath(currentMedia.thumbnailUrl)}
           />
         )}
 

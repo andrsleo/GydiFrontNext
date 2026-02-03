@@ -3,45 +3,39 @@
  */
 
 /**
- * Extracts the path from a full backend image URL
+ * Adds automatic format and quality optimization to Cloudinary URLs.
  *
- * In development, returns the full backend URL so Next.js can load images from localhost:8080.
- * In production, extracts the pathname for CDN/S3 URLs.
+ * Inserts `f_auto,q_auto` after `/upload/` so Cloudinary converts images
+ * to the best browser-compatible format (WebP, AVIF, JPEG).
+ * This is essential for formats like HEIC that browsers cannot display natively.
  *
- * @param url - Full URL from backend (e.g., http://localhost:8080/uploads/properties/123/image.jpg)
- * @returns Full URL in dev or pathname in production, or placeholder if empty
+ * @param url - A Cloudinary URL
+ * @returns The URL with f_auto,q_auto transformation, or original if not Cloudinary
+ */
+function optimizeCloudinaryUrl(url: string): string {
+  if (!url.includes('res.cloudinary.com')) return url;
+
+  // Already has f_auto transformation
+  if (url.includes('/f_auto')) return url;
+
+  // Insert f_auto,q_auto after /upload/ (before version or folder)
+  return url.replace('/upload/', '/upload/f_auto,q_auto/');
+}
+
+/**
+ * Returns a display-ready image URL.
  *
- * @example
- * ```ts
- * // Development
- * getImagePath('http://localhost:8080/uploads/properties/123/image.jpg')
- * // Returns: 'http://localhost:8080/uploads/properties/123/image.jpg'
+ * For Cloudinary URLs, adds `f_auto,q_auto` so formats like HEIC are
+ * automatically converted to browser-compatible formats (WebP/JPEG).
+ * Returns a placeholder for empty/null URLs.
  *
- * // Production
- * getImagePath('https://cdn.gydi.com/uploads/properties/123/image.jpg')
- * // Returns: 'https://cdn.gydi.com/uploads/properties/123/image.jpg'
- *
- * getImagePath(undefined)
- * // Returns: '/images/property-placeholder.jpg'
- * ```
+ * @param url - Image URL from backend
+ * @returns Optimized URL ready for display, or placeholder if empty
  */
 export function getImagePath(url: string | undefined | null): string {
   if (!url) return '/images/property-placeholder.jpg';
 
-  try {
-    const _urlObj = new URL(url);
-
-    // In development, return full URL for backend images
-    if (process.env.NODE_ENV === 'development' && url.includes('localhost:8080')) {
-      return url;
-    }
-
-    // In production or for external URLs (S3, CDN), return the full URL
-    return url;
-  } catch {
-    // If URL parsing fails, assume it's already a path
-    return url;
-  }
+  return optimizeCloudinaryUrl(url);
 }
 
 /**
