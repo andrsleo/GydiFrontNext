@@ -87,7 +87,7 @@ test.describe('Delete Payment Method', () => {
       // Verify only one payment method
       const count = await getPaymentMethodCount(page);
       if (count !== 1) {
-        test.skip('User must have exactly one payment method for this test');
+        test.skip(true, 'User must have exactly one payment method for this test');
       }
 
       // Try to delete the only method
@@ -107,7 +107,7 @@ test.describe('Delete Payment Method', () => {
     test('should allow deleting only payment method on FREE plan', async ({ page }) => {
       // This test requires a user on FREE plan with one payment method
       // You may need to set up test data accordingly
-      test.skip('Requires specific test data setup');
+      test.skip(true, 'Requires specific test data setup');
     });
   });
 
@@ -142,7 +142,7 @@ test.describe('Delete Payment Method', () => {
 
     test('should allow deleting default payment method when it is the only one', async ({ page }) => {
       // This test requires specific setup: user with only one payment method (which is default)
-      test.skip('Requires specific test data setup');
+      test.skip(true, 'Requires specific test data setup');
     });
   });
 
