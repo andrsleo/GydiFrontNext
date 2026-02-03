@@ -30,6 +30,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Upload, X, Image as ImageIcon, CheckCircle2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import { IMAGE_ACCEPT, IMAGE_FORMATS_LABEL } from '@/lib/utils/media-types';
 import type { MediaUploadResponse } from '../types';
 
 interface CloudinaryImageUploaderProps {
@@ -144,7 +145,7 @@ export function CloudinaryImageUploader({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            accept={IMAGE_ACCEPT}
             multiple
             onChange={(e) => handleFileSelect(e.target.files)}
             disabled={disabled || isUploading}
@@ -164,7 +165,7 @@ export function CloudinaryImageUploader({
                 Click to select images
               </div>
               <div className="text-xs text-muted-foreground">
-                JPG, PNG, WEBP, HEIC (max 10MB, up to {maxFiles} files)
+                {IMAGE_FORMATS_LABEL} (max 10MB, up to {maxFiles} files)
               </div>
             </div>
           </div>

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatFileSize } from '@/lib/utils/format';
+import { isAllowedImageType, IMAGE_ACCEPT, IMAGE_FORMATS_LABEL } from '@/lib/utils/media-types';
 
 interface ImageUploaderProps {
   maxFiles?: number;
@@ -46,10 +47,10 @@ export function ImageUploader({
   // Validate file
   const validateFile = useCallback(
     (file: File): boolean => {
-      // Check file type
-      if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'].includes(file.type)) {
+      // Check file type (with extension-based fallback for HEIC/HEIF)
+      if (!isAllowedImageType(file)) {
         toast.error(`Invalid file type: ${file.name}`, {
-          description: 'Only JPG, PNG, WEBP, and HEIC formats are allowed',
+          description: `Only ${IMAGE_FORMATS_LABEL} formats are allowed`,
         });
         return false;
       }
@@ -189,7 +190,7 @@ export function ImageUploader({
       >
         <input
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+          accept={IMAGE_ACCEPT}
           multiple
           onChange={handleInputChange}
           disabled={disabled}
@@ -202,7 +203,7 @@ export function ImageUploader({
             {isDragging ? 'Drop images here' : 'Drag & drop images or click to browse'}
           </p>
           <p className="text-xs text-muted-foreground">
-            JPG, PNG, WEBP, or HEIC • Max {maxFiles} images • {formatFileSize(maxSize)} each
+            {IMAGE_FORMATS_LABEL} • Max {maxFiles} images • {formatFileSize(maxSize)} each
           </p>
         </div>
       </div>

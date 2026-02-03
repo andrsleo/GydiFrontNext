@@ -70,8 +70,9 @@ async function proxyRequest(
     const contentType = request.headers.get('content-type') || '';
 
     if (contentType.includes('multipart/form-data')) {
-      // For file uploads, pass the raw body
-      body = await request.blob();
+      // For file uploads, use arrayBuffer to preserve exact bytes including boundary
+      // This is more reliable than blob() for multipart data
+      body = await request.arrayBuffer();
     } else if (contentType.includes('application/json')) {
       body = await request.text();
     } else {
@@ -164,3 +165,8 @@ export const OPTIONS = handler;
 // Configure the route
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+// Allow larger request bodies for file uploads (up to 50MB)
+// Note: Vercel has limits based on plan (4.5MB hobby, 5MB pro)
+// For larger files, consider using direct Cloudinary upload
+export const maxDuration = 60; // 60 seconds timeout for large uploads

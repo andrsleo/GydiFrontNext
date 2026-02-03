@@ -2,7 +2,7 @@
 
 import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { usePropertyById, useUpdateProperty, useUploadImages, useUploadVideos, usePublishProperty } from '@/features/properties';
+import { usePropertyById, useUpdateProperty, useUploadVideos, usePublishProperty, useCloudinaryDirectUpload } from '@/features/properties';
 import { PropertyForm, ImageUploader, VideoUploader, PropertyGallery, ImageOrganizer, VideoOrganizer } from '@/features/properties/components';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +18,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
   const { id } = use(params);
   const { data: property, isLoading } = usePropertyById({ id });
   const updateProperty = useUpdateProperty();
-  const uploadImages = useUploadImages();
+  const { uploadImagesAsync, isUploading: isUploadingImages, progress: uploadProgress } = useCloudinaryDirectUpload();
   const uploadVideos = useUploadVideos();
   const publishProperty = usePublishProperty();
 
@@ -230,12 +230,13 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
                 maxFiles={20 - property.imageCount}
                 onFilesSelected={async (files) => {
                   try {
-                    await uploadImages.mutateAsync({ propertyId: id, files });
+                    // Use direct Cloudinary upload (bypasses Vercel size limits)
+                    await uploadImagesAsync({ propertyId: id, files });
                   } catch (error) {
                     console.error('Error uploading images:', error);
                   }
                 }}
-                disabled={uploadImages.isPending}
+                disabled={isUploadingImages}
               />
             </CardContent>
           </Card>
