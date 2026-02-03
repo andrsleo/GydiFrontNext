@@ -263,7 +263,12 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
   ): Promise<MediaUploadResponse[]> => {
     const { data } = await apiClient.post<MediaUploadResponse[]>(
       `/api/properties/${propertyId}/media/images/save-urls`,
-      { urls }
+      {
+        mediaUrls: urls.map((url, index) => ({
+          url,
+          displayOrder: index,
+        })),
+      }
     );
     return data;
   };
