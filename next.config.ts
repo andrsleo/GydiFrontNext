@@ -84,14 +84,14 @@ const nextConfig: NextConfig = {
               // Images: Allow self, data URLs, S3, and backend API
               `img-src 'self' data: https: blob: ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}`,
 
-              // Media: Allow videos from backend API
-              `media-src 'self' blob: ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}`,
+              // Media: Allow videos from backend API and Cloudinary
+              `media-src 'self' blob: ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'} https://res.cloudinary.com`,
 
               // Fonts: Only from same origin
               "font-src 'self'",
 
-              // API/AJAX: Allow backend API and Stripe API
-              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'} https://api.stripe.com`,
+              // API/AJAX: Allow backend API, Stripe API, and Cloudinary upload API
+              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'} https://api.stripe.com https://api.cloudinary.com https://res.cloudinary.com`,
 
               // Frames: Deny all iframes from loading this site
               // Allow Stripe iframes for secure payment elements
