@@ -185,23 +185,51 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Handle CSRF token validation failure (403) - Retry once with new token
+    // Handle 403 Forbidden - Could be CSRF issue OR expired JWT (anonymous auth returns 403)
     if (error.response?.status === 403 && !originalRequest._csrfRetry) {
       originalRequest._csrfRetry = true;
 
       try {
-        // Re-fetch CSRF token from response body
+        // Step 1: Re-fetch CSRF token and retry
         await fetchCsrfToken();
 
-        // Retry original request with new CSRF token + X-Requested-With
         if (csrfToken && originalRequest.method?.toUpperCase() !== 'GET') {
           originalRequest.headers['X-XSRF-TOKEN'] = csrfToken;
           originalRequest.headers['X-Requested-With'] = 'XMLHttpRequest';
         }
 
         return apiClient(originalRequest);
-      } catch (csrfError) {
-        console.error('[API Client] CSRF token refresh failed:', csrfError);
+      } catch (csrfRetryError: any) {
+        // Step 2: If retry still fails with 403, it's likely an expired JWT
+        // Spring Security + AnonymousAuthenticationFilter returns 403 (not 401)
+        // when no valid JWT is present, so we need to attempt token refresh here too
+        if (csrfRetryError?.response?.status === 403 && !originalRequest._authRetry && typeof window !== 'undefined') {
+          originalRequest._authRetry = true;
+
+          try {
+            const refreshUrl = '/api/proxy/api/v1/auth/refresh';
+            await axios.post(refreshUrl, {}, { withCredentials: true });
+
+            // Re-fetch CSRF token after auth refresh (token may have rotated)
+            await fetchCsrfToken();
+            if (csrfToken) {
+              originalRequest.headers['X-XSRF-TOKEN'] = csrfToken;
+            }
+
+            return apiClient(originalRequest);
+          } catch (refreshError) {
+            // Auth refresh failed - session is truly expired, redirect to login
+            document.cookie = 'gydi_session=; path=/; max-age=0; SameSite=Lax; Secure';
+            clearCsrfToken();
+            sessionStorage.removeItem('access_token');
+            sessionStorage.removeItem('refresh_token');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/login?error=SessionExpired';
+            return Promise.reject(refreshError);
+          }
+        }
+
         return Promise.reject(error);
       }
     }
