@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Filter, Check, Copy, ExternalLink } from 'lucide-react';
 import { useGenerateReferralLink } from '@/features/referrals/hooks';
 import { propertyKeys } from '@/lib/constants/query-keys';
+import { PropertyStatus } from '../types';
 import type { PropertyResponse } from '../types';
 
 export function ReferPropertiesTab() {
@@ -26,10 +27,10 @@ export function ReferPropertiesTab() {
 
   const generateLink = useGenerateReferralLink();
 
-  // Fetch all platform properties
+  // Fetch only PUBLISHED properties (non-published should not be referrable)
   const { data, isLoading } = useQuery({
-    queryKey: propertyKeys.list({ page, size: pageSize, searchText: searchQuery }),
-    queryFn: () => propertiesApi.getAll({ page, size: pageSize, searchText: searchQuery }),
+    queryKey: propertyKeys.list({ page, size: pageSize, searchText: searchQuery, status: PropertyStatus.PUBLISHED }),
+    queryFn: () => propertiesApi.getAll({ page, size: pageSize, searchText: searchQuery, status: PropertyStatus.PUBLISHED }),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -40,9 +41,9 @@ export function ReferPropertiesTab() {
     }
 
     try {
+      // Expiration is calculated automatically by backend based on user plan
       const response = await generateLink.mutateAsync({
         propertyId: property.id.toString(),
-        expirationDays: 90,
       });
 
       // Copy to clipboard

@@ -6,7 +6,7 @@ import { z } from 'zod';
 export const generateReferralLinkSchema = z.object({
   affiliateId: z.number().positive('Affiliate ID must be positive'),
   propertyId: z.string().uuid('Invalid property ID'),
-  expirationDays: z.number().min(1).max(365).optional().default(90),
+  // expirationDays removed - backend calculates based on user plan
 });
 
 export const trackClickSchema = z.object({
@@ -19,12 +19,9 @@ export const trackClickSchema = z.object({
 });
 
 // Form schemas
+// expirationDays removed - backend calculates based on user plan
 export const createReferralLinkFormSchema = z.object({
   propertyId: z.string().uuid('Please select a valid property'),
-  expirationDays: z.coerce
-    .number()
-    .min(1, 'Minimum 1 day')
-    .max(365, 'Maximum 365 days'),
 });
 
 export type GenerateReferralLinkFormData = z.infer<typeof createReferralLinkFormSchema>;

@@ -104,13 +104,13 @@ function RegisterForm() {
                   )}
                 </div>
                 <p className="mt-1 text-sm text-gray-600">
-                  {planDetails.priceDisplay} • Comisión: {planDetails.commissionDisplay}
+                  {planDetails.priceDisplay} • Comisión Afiliado: {planDetails.affiliate.commissionDisplay}
                 </p>
               </div>
               <CheckCircle2 className="h-8 w-8 text-primary" />
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              {planDetails.features.slice(0, 3).map((feature, index) => (
+              {planDetails.affiliate.benefits.slice(0, 3).map((feature, index) => (
                 <span
                   key={index}
                   className="rounded-md bg-white px-2 py-1 text-xs text-gray-700"

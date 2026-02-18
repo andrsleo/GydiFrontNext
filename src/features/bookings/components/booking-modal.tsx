@@ -56,14 +56,12 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
     defaultValues: {
       referralLinkId: '',
       propertyId: property.id,
-      startDate: '',
-      endDate: '',
-      clientFirstName: '',
-      clientLastName: '',
-      clientEmail: '',
-      clientPhone: '',
-      totalAmount: 0,
-      currency: property.currency,
+      checkInDate: '',
+      checkOutDate: '',
+      guestName: '',
+      guestEmail: '',
+      guestPhone: '',
+      guestsCount: 1,
     },
     mode: 'onChange', // Validate on change
   });
@@ -80,38 +78,36 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
     setSelectedDates(dates);
     if (dates?.from && dates?.to) {
       // Convert dates to YYYY-MM-DD format
-      form.setValue('startDate', format(dates.from, 'yyyy-MM-dd'));
-      form.setValue('endDate', format(dates.to, 'yyyy-MM-dd'));
+      form.setValue('checkInDate', format(dates.from, 'yyyy-MM-dd'));
+      form.setValue('checkOutDate', format(dates.to, 'yyyy-MM-dd'));
     } else {
-      form.setValue('startDate', '');
-      form.setValue('endDate', '');
+      form.setValue('checkInDate', '');
+      form.setValue('checkOutDate', '');
     }
   };
 
   // Watch date fields to calculate quote
-  const startDate = form.watch('startDate');
-  const endDate = form.watch('endDate');
+  const checkInDate = form.watch('checkInDate');
+  const checkOutDate = form.watch('checkOutDate');
 
   // Calculate nights and total
   const nights = useMemo(() => {
-    if (startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
+    if (checkInDate && checkOutDate) {
+      const start = new Date(checkInDate);
+      const end = new Date(checkOutDate);
       return differenceInDays(end, start);
     }
     return 0;
-  }, [startDate, endDate]);
+  }, [checkInDate, checkOutDate]);
 
   const total = useMemo(() => {
     if (nights > 0) {
       const subtotal = property.pricePerNight * nights;
       const serviceFee = subtotal * 0.1; // 10% service fee
-      const calculatedTotal = subtotal + serviceFee;
-      form.setValue('totalAmount', calculatedTotal);
-      return calculatedTotal;
+      return subtotal + serviceFee;
     }
     return 0;
-  }, [nights, property.pricePerNight, form]);
+  }, [nights, property.pricePerNight]);
 
   const onSubmit = async (data: CreateBookingFormData) => {
     try {
@@ -119,13 +115,10 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
 
       // Si la propiedad tiene URL de Airbnb, construir la URL con las fechas y abrir en nueva pestaña
       if (property.airbnbUrl) {
-        const checkInDate = data.startDate; // Already in YYYY-MM-DD format
-        const checkOutDate = data.endDate; // Already in YYYY-MM-DD format
-
         // Construir URL de Airbnb con parámetros de fechas
         const url = new URL(property.airbnbUrl);
-        url.searchParams.set('check_in', checkInDate);
-        url.searchParams.set('check_out', checkOutDate);
+        url.searchParams.set('check_in', data.checkInDate);
+        url.searchParams.set('check_out', data.checkOutDate);
 
         // Abrir en nueva pestaña
         window.open(url.toString(), '_blank');
@@ -146,7 +139,7 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
     setSelectedDates(undefined);
   };
 
-  const hasSelectedDates = startDate && endDate;
+  const hasSelectedDates = checkInDate && checkOutDate;
   const subtotal = nights * property.pricePerNight;
   const serviceFee = subtotal * 0.1;
 
@@ -198,39 +191,23 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
             <div className="space-y-4">
               <FormLabel>Datos del huésped</FormLabel>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="clientFirstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nombre</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Juan" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="clientLastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Apellido</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Pérez" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="guestName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre Completo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Juan Pérez García" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
-                name="clientEmail"
+                name="guestEmail"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
@@ -244,7 +221,7 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
 
               <FormField
                 control={form.control}
-                name="clientPhone"
+                name="guestPhone"
                 render={({ field: { onChange, value } }) => (
                   <FormItem>
                     <FormLabel>Teléfono</FormLabel>
@@ -255,6 +232,27 @@ export function BookingModal({ isOpen, onClose, property, referralLinkId }: Book
                         onChange={onChange}
                         defaultCountry="CO"
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="guestsCount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Número de Huéspedes</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="50"
+                        placeholder="1"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
                       />
                     </FormControl>
                     <FormMessage />

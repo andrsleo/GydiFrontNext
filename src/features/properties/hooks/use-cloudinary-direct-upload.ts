@@ -274,7 +274,37 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
   };
 
   /**
+   * Fallback: Upload directly to backend (for local dev without Cloudinary)
+   *
+   * Used when NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME is not configured.
+   * Backend stores files in ./uploads/ directory (LocalFileSystemStorageAdapter).
+   */
+  const uploadToBackendDirect = async (propertyId: string, files: File[]): Promise<void> => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+
+    await apiClient.post(`/api/properties/${propertyId}/media/images`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          // Update all files to the same overall progress (simulated per-file)
+          const simulatedProgress: UploadProgress = {};
+          files.forEach((file) => {
+            simulatedProgress[file.name] = percent;
+          });
+          setProgress(simulatedProgress);
+        }
+      },
+    });
+  };
+
+  /**
    * Main mutation: Upload images flow
+   *
+   * Automatically selects upload strategy:
+   * - Cloudinary (production): signatures → direct-to-CDN → save URLs
+   * - Local backend (dev): multipart upload → LocalFileSystemStorageAdapter
    */
   const mutation = useMutation<MediaUploadResponse[], Error, UploadImagesVariables>({
     mutationFn: async ({ propertyId, files }) => {
@@ -306,6 +336,16 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       setProgress(initialProgress);
 
       try {
+        // Detect storage strategy based on environment
+        const isCloudinaryConfigured = !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+        if (!isCloudinaryConfigured) {
+          // LOCAL DEV: Upload directly to backend (no Cloudinary needed)
+          await uploadToBackendDirect(propertyId, files);
+          return [];
+        }
+
+        // PRODUCTION: Cloudinary direct upload flow
         // Step 1: Get signatures from backend (one per file)
         const signatureResponse = await getUploadSignatures(propertyId, files.length, 'IMAGE');
 
@@ -345,8 +385,12 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       setProgress({});
 
       // Show success toast
+      const isCloudinaryConfigured = !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+      const uploadedCount = data.length > 0 ? data.length : variables.files.length;
       toast.success('Images uploaded successfully', {
-        description: `${data.length} image(s) have been uploaded directly to Cloudinary`,
+        description: isCloudinaryConfigured
+          ? `${uploadedCount} image(s) have been uploaded to Cloudinary`
+          : `${uploadedCount} image(s) have been uploaded`,
       });
     },
     onError: (error) => {

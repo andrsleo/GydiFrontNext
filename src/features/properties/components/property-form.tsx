@@ -24,7 +24,7 @@ import {
   type UpdatePropertyFormData,
 } from '../schemas';
 import { useAmenities, useValidateICalUrl } from '../hooks';
-import { PropertyType, PropertyListingType, Currency, LISTING_TYPE_LABELS } from '../types';
+import { PropertyType, PropertyListingType, Currency, LISTING_TYPE_LABELS, PROPERTY_TYPE_LABELS } from '../types';
 
 interface PropertyFormProps {
   mode: 'create' | 'edit';
@@ -210,7 +210,7 @@ export function PropertyForm({
           aria-invalid={errors.listingType ? 'true' : 'false'}
           aria-describedby={errors.listingType ? 'listingType-error' : undefined}
         >
-          {Object.entries(LISTING_TYPE_LABELS).map(([key, label]) => (
+          {Object.entries(LISTING_TYPE_LABELS).map(([key, label]) => key === PropertyListingType.SHORT_TERM_RENTAL && (
             <option key={key} value={key}>
               {label}
             </option>
@@ -363,9 +363,9 @@ export function PropertyForm({
           aria-invalid={errors.propertyType ? 'true' : 'false'}
           aria-describedby={errors.propertyType ? 'propertyType-error' : undefined}
         >
-          {Object.values(PropertyType).map((type) => (
-            <option key={type} value={type}>
-              {type}
+          {Object.entries(PROPERTY_TYPE_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
             </option>
           ))}
         </select>

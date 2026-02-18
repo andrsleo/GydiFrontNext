@@ -155,13 +155,24 @@ export const authApi = {
       console.error('[Auth] Failed to fetch CSRF token after login:', error);
     }
 
+    // Fetch actual subscription plan from backend
+    let activePlan: string = 'FREE';
+    try {
+      const { data: subscription } = await apiClient.get('/api/subscriptions/current');
+      if (subscription?.planCode) {
+        activePlan = subscription.planCode;
+      }
+    } catch {
+      // No subscription or error - keep default FREE
+    }
+
     // Transform backend user to AuthUser format
     return {
       id: data.user.id.toString(),
       email: data.user.email,
-      name: data.user.name || data.user.email, // Use name directly from backend
+      name: data.user.name || data.user.email,
       role: (data.user.roleNames?.[0] as any) || 'USER',
-      activePlan: 'FREE', // Default plan, should be fetched from backend
+      activePlan: activePlan as any,
       capabilities: {
         canPublish: true,
         canRefer: true,
@@ -226,19 +237,30 @@ export const authApi = {
         return null;
       }
 
+      // Fetch actual subscription plan from backend
+      let activePlan: string = 'FREE';
+      try {
+        const { data: subscription } = await apiClient.get('/api/subscriptions/current');
+        if (subscription?.planCode) {
+          activePlan = subscription.planCode;
+        }
+      } catch {
+        // No subscription or error - keep default FREE
+      }
+
       // Transform backend user to AuthUser format (same as login)
       return {
         id: verifyResponse.user.id.toString(),
         email: verifyResponse.user.email,
-        name: verifyResponse.user.name || verifyResponse.user.email, // Use name directly from backend
+        name: verifyResponse.user.name || verifyResponse.user.email,
         role: (verifyResponse.user.roleNames?.[0] as any) || 'USER',
-        activePlan: 'FREE', // Default plan, should be fetched from backend
+        activePlan: activePlan as any,
         capabilities: {
           canPublish: true,
           canRefer: true,
           canRent: true,
         },
-        accountVerified: true, // JWT tokens are only issued to verified users
+        accountVerified: true,
       };
     } catch (error) {
       console.error('Error fetching current user:', error);

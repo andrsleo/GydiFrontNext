@@ -65,6 +65,10 @@ export function CancelSubscriptionDialog({
   });
 
   const cancelImmediately = form.watch('cancelImmediately');
+  const reason = form.watch('reason');
+
+  // Enable button when reason has at least 10 characters
+  const isFormValid = reason.trim().length >= 10;
 
   const onSubmit = (data: CancelSubscriptionFormData) => {
     cancelSubscription(data, {
@@ -188,7 +192,7 @@ export function CancelSubscriptionDialog({
               <Button
                 type="submit"
                 variant="destructive"
-                disabled={isPending || !form.formState.isValid}
+                disabled={isPending || !isFormValid}
               >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Cancel Subscription

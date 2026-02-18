@@ -1,18 +1,30 @@
 /**
  * Subscription Plans Constants
  *
- * Defines the available subscription plans, commission rates, and resource limits.
- * This file is aligned with the backend SubscriptionPlan enum.
+ * Defines available subscription plans with ROLE-SPECIFIC commission rates.
+ * Users can be AFFILIATE, HOST, or BOTH.
  *
- * Commission Structure:
- * - When a user refers someone who subscribes, they earn a commission
- * - Commission rate depends on the REFERRER's plan (not the referred user's plan)
+ * ✅ **CORRECT Commission Structure:**
+ * - **AFFILIATE**: RECEIVES commission FROM platform (2%, 5%, 10%)
+ * - **HOST**: PAYS commission TO platform (25%, 20%, 15%)
+ * - **PLATFORM**: Earns profit = (host fee - affiliate commission)
  *
- * Example: User with PRO plan (5%) refers someone who subscribes to ELITE ($99.99)
- * → User earns: $99.99 × 5% = $4.99
+ * @example
+ * // User with PRO plan, $100 booking:
+ * // As AFFILIATE: Platform PAYS $5 (5%) → Affiliate receives $5
+ * // As HOST: Platform CHARGES $20 (20%) → Host receives $80 ($100 - $20)
+ * // Platform profit: $20 - $5 = $15
  */
 
 import type { SubscriptionPlan } from '@/types/user';
+
+// Re-export SubscriptionPlan type for convenience
+export type { SubscriptionPlan } from '@/types/user';
+
+/**
+ * User Roles
+ */
+export type UserRole = 'AFFILIATE' | 'HOST' | 'BOTH';
 
 /**
  * Subscription Plan Names
@@ -24,45 +36,76 @@ export const SUBSCRIPTION_PLANS = {
 } as const;
 
 /**
- * Commission rates by plan
+ * Commission rates by plan and role
  *
- * - FREE: 2% per referral subscription
- * - PRO: 5% per referral subscription
- * - ELITE: 10% per referral subscription
+ * **SEMANTICS:**
+ * - `affiliateEarns`: % that platform PAYS to affiliate
+ * - `platformCharges`: % that platform CHARGES to host (platform fee)
  */
-export const COMMISSION_RATES: Record<SubscriptionPlan, number> = {
-  FREE: 0.02, // 2%
-  PRO: 0.05, // 5%
-  ELITE: 0.10, // 10%
+export const COMMISSION_RATES: Record<
+  SubscriptionPlan,
+  {
+    affiliateEarns: number;     // Platform PAYS this to affiliate
+    platformChargesHost: number // Platform CHARGES this to host
+  }
+> = {
+  FREE: {
+    affiliateEarns: 0.02,         // Platform PAYS 2% to affiliate
+    platformChargesHost: 0.25,    // Platform CHARGES 25% to host
+  },
+  PRO: {
+    affiliateEarns: 0.05,         // Platform PAYS 5% to affiliate
+    platformChargesHost: 0.20,    // Platform CHARGES 20% to host
+  },
+  ELITE: {
+    affiliateEarns: 0.10,         // Platform PAYS 10% to affiliate
+    platformChargesHost: 0.15,    // Platform CHARGES 15% to host
+  },
 };
+
+/**
+ * @deprecated Use COMMISSION_RATES with new property names instead
+ * Legacy keys for backward compatibility
+ */
+export const COMMISSION_RATES_LEGACY = {
+  FREE: { affiliate: 0.02, host: 0.25 },
+  PRO: { affiliate: 0.05, host: 0.20 },
+  ELITE: { affiliate: 0.10, host: 0.15 },
+} as const;
 
 /**
  * Plan pricing (USD per month)
  */
 export const PLAN_PRICES: Record<SubscriptionPlan, number> = {
-  FREE: 0, // Free
-  PRO: 29.99, // $29.99/month
-  ELITE: 99.99, // $99.99/month
+  FREE: 0,      // Free
+  PRO: 19.00,   // $19.00/month
+  ELITE: 39.00, // $39.00/month
 };
 
 /**
  * Resource limits by plan
  *
- * Properties: Number of properties that can be published
- * Referrals: Number of referral links that can be generated
+ * ⚠️ **NOTA: LÍMITES DESACTIVADOS TEMPORALMENTE**
+ * Los planes actualmente solo se diferencian por porcentaje de comisiones.
+ * Los límites de recursos (propiedades, referidos) NO se aplican por el momento.
+ *
+ * Esta constante se mantiene para posible uso futuro, pero actualmente
+ * no hay validaciones activas que bloqueen operaciones por límites.
+ *
+ * @deprecated Temporalmente no se usa. Los planes solo se diferencian por comisiones.
  */
 export const PLAN_LIMITS = {
   FREE: {
-    properties: 10,
-    referrals: 50,
+    properties: Infinity,  // Sin límite (desactivado)
+    referrals: Infinity,   // Sin límite (desactivado)
   },
   PRO: {
-    properties: 50,
-    referrals: 200,
+    properties: Infinity,  // Sin límite (desactivado)
+    referrals: Infinity,   // Sin límite (desactivado)
   },
   ELITE: {
-    properties: Infinity,
-    referrals: Infinity,
+    properties: Infinity,  // Sin límite (desactivado)
+    referrals: Infinity,   // Sin límite (desactivado)
   },
 } as const;
 
@@ -74,91 +117,267 @@ export const PLAN_FEATURES = {
     name: 'Free',
     price: PLAN_PRICES.FREE,
     priceDisplay: 'Gratis',
-    commission: COMMISSION_RATES.FREE,
-    commissionDisplay: '2%',
-    maxProperties: PLAN_LIMITS.FREE.properties,
-    maxReferrals: PLAN_LIMITS.FREE.referrals,
-    features: [
-      'Hasta 10 propiedades',
-      'Hasta 50 referidos',
-      'Link de referido básico',
-      'Comisión del 2%',
-      'Dashboard básico',
-    ],
+    tagline: 'Empieza sin riesgo',
+
+    // AFFILIATE benefits (what you RECEIVE from platform)
+    affiliate: {
+      commission: COMMISSION_RATES.FREE.affiliateEarns,
+      commissionDisplay: '2%',
+      benefits: [
+        'Ganas 2% de comisión por cada reserva que refier as',
+        'Plataforma te paga por tus referencias exitosas',
+        'Sin límite de referidos',
+        'Acceso a enlaces de referencia',
+        'Sin suscripción',
+      ],
+    },
+
+    // HOST benefits (what platform CHARGES you)
+    host: {
+      platformFee: COMMISSION_RATES.FREE.platformChargesHost,
+      platformFeeDisplay: '25%',
+      benefits: [
+        'Plataforma cobra 25% por cada reserva generada por referido',
+        'Recibes 75% del monto de la reserva',
+        'Tráfico adicional dirigido a la propiedad',
+        'Sin exclusividad',
+        'Solo pagas si hay reserva',
+      ],
+    },
+
+    key: 'Puedes ser afiliado, anfitrión o ambos. Ideal para probar la plataforma.',
+    cta: 'Empezar gratis',
     badge: null,
     color: 'gray',
+    popular: false,
   },
+
   PRO: {
     name: 'Pro',
     price: PLAN_PRICES.PRO,
-    priceDisplay: '$29.99/mes',
-    commission: COMMISSION_RATES.PRO,
-    commissionDisplay: '5%',
-    maxProperties: PLAN_LIMITS.PRO.properties,
-    maxReferrals: PLAN_LIMITS.PRO.referrals,
-    features: [
-      'Hasta 50 propiedades',
-      'Hasta 200 referidos',
-      'Link de referido + QR Code',
-      'Comisión del 5%',
-      'Analytics avanzado',
-      'Exportación de datos',
-      'Soporte prioritario',
-    ],
+    priceDisplay: '$19/mes',
+    tagline: 'Convierte tus referidos en ingresos constantes',
+
+    // AFFILIATE benefits (what you RECEIVE from platform)
+    affiliate: {
+      commission: COMMISSION_RATES.PRO.affiliateEarns,
+      commissionDisplay: '5%',
+      previousRate: '2%', // To show upgrade
+      benefits: [
+        'Ganas 5% de comisión por cada reserva referida (upgrade de 2%)',
+        'Plataforma te paga más del doble que el plan Free',
+        'Sin límite de referidos',
+        'Ideal para actividad constante',
+      ],
+    },
+
+    // HOST benefits (what platform CHARGES you)
+    host: {
+      platformFee: COMMISSION_RATES.PRO.platformChargesHost,
+      platformFeeDisplay: '20%',
+      benefits: [
+        'Plataforma cobra 20% por cada reserva generada por referido',
+        'Ahorras 5% comparado con el plan Free (25% → 20%)',
+        'Recibes 80% del monto de la reserva',
+        'Tráfico adicional dirigido a la propiedad',
+        'Sin exclusividad',
+      ],
+    },
+
+    key: 'Suscripción mensual, cancela cuando quieras. Beneficios aplican según el rol que ejerzas.',
+    cta: 'Pasar a PRO',
     badge: 'Más popular',
     color: 'blue',
+    popular: true,
   },
+
   ELITE: {
     name: 'Elite',
     price: PLAN_PRICES.ELITE,
-    priceDisplay: '$99.99/mes',
-    commission: COMMISSION_RATES.ELITE,
-    commissionDisplay: '10%',
-    maxProperties: PLAN_LIMITS.ELITE.properties,
-    maxReferrals: PLAN_LIMITS.ELITE.referrals,
-    features: [
-      'Propiedades ilimitadas',
-      'Referidos ilimitados',
-      'Link + QR + Widget personalizado',
-      'Comisión del 10%',
-      'Analytics completo + API access',
-      'Estadísticas globales',
-      'White label disponible',
-      'Gerente de cuenta dedicado',
-    ],
+    priceDisplay: '$39/mes',
+    tagline: 'Maximiza ingresos y escala resultados',
+
+    // AFFILIATE benefits (what you RECEIVE from platform)
+    affiliate: {
+      commission: COMMISSION_RATES.ELITE.affiliateEarns,
+      commissionDisplay: '10%',
+      previousRates: ['2%', '5%'], // To show progression
+      benefits: [
+        'Ganas 10% de comisión por cada reserva referida',
+        'La comisión más alta de la plataforma para afiliados',
+        'Duplicas las ganancias del plan PRO',
+        'Sin límite de referidos',
+        'Ideal para alto volumen y partners estratégicos',
+      ],
+    },
+
+    // HOST benefits (what platform CHARGES you)
+    host: {
+      platformFee: COMMISSION_RATES.ELITE.platformChargesHost,
+      platformFeeDisplay: '15%',
+      benefits: [
+        'Plataforma cobra solo 15% por cada reserva generada por referido',
+        'Ahorras 10% comparado con el plan Free (25% → 15%)',
+        'Recibes 85% del monto de la reserva',
+        'Tráfico adicional dirigido a la propiedad',
+        'Sin exclusividad',
+        'Acceso prioritario a nuevas funcionalidades',
+        'Perfil destacado dentro de GYDI Properties',
+      ],
+    },
+
+    key: 'Suscripción mensual flexible. Diseñado para crecimiento y volumen.',
+    cta: 'Unirme a ELITE',
     badge: 'Mejor valor',
     color: 'purple',
+    popular: false,
   },
 } as const;
 
 /**
- * Get commission amount for a subscription
+ * Calculate affiliate earnings (what platform PAYS to affiliate)
  *
- * @param referrerPlan - Plan of the user who made the referral
- * @param subscriptionAmount - Amount of the referred user's subscription
- * @returns Commission amount in the same currency
+ * @param plan - Affiliate's subscription plan
+ * @param bookingAmount - Total booking amount
+ * @returns Amount affiliate receives from platform
  *
  * @example
- * // User with PRO plan refers someone who subscribes to ELITE
- * getCommissionAmount('PRO', 99.99) // Returns 4.9995 (~$5)
+ * // Affiliate with PRO plan, $100 booking
+ * calculateAffiliateEarnings('PRO', 100) // Returns 5.00 (platform pays 5%)
  */
-export function getCommissionAmount(
-  referrerPlan: SubscriptionPlan,
-  subscriptionAmount: number
+export function calculateAffiliateEarnings(
+  plan: SubscriptionPlan,
+  bookingAmount: number
 ): number {
-  const rate = COMMISSION_RATES[referrerPlan];
-  return subscriptionAmount * rate;
+  return bookingAmount * COMMISSION_RATES[plan].affiliateEarns;
 }
 
 /**
- * Format commission rate for display
+ * Calculate platform fee (what platform CHARGES to host)
+ *
+ * @param plan - Host's subscription plan
+ * @param bookingAmount - Total booking amount
+ * @returns Amount platform charges to host
  *
  * @example
- * formatCommissionRate('PRO') // Returns "5%"
+ * // Host with PRO plan, $100 booking
+ * calculatePlatformFee('PRO', 100) // Returns 20.00 (platform charges 20%)
  */
-export function formatCommissionRate(plan: SubscriptionPlan): string {
-  const rate = COMMISSION_RATES[plan];
+export function calculatePlatformFee(
+  plan: SubscriptionPlan,
+  bookingAmount: number
+): number {
+  return bookingAmount * COMMISSION_RATES[plan].platformChargesHost;
+}
+
+/**
+ * Calculate host net income (what host receives after platform fee)
+ *
+ * @param plan - Host's subscription plan
+ * @param bookingAmount - Total booking amount
+ * @returns Amount host receives (booking - platform fee)
+ *
+ * @example
+ * // Host with PRO plan, $100 booking
+ * calculateHostNetIncome('PRO', 100) // Returns 80.00 ($100 - $20 fee)
+ */
+export function calculateHostNetIncome(
+  plan: SubscriptionPlan,
+  bookingAmount: number
+): number {
+  const platformFee = calculatePlatformFee(plan, bookingAmount);
+  return bookingAmount - platformFee;
+}
+
+/**
+ * Calculate platform profit (platform fee - affiliate commission)
+ *
+ * @param hostPlan - Host's subscription plan
+ * @param affiliatePlan - Affiliate's subscription plan
+ * @param bookingAmount - Total booking amount
+ * @returns Platform's net profit
+ *
+ * @example
+ * // Host PRO, Affiliate PRO, $100 booking
+ * calculatePlatformProfit('PRO', 'PRO', 100) // Returns 15.00 ($20 - $5)
+ */
+export function calculatePlatformProfit(
+  hostPlan: SubscriptionPlan,
+  affiliatePlan: SubscriptionPlan,
+  bookingAmount: number
+): number {
+  const platformFee = calculatePlatformFee(hostPlan, bookingAmount);
+  const affiliateEarnings = calculateAffiliateEarnings(affiliatePlan, bookingAmount);
+  return platformFee - affiliateEarnings;
+}
+
+/**
+ * @deprecated Use calculateAffiliateEarnings or calculatePlatformFee instead
+ * Legacy function for backward compatibility
+ */
+export function getCommissionAmount(
+  plan: SubscriptionPlan,
+  role: 'AFFILIATE' | 'HOST',
+  bookingAmount: number
+): number {
+  if (role === 'AFFILIATE') {
+    return calculateAffiliateEarnings(plan, bookingAmount);
+  } else {
+    return calculatePlatformFee(plan, bookingAmount);
+  }
+}
+
+/**
+ * Format affiliate commission rate for display
+ *
+ * @example
+ * formatAffiliateRate('PRO') // Returns "5%"
+ */
+export function formatAffiliateRate(plan: SubscriptionPlan): string {
+  const rate = COMMISSION_RATES[plan].affiliateEarns;
   return `${(rate * 100).toFixed(0)}%`;
+}
+
+/**
+ * Format host platform fee rate for display
+ *
+ * @example
+ * formatHostFeeRate('PRO') // Returns "20%"
+ */
+export function formatHostFeeRate(plan: SubscriptionPlan): string {
+  const rate = COMMISSION_RATES[plan].platformChargesHost;
+  return `${(rate * 100).toFixed(0)}%`;
+}
+
+/**
+ * @deprecated Use formatAffiliateRate or formatHostFeeRate instead
+ */
+export function formatCommissionRate(
+  plan: SubscriptionPlan,
+  role: 'AFFILIATE' | 'HOST'
+): string {
+  if (role === 'AFFILIATE') {
+    return formatAffiliateRate(plan);
+  } else {
+    return formatHostFeeRate(plan);
+  }
+}
+
+/**
+ * Get commission rates for both roles with correct semantics
+ *
+ * @example
+ * getBothCommissionRates('PRO')
+ * // Returns { affiliateEarns: "5%", platformCharges: "20%" }
+ */
+export function getBothCommissionRates(plan: SubscriptionPlan): {
+  affiliateEarns: string;
+  platformCharges: string;
+} {
+  return {
+    affiliateEarns: formatAffiliateRate(plan),
+    platformCharges: formatHostFeeRate(plan),
+  };
 }
 
 /**
@@ -166,11 +385,11 @@ export function formatCommissionRate(plan: SubscriptionPlan): string {
  *
  * @example
  * formatPrice(0) // Returns "Gratis"
- * formatPrice(29.99) // Returns "$29.99/mes"
+ * formatPrice(19) // Returns "$19/mes"
  */
 export function formatPrice(price: number): string {
   if (price === 0) return 'Gratis';
-  return `$${price.toFixed(2)}/mes`;
+  return `$${price.toFixed(0)}/mes`;
 }
 
 /**
@@ -198,6 +417,7 @@ export function canAddProperty(plan: SubscriptionPlan, currentProperties: number
 
 /**
  * Check if user can add more referrals based on plan
+ * Note: All plans have unlimited referrals now
  *
  * @param plan - User's subscription plan
  * @param currentReferrals - Number of referrals currently generated
@@ -264,24 +484,50 @@ export function isUpgrade(fromPlan: SubscriptionPlan, toPlan: SubscriptionPlan):
 }
 
 /**
- * Calculate monthly savings between plans
+ * Calculate affiliate commission increase when upgrading
  *
  * @example
- * // If upgrading from FREE to PRO
- * calculateMonthlySavings('FREE', 'PRO') // Returns 0 (no savings, PRO costs money)
- *
- * // For commission comparison:
- * // FREE: 2% of $100 = $2
- * // PRO: 5% of $100 = $5
- * // Extra commission per $100: $3
+ * getAffiliateCommissionIncrease('FREE', 'PRO')
+ * // Returns 3 (from 2% to 5%, increase of 3 percentage points)
  */
-export function getExtraCommissionPercentage(
+export function getAffiliateCommissionIncrease(
   fromPlan: SubscriptionPlan,
   toPlan: SubscriptionPlan
 ): number {
-  const fromRate = COMMISSION_RATES[fromPlan];
-  const toRate = COMMISSION_RATES[toPlan];
+  const fromRate = COMMISSION_RATES[fromPlan].affiliateEarns;
+  const toRate = COMMISSION_RATES[toPlan].affiliateEarns;
   return (toRate - fromRate) * 100;
+}
+
+/**
+ * Calculate platform fee decrease when host upgrades (lower % charged)
+ *
+ * @example
+ * getHostFeeDecrease('FREE', 'PRO')
+ * // Returns 5 (from 25% to 20%, decrease of 5 percentage points)
+ */
+export function getHostFeeDecrease(
+  fromPlan: SubscriptionPlan,
+  toPlan: SubscriptionPlan
+): number {
+  const fromRate = COMMISSION_RATES[fromPlan].platformChargesHost;
+  const toRate = COMMISSION_RATES[toPlan].platformChargesHost;
+  return (fromRate - toRate) * 100; // Positive number means saving
+}
+
+/**
+ * @deprecated Use getAffiliateCommissionIncrease or getHostFeeDecrease instead
+ */
+export function getCommissionIncrease(
+  fromPlan: SubscriptionPlan,
+  toPlan: SubscriptionPlan,
+  role: 'AFFILIATE' | 'HOST'
+): number {
+  if (role === 'AFFILIATE') {
+    return getAffiliateCommissionIncrease(fromPlan, toPlan);
+  } else {
+    return -getHostFeeDecrease(fromPlan, toPlan); // Negative because it's actually a decrease
+  }
 }
 
 /**
@@ -314,4 +560,16 @@ export function getPlanBadge(plan: SubscriptionPlan): string | null {
  */
 export function hasUnlimitedResources(plan: SubscriptionPlan): boolean {
   return plan === SUBSCRIPTION_PLANS.ELITE;
+}
+
+/**
+ * Check if plan has unlimited referrals
+ * Note: All plans now have unlimited referrals
+ *
+ * @example
+ * hasUnlimitedReferrals('FREE') // Returns true
+ * hasUnlimitedReferrals('PRO') // Returns true
+ */
+export function hasUnlimitedReferrals(plan: SubscriptionPlan): boolean {
+  return PLAN_LIMITS[plan].referrals === Infinity;
 }

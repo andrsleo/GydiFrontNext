@@ -50,7 +50,7 @@ export function UpgradeModal({
     router.push(`/onboarding/payment?plan=${targetPlanCode}`);
   };
 
-  const commissionIncrease = (targetPlan.commission - currentPlan.commission) * 100;
+  const commissionIncrease = (targetPlan.affiliate.commission - currentPlan.affiliate.commission) * 100;
   const priceDifference = targetPlan.price - currentPlan.price;
 
   return (
@@ -85,7 +85,7 @@ export function UpgradeModal({
               <div className="mb-2 text-sm font-medium text-gray-600">Tu plan actual</div>
               <div className="text-2xl font-bold text-gray-900">{currentPlan.name}</div>
               <div className="mt-1 text-sm text-gray-600">
-                {currentPlan.priceDisplay} • {currentPlan.commissionDisplay}
+                {currentPlan.priceDisplay} • Comisión: {currentPlan.affiliate.commissionDisplay}
               </div>
             </div>
 
@@ -101,7 +101,7 @@ export function UpgradeModal({
               </div>
               <div className="text-2xl font-bold text-gray-900">{targetPlan.name}</div>
               <div className="mt-1 text-sm text-gray-600">
-                {targetPlan.priceDisplay} • {targetPlan.commissionDisplay}
+                {targetPlan.priceDisplay} • Comisión: {targetPlan.affiliate.commissionDisplay}
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@ export function UpgradeModal({
                   comisión por referido
                 </span>
               </div>
-              {targetPlan.features.slice(0, 4).map((feature, index) => (
+              {targetPlan.affiliate.benefits.slice(0, 4).map((feature, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm">
                   <CheckCircle2 className="h-4 w-4 text-green-600" />
                   <span>{feature}</span>

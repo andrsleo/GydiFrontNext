@@ -291,7 +291,7 @@ function PaymentWizardContent() {
                     Incluye:
                   </h4>
                   <ul className="space-y-2">
-                    {planDetails.features.slice(0, 5).map((feature, index) => (
+                    {planDetails.affiliate.benefits.slice(0, 5).map((feature, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
                         <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                         <span>{feature}</span>

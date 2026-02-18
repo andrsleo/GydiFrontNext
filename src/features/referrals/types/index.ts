@@ -11,8 +11,10 @@ export interface ReferralLink {
   id: string;
   affiliateId: number;
   propertyId: string;
+  encryptedToken: string;
   shortCode: string;
   fullUrl: string;
+  qrCodeUrl: string;
   clicksCount: number;
   conversionsCount: number;
   totalCommission: number;
@@ -26,10 +28,15 @@ export interface ReferralLink {
 /**
  * SECURITY: affiliateId removed from request
  * Server extracts it from JWT token to prevent IDOR attacks
+ *
+ * NOTE: expirationDays is NO LONGER accepted
+ * The backend automatically calculates expiration based on user's plan:
+ * - FREE: 30 days
+ * - PRO: 90 days
+ * - ELITE: 365 days
  */
 export interface GenerateReferralLinkRequest {
   propertyId: string;
-  expirationDays?: number;
 }
 
 export interface GenerateReferralLinkResponse {

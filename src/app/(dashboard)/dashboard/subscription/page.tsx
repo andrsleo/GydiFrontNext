@@ -96,7 +96,6 @@ export default function SubscriptionPage() {
             isDeleting={isDeleting}
             isSettingDefault={isSettingDefault}
           />
-          <BillingInfo subscription={subscription} />
         </div>
       </div>
 

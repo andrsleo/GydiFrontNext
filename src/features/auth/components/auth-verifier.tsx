@@ -63,13 +63,21 @@ export function AuthVerifier() {
   // 3. No estamos en una página de autenticación
   const shouldVerify = hasHydrated && isAuthenticated && currentUser && !isAuthPage;
 
+  // ✅ FIX: Establecer loading state ANTES de verificar
+  // Esto previene que el Header muestre el usuario antes de la verificación
+  useEffect(() => {
+    if (shouldVerify) {
+      setLoading(true);
+    }
+  }, [shouldVerify, setLoading]);
+
   // Hook de React Query para verificar con el backend
   const {
     data: verifiedUser,
     isLoading,
     error,
   } = useCurrentUser({
-    enabled: shouldVerify, // Solo ejecutar si shouldVerify es true
+    enabled: Boolean(shouldVerify), // Solo ejecutar si shouldVerify es true
     retry: false, // No reintentar si falla (token expirado es error esperado)
     staleTime: 0, // Siempre verificar datos frescos
     refetchOnMount: true, // Verificar cada vez que se monta

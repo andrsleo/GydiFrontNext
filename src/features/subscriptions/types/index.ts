@@ -49,6 +49,11 @@ export type PaymentMethodType =
  */
 export type PaymentMethodStatus = 'ACTIVE' | 'INACTIVE' | 'EXPIRED' | 'FAILED' | 'REPLACED';
 
+/**
+ * Payment method purpose (matches backend PaymentMethodPurpose enum)
+ */
+export type PaymentMethodPurpose = 'SUBSCRIPTION' | 'HOST_COMMISSION' | 'BOTH';
+
 // ==================== Response DTOs ====================
 
 /**
@@ -113,6 +118,7 @@ export interface PaymentMethodResponse {
   /** @deprecated Use status field instead. Kept for backward compatibility. */
   isActive: boolean;
   status: PaymentMethodStatus;
+  purpose: PaymentMethodPurpose;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string | null;

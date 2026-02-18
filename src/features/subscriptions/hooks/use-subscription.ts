@@ -7,6 +7,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/store/auth-store';
 import { subscriptionsApi } from '../api/subscriptions.api';
 import type {
   UserSubscriptionResponse,
@@ -84,6 +85,7 @@ export function useSubscription() {
 export function useSubscribeToPlan() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const updateUser = useAuthStore((state) => state.updateUser);
 
   return useMutation({
     mutationFn: (request: SubscribeToPlanRequest) =>
@@ -91,6 +93,11 @@ export function useSubscribeToPlan() {
     onSuccess: (data) => {
       // Invalidate subscription query to refetch
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.current() });
+
+      // Sync activePlan in auth store so badge updates immediately
+      if (data.planCode) {
+        updateUser({ activePlan: data.planCode as any });
+      }
 
       toast.success('Successfully subscribed!', {
         description: `You are now on the ${data.planName} plan.`,
@@ -134,6 +141,7 @@ export function useSubscribeToPlan() {
  */
 export function useChangePlan() {
   const queryClient = useQueryClient();
+  const updateUser = useAuthStore((state) => state.updateUser);
 
   return useMutation({
     mutationFn: (request: ChangePlanRequest) =>
@@ -141,6 +149,11 @@ export function useChangePlan() {
     onSuccess: (data) => {
       // Invalidate subscription query
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.current() });
+
+      // Sync activePlan in auth store so badge updates immediately
+      if (data.planCode) {
+        updateUser({ activePlan: data.planCode as any });
+      }
 
       toast.success('Plan changed successfully!', {
         description: `You are now on the ${data.planName} plan.`,
@@ -181,6 +194,7 @@ export function useChangePlan() {
  */
 export function useCancelSubscription() {
   const queryClient = useQueryClient();
+  const updateUser = useAuthStore((state) => state.updateUser);
 
   return useMutation({
     mutationFn: (request: CancelSubscriptionRequest) =>
@@ -188,6 +202,12 @@ export function useCancelSubscription() {
     onSuccess: (data) => {
       // Invalidate subscription query
       queryClient.invalidateQueries({ queryKey: subscriptionKeys.current() });
+
+      // Sync activePlan in auth store so badge updates immediately
+      // Immediate cancel → planCode is FREE; end-of-period → planCode stays the same
+      if (data.planCode) {
+        updateUser({ activePlan: data.planCode as any });
+      }
 
       if (data.status === 'CANCELED') {
         toast.success('Subscription canceled', {

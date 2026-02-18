@@ -190,7 +190,7 @@ function LoginContent() {
       // ✅ FIX: Redirect to dashboard after successful login
       // Get callbackUrl from query params or default to /dashboard
       const callbackUrl = searchParams?.get('callbackUrl') || '/dashboard';
-      router.push(callbackUrl);
+      router.push(callbackUrl as any);
     }
   };
 
@@ -288,25 +288,6 @@ function LoginContent() {
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </Button>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-gray-50 px-2 text-gray-500">Credenciales de prueba</span>
-              </div>
-            </div>
-
-            <div className="mt-4 rounded-md bg-blue-50 p-4">
-              <p className="text-sm text-blue-800">
-                <strong>Email:</strong> admin@demo.com
-                <br />
-                <strong>Contraseña:</strong> 123456
-              </p>
-            </div>
-          </div>
         </form>
       </div>
     </div>

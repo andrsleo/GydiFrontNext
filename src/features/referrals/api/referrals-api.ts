@@ -45,6 +45,16 @@ export async function getReferralLinkById(id: string): Promise<ReferralLink> {
 }
 
 /**
+ * Renew an expired or expiring referral link
+ * @param id - Referral link ID
+ * @returns Updated referral link with new expiration date
+ */
+export async function renewReferralLink(id: string): Promise<ReferralLink> {
+  const response = await apiClient.put<ReferralLink>(`/api/v1/referrals/links/${id}/renew`);
+  return response.data;
+}
+
+/**
  * Track a click on a referral link (public endpoint)
  */
 export async function trackClick(request: TrackClickRequest): Promise<void> {

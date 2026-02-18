@@ -88,4 +88,30 @@ export const paymentMethodsApi = {
     );
     return data;
   },
+
+  /**
+   * Verify a payment method (charge $0.01 and refund)
+   * POST /api/v1/payment-methods/:id/verify
+   */
+  async verify(id: number): Promise<PaymentMethodResponse> {
+    const { data } = await apiClient.post<PaymentMethodResponse>(
+      `/api/v1/payment-methods/${id}/verify`
+    );
+    return data;
+  },
+
+  /**
+   * Update payment method purpose
+   * PATCH /api/v1/payment-methods/:id/purpose
+   */
+  async updatePurpose(
+    id: number,
+    purpose: 'SUBSCRIPTION' | 'HOST_COMMISSION' | 'BOTH'
+  ): Promise<PaymentMethodResponse> {
+    const { data } = await apiClient.patch<PaymentMethodResponse>(
+      `/api/v1/payment-methods/${id}/purpose`,
+      { purpose }
+    );
+    return data;
+  },
 };

@@ -43,12 +43,14 @@ export function EarningsSummary() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Total Earnings</CardTitle>
-            <CardDescription>
-              Current plan: <Badge variant="outline">{earnings.currentPlan}</Badge>
-              <span className="ml-2 text-xs">
+            <CardDescription>View your earnings breakdown and payout status</CardDescription>
+            <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+              <span>Current plan:</span>
+              <Badge variant="outline">{earnings.currentPlan}</Badge>
+              <span className="text-xs">
                 {(earnings.currentCommissionRate * 100).toFixed(0)}% commission
               </span>
-            </CardDescription>
+            </div>
           </div>
           <DollarSign className="h-8 w-8 text-muted-foreground" />
         </div>

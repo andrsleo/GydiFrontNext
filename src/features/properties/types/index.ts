@@ -36,6 +36,22 @@ export enum PropertyType {
 }
 
 /**
+ * Etiquetas en español para cada tipo de propiedad.
+ * Úsalas en la UI para mostrar texto legible al usuario.
+ * Los valores del enum (APARTMENT, HOUSE, etc.) se usan para la API y BD.
+ */
+export const PROPERTY_TYPE_LABELS: Record<PropertyType, string> = {
+  [PropertyType.APARTMENT]: 'Apartamento',
+  [PropertyType.HOUSE]: 'Casa',
+  [PropertyType.VILLA]: 'Villa',
+  [PropertyType.CABIN]: 'Cabaña',
+  [PropertyType.STUDIO]: 'Estudio',
+  [PropertyType.CONDO]: 'Condominio',
+  [PropertyType.BUNGALOW]: 'Bungalow',
+  [PropertyType.OTHER]: 'Otro',
+};
+
+/**
  * Property Listing Type Enum
  */
 export enum PropertyListingType {
@@ -68,10 +84,10 @@ export const LISTING_TYPE_DESCRIPTIONS: Record<PropertyListingType, string> = {
 export enum Currency {
   USD = 'USD',
   EUR = 'EUR',
-  MXN = 'MXN',
-  COP = 'COP',
-  CAD = 'CAD',
-  GBP = 'GBP',
+  // MXN = 'MXN',
+  // COP = 'COP',
+  // CAD = 'CAD',
+  // GBP = 'GBP',
 }
 
 /**

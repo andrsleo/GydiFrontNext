@@ -19,13 +19,40 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
   const refParam = searchParams.get('ref');
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [referralLinkId, setReferralLinkId] = useState<string>(refParam || '');
+
+  // Determine if ref is a valid numeric ID or a legacy JWE token
+  const isNumericRef = refParam != null && /^\d+$/.test(refParam);
+  const [referralLinkId, setReferralLinkId] = useState<string>(isNumericRef ? refParam : '');
 
   const { data: property, isLoading, error } = usePropertyDetail({ slug });
 
-  // Fetch system referral link if no ref parameter
+  // Resolve referralLinkId based on the ref parameter type
   useEffect(() => {
-    if (!refParam && property?.id) {
+    if (isNumericRef) {
+      // New flow: ref is already a numeric referralLinkId
+      setReferralLinkId(refParam);
+    } else if (refParam && !isNumericRef && property?.id) {
+      // Legacy flow: ref is a JWE token from old cached URLs
+      // Resolve it to get the numeric referralLinkId
+      apiClient
+        .post('/api/v1/referrals/resolve', { token: refParam })
+        .then((response) => {
+          setReferralLinkId(response.data.referralLinkId.toString());
+        })
+        .catch((err) => {
+          console.error('Error resolving referral token, falling back to system link:', err);
+          // Fallback to system link if token resolution fails
+          return apiClient
+            .get(`/api/v1/referrals/public/system-link/${property.id}`)
+            .then((response) => {
+              setReferralLinkId(response.data.referralLinkId.toString());
+            });
+        })
+        .catch((error) => {
+          console.error('Error fetching system referral link:', error);
+          setReferralLinkId('0');
+        });
+    } else if (!refParam && property?.id) {
       // User arrived organically (no referral link)
       // Fetch or create system referral link
       apiClient
@@ -35,11 +62,10 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
         })
         .catch((error) => {
           console.error('Error fetching system referral link:', error);
-          // Fallback to a placeholder if the endpoint fails
           setReferralLinkId('0');
         });
     }
-  }, [refParam, property?.id]);
+  }, [refParam, isNumericRef, property?.id]);
 
   if (isLoading) {
     return (
@@ -164,17 +190,17 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
             {/* Precios Condicionales - Solo precio de VENTA (si aplica) */}
             {(property.listingType === PropertyListingType.SALE ||
               property.listingType === PropertyListingType.BOTH) && property.salePrice && (
-              <div className="space-y-3">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-3xl font-bold">
-                      {formatCurrency(property.salePrice, property.currency)}
-                    </span>
-                    <span className="text-sm text-muted-foreground">precio de venta</span>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl sm:text-3xl font-bold">
+                        {formatCurrency(property.salePrice, property.currency)}
+                      </span>
+                      <span className="text-sm text-muted-foreground">precio de venta</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Botón según tipo de publicación */}
             {property.listingType === PropertyListingType.SALE ? (

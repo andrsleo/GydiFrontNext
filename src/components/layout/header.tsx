@@ -3,25 +3,40 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@/features/auth/hooks/use-auth';
 import { useAuthStore } from '@/store/auth-store';
+import { UserMenu } from './user-menu';
 
 export function Header() {
   const user = useUser();
   const isLoading = useAuthStore((state) => state.isLoading);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const hasHydrated = useAuthStore((state) => state._hasHydrated);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hasCompletedInitialVerification, setHasCompletedInitialVerification] = useState(false);
+
+  // ✅ FIX: Track when initial verification completes
+  // This prevents showing user before AuthVerifier validates the session
+  useEffect(() => {
+    if (hasHydrated && !isLoading) {
+      // Only set this once after the initial hydration + verification cycle
+      if (!hasCompletedInitialVerification) {
+        setHasCompletedInitialVerification(true);
+      }
+    }
+  }, [hasHydrated, isLoading, hasCompletedInitialVerification]);
 
   // Don't show user until:
   // 1. Store has hydrated from localStorage
-  // 2. Auth verification is complete (isLoading = false)
+  // 2. Initial auth verification is complete (prevents showing stale user)
   // 3. User exists in store
+  // 4. Not currently loading
   // This prevents showing stale data from localStorage while checking if token is valid
-  const showUser = hasHydrated && user && !isLoading;
+  const showUser = hasHydrated && hasCompletedInitialVerification && user && isAuthenticated && !isLoading;
 
   // Show loading state while verifying
-  const showLoading = !hasHydrated || isLoading;
+  const showLoading = !hasHydrated || isLoading || (isAuthenticated && !hasCompletedInitialVerification);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-gradient-to-r from-background via-background/98 to-primary/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
@@ -89,17 +104,15 @@ export function Header() {
             </>
           ) : showUser ? (
             <>
-              <div className="group relative overflow-hidden rounded-full bg-gradient-to-br from-primary/10 to-blue-500/10 px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20">
-                <span className="text-sm font-semibold text-foreground">
-                  Hola, <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">{user?.name}</span>
-                </span>
-              </div>
-              <Button asChild className="group relative overflow-hidden shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">
+              {/* Dashboard Button */}
+              <Button asChild variant="ghost" className="group relative overflow-hidden transition-all duration-300 hover:scale-105">
                 <Link href="/dashboard" className="relative">
-                  <span className="relative z-10">Dashboard</span>
-                  <div className="absolute inset-0 -z-0 bg-gradient-to-r from-primary via-blue-600 to-purple-600 opacity-0 transition-opacity duration-300 group-hover:opacity-20" />
+                  <span className="relative z-10 font-semibold">Dashboard</span>
+                  <div className="absolute inset-0 -z-0 bg-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </Link>
               </Button>
+              {/* User Menu Dropdown */}
+              <UserMenu />
             </>
           ) : (
             <>
@@ -172,13 +185,15 @@ export function Header() {
                 </>
               ) : showUser ? (
                 <>
-                  <div className="rounded-lg bg-gradient-to-br from-primary/10 to-blue-500/10 px-4 py-3 text-center">
+                  {/* User Menu for Mobile */}
+                  <div className="flex items-center justify-between rounded-lg bg-gradient-to-br from-primary/10 to-blue-500/10 px-4 py-3">
                     <span className="text-sm font-semibold text-foreground">
-                      Hola, <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">{user?.name}</span>
+                      <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">{user?.name}</span>
                     </span>
+                    <UserMenu />
                   </div>
                   <Button asChild className="w-full shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">
-                    <Link href="/dashboard">Dashboard</Link>
+                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
                   </Button>
                 </>
               ) : (

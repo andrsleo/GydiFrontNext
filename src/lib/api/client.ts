@@ -85,6 +85,7 @@ apiClient.interceptors.request.use(
       '/api/v1/auth/refresh',
       '/api/v1/auth/csrf',
       '/api/v1/referrals/resolve',
+      '/api/public/bookings',
     ];
     const isPublicEndpoint = publicEndpoints.some((endpoint) =>
       config.url?.startsWith(endpoint)

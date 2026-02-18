@@ -93,7 +93,7 @@ function SuccessPageContent() {
                   <p className="text-2xl font-bold text-primary">
                     {planDetails.priceDisplay}
                   </p>
-                  <p className="text-sm text-gray-600">Comisión: {planDetails.commissionDisplay}</p>
+                  <p className="text-sm text-gray-600">Comisión: {planDetails.affiliate.commissionDisplay}</p>
                 </div>
               </div>
 
@@ -103,7 +103,7 @@ function SuccessPageContent() {
                   Ahora tienes acceso a:
                 </h4>
                 <div className="grid gap-2">
-                  {planDetails.features.map((feature, index) => (
+                  {planDetails.affiliate.benefits.map((feature, index) => (
                     <div
                       key={index}
                       className="flex items-start gap-2 rounded-md bg-white p-3 text-sm"

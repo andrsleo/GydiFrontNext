@@ -49,12 +49,12 @@ function ReferralRedirectContent() {
                 const data = await response.json();
 
                 if (data.destinationUrl) {
-                    // CRITICAL: Preserve the JWT token by adding it as 'ref' query parameter
-                    // This ensures the referral attribution is maintained throughout the flow
+                    // Use the numeric referralLinkId from the resolve response
+                    // The JWE token has already been validated and is no longer needed
                     const url = new URL(data.destinationUrl);
-                    url.searchParams.set('ref', token);
+                    url.searchParams.set('ref', String(data.referralLinkId));
 
-                    // Redirect to the property page WITH the ref token
+                    // Redirect to the property page WITH the referralLinkId
                     window.location.href = url.toString();
                 } else {
                     throw new Error('Invalid response from server');

@@ -5,7 +5,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useIsAuthenticated } from '@/features/auth/hooks/use-auth';
-import { generateReferralLink, getReferralLinks, getReferralLinkById } from '../api/referrals-api';
+import { generateReferralLink, getReferralLinks, getReferralLinkById, renewReferralLink } from '../api/referrals-api';
 import type { GenerateReferralLinkRequest, ReferralLink, GenerateReferralLinkResponse } from '../types';
 import { toast } from 'sonner';
 
@@ -76,6 +76,33 @@ export function useGenerateReferralLink() {
 export function useActiveLinksCount() {
   const { data: links } = useReferralLinks();
   return links?.filter((link) => link.status === 'ACTIVE').length ?? 0;
+}
+
+/**
+ * Hook to renew an expired or expiring referral link
+ */
+export function useRenewReferralLink() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => renewReferralLink(id),
+    onSuccess: (data: ReferralLink) => {
+      // Invalidate links query to refetch
+      queryClient.invalidateQueries({ queryKey: referralKeys.links() });
+
+      // Update specific link in cache
+      queryClient.setQueryData(referralKeys.link(data.id), data);
+
+      toast.success('Referral link renewed!', {
+        description: `New expiration: ${new Date(data.expiresAt).toLocaleDateString()}`,
+      });
+    },
+    onError: (error: Error) => {
+      toast.error('Failed to renew referral link', {
+        description: error.message,
+      });
+    },
+  });
 }
 
 /**

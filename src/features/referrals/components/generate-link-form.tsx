@@ -23,33 +23,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Loader2 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Loader2, Info } from 'lucide-react';
 import { createReferralLinkFormSchema, type GenerateReferralLinkFormData } from '../schemas';
 import { useGenerateReferralLink } from '../hooks';
 
 interface GenerateLinkFormProps {
   properties: Array<{ id: string; title: string }>;
+  userPlan?: 'FREE' | 'PRO' | 'ELITE';
   onSuccess?: () => void;
 }
 
-export function GenerateLinkForm({ properties, onSuccess }: GenerateLinkFormProps) {
+export function GenerateLinkForm({ properties, userPlan = 'FREE', onSuccess }: GenerateLinkFormProps) {
   const generateLink = useGenerateReferralLink();
+
+  const expirationDays = {
+    FREE: 30,
+    PRO: 90,
+    ELITE: 365,
+  }[userPlan];
 
   const form = useForm<GenerateReferralLinkFormData>({
     resolver: zodResolver(createReferralLinkFormSchema),
     defaultValues: {
       propertyId: '',
-      expirationDays: 90,
     },
   });
 
   const onSubmit = async (data: GenerateReferralLinkFormData) => {
     try {
       // SECURITY: affiliateId extracted from JWT on server-side
+      // Expiration is calculated automatically by backend based on user plan
       await generateLink.mutateAsync({
         propertyId: data.propertyId,
-        expirationDays: data.expirationDays,
       });
 
       form.reset();
@@ -63,6 +69,16 @@ export function GenerateLinkForm({ properties, onSuccess }: GenerateLinkFormProp
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>Link Duration</AlertTitle>
+          <AlertDescription>
+            Your <strong>{userPlan}</strong> plan links last <strong>{expirationDays} days</strong>.
+            {userPlan === 'FREE' && ' Upgrade to PRO for 90-day links or ELITE for 1-year links.'}
+            {userPlan === 'PRO' && ' Upgrade to ELITE for 1-year links.'}
+          </AlertDescription>
+        </Alert>
+
         <FormField
           control={form.control}
           name="propertyId"
@@ -85,29 +101,6 @@ export function GenerateLinkForm({ properties, onSuccess }: GenerateLinkFormProp
               </Select>
               <FormDescription>
                 Choose the property you want to promote
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="expirationDays"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Expiration (days)</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  max={365}
-                  {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                />
-              </FormControl>
-              <FormDescription>
-                Link will expire after this many days (1-365)
               </FormDescription>
               <FormMessage />
             </FormItem>
