@@ -5,11 +5,20 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, X, Play } from 'lucide-react';
-import { getImagePath } from '@/lib/utils/image';
+import {
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Play,
+  Maximize2,
+  ZoomIn,
+  ZoomOut,
+  Download,
+} from 'lucide-react';
+import { getImagePath, getBlurDataURL } from '@/lib/utils/image';
 import type { PropertyImage, PropertyVideo } from '../types';
 
 interface PropertyGalleryProps {
@@ -34,6 +43,8 @@ interface PropertyGalleryProps {
 export function PropertyGallery({ images, videos = [], title }: PropertyGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const touchStartX = useRef<number | null>(null);
 
   const allMedia = [
     ...images.map((img) => ({ type: 'image' as const, ...img })),
@@ -43,20 +54,40 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
   const currentMedia = allMedia[currentIndex];
 
   const goToPrevious = () => {
+    setZoomLevel(1);
     setCurrentIndex((prev) => (prev === 0 ? allMedia.length - 1 : prev - 1));
   };
 
   const goToNext = () => {
+    setZoomLevel(1);
     setCurrentIndex((prev) => (prev === allMedia.length - 1 ? 0 : prev + 1));
   };
 
   const openLightbox = (index: number) => {
     setCurrentIndex(index);
+    setZoomLevel(1);
     setIsLightboxOpen(true);
   };
 
   const closeLightbox = () => {
     setIsLightboxOpen(false);
+    setZoomLevel(1);
+  };
+
+  const cycleZoom = () => {
+    setZoomLevel((prev) => {
+      if (prev === 1) return 1.5;
+      if (prev === 1.5) return 2;
+      return 1;
+    });
+  };
+
+  const handleFullscreen = () => {
+    try {
+      document.documentElement.requestFullscreen();
+    } catch {
+      // Some browsers don't support fullscreen
+    }
   };
 
   // Keyboard navigation
@@ -73,6 +104,35 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isLightboxOpen]);
 
+  // Scroll lock when lightbox is open
+  useEffect(() => {
+    if (isLightboxOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isLightboxOpen]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        goToNext();
+      } else {
+        goToPrevious();
+      }
+    }
+    touchStartX.current = null;
+  };
+
   if (allMedia.length === 0) {
     return (
       <div className="flex aspect-video items-center justify-center rounded-lg bg-muted">
@@ -87,14 +147,21 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
       <div className="relative aspect-video overflow-hidden rounded-lg bg-muted">
         {currentMedia.type === 'image' ? (
           <>
-            <Image
-              src={getImagePath(currentMedia.url)}
-              alt={`${title} - Image ${currentIndex + 1}`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 66vw"
-              priority={currentIndex === 0}
-            />
+            {(() => {
+              const blurUrl = getBlurDataURL(getImagePath(currentMedia.url));
+              return (
+                <Image
+                  src={getImagePath(currentMedia.url)}
+                  alt={`${title} - Image ${currentIndex + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  priority={currentIndex === 0}
+                  placeholder={blurUrl ? 'blur' : 'empty'}
+                  blurDataURL={blurUrl || undefined}
+                />
+              );
+            })()}
             <button
               onClick={() => openLightbox(currentIndex)}
               className="absolute inset-0 z-10 cursor-zoom-in"
@@ -106,7 +173,7 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
             src={currentMedia.url}
             controls
             className="h-full w-full object-cover"
-            poster={getImagePath(currentMedia.thumbnailUrl)}
+            poster={currentMedia.thumbnailUrl ? getImagePath(currentMedia.thumbnailUrl) : undefined}
           />
         )}
 
@@ -154,25 +221,39 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
             aria-label={`View ${media.type} ${index + 1}`}
           >
             {media.type === 'image' ? (
-              <Image
-                src={getImagePath(media.url)}
-                alt={`Thumbnail ${index + 1}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 25vw, (max-width: 768px) 16vw, (max-width: 1024px) 12.5vw, 10vw"
-                loading={index < 10 ? 'eager' : 'lazy'}
-              />
-            ) : (
-              <>
-                {media.thumbnailUrl ? (
+              (() => {
+                const blurUrl = getBlurDataURL(getImagePath(media.url));
+                return (
                   <Image
-                    src={getImagePath(media.thumbnailUrl)}
-                    alt={`Video thumbnail ${index + 1}`}
+                    src={getImagePath(media.url)}
+                    alt={`Thumbnail ${index + 1}`}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 25vw, (max-width: 768px) 16vw, (max-width: 1024px) 12.5vw, 10vw"
                     loading={index < 10 ? 'eager' : 'lazy'}
+                    placeholder={blurUrl ? 'blur' : 'empty'}
+                    blurDataURL={blurUrl || undefined}
                   />
+                );
+              })()
+            ) : (
+              <>
+                {media.thumbnailUrl ? (
+                  (() => {
+                    const blurUrl = getBlurDataURL(getImagePath(media.thumbnailUrl));
+                    return (
+                      <Image
+                        src={getImagePath(media.thumbnailUrl)}
+                        alt={`Video thumbnail ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 25vw, (max-width: 768px) 16vw, (max-width: 1024px) 12.5vw, 10vw"
+                        loading={index < 10 ? 'eager' : 'lazy'}
+                        placeholder={blurUrl ? 'blur' : 'empty'}
+                        blurDataURL={blurUrl || undefined}
+                      />
+                    );
+                  })()
                 ) : (
                   <div className="h-full w-full bg-gradient-to-br from-gray-700 to-gray-900" />
                 )}
@@ -190,32 +271,124 @@ export function PropertyGallery({ images, videos = [], title }: PropertyGalleryP
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
           onClick={closeLightbox}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-2 sm:right-4 top-2 sm:top-4 text-white hover:bg-white/20"
-            onClick={closeLightbox}
-            aria-label="Close lightbox"
-          >
-            <X className="h-5 w-5 sm:h-6 sm:w-6" />
-          </Button>
+          {/* Lightbox Header Controls */}
+          <div className="absolute top-2 sm:top-4 right-2 sm:right-4 flex items-center gap-2 z-10">
+            {/* Download button (images only) */}
+            {currentMedia.type === 'image' && (
+              <a
+                href={getImagePath(currentMedia.url)}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/20"
+                  aria-label="Download image"
+                >
+                  <Download className="h-5 w-5 sm:h-6 sm:w-6" />
+                </Button>
+              </a>
+            )}
 
-          <div className="relative h-[90vh] w-[90vw]" onClick={(e) => e.stopPropagation()}>
+            {/* Zoom controls (images only) */}
+            {currentMedia.type === 'image' && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setZoomLevel((prev) => Math.min(prev + 0.5, 2));
+                  }}
+                  aria-label="Zoom in"
+                >
+                  <ZoomIn className="h-5 w-5 sm:h-6 sm:w-6" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setZoomLevel((prev) => Math.max(prev - 0.5, 1));
+                  }}
+                  aria-label="Zoom out"
+                >
+                  <ZoomOut className="h-5 w-5 sm:h-6 sm:w-6" />
+                </Button>
+              </>
+            )}
+
+            {/* Fullscreen button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/20"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFullscreen();
+              }}
+              aria-label="Fullscreen"
+            >
+              <Maximize2 className="h-5 w-5 sm:h-6 sm:w-6" />
+            </Button>
+
+            {/* Close button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/20"
+              onClick={closeLightbox}
+              aria-label="Close lightbox"
+            >
+              <X className="h-5 w-5 sm:h-6 sm:w-6" />
+            </Button>
+          </div>
+
+          <div
+            className="relative h-[90vh] w-[90vw] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             {currentMedia.type === 'image' ? (
-              <Image
-                src={getImagePath(currentMedia.url)}
-                alt={`${title} - Image ${currentIndex + 1}`}
-                fill
-                className="object-contain"
-                sizes="90vw"
-              />
+              <div
+                className="h-full w-full flex items-center justify-center cursor-zoom-in transition-transform duration-200"
+                style={{ transform: `scale(${zoomLevel})` }}
+                onClick={cycleZoom}
+              >
+                {(() => {
+                  const blurUrl = getBlurDataURL(getImagePath(currentMedia.url));
+                  return (
+                    <Image
+                      src={getImagePath(currentMedia.url)}
+                      alt={`${title} - Image ${currentIndex + 1}`}
+                      fill
+                      className="object-contain"
+                      sizes="90vw"
+                      placeholder={blurUrl ? 'blur' : 'empty'}
+                      blurDataURL={blurUrl || undefined}
+                    />
+                  );
+                })()}
+              </div>
             ) : (
               <video
                 src={currentMedia.url}
                 controls
                 autoPlay
                 className="h-full w-full object-contain"
+                poster={
+                  currentMedia.thumbnailUrl
+                    ? getImagePath(currentMedia.thumbnailUrl)
+                    : undefined
+                }
+                preload="metadata"
               />
             )}
           </div>

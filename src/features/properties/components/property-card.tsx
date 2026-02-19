@@ -11,7 +11,7 @@ import { MapPin, Bed, Bath, Users } from 'lucide-react';
 import type { PropertyResponse } from '../types';
 import { LISTING_TYPE_LABELS, PropertyListingType } from '../types';
 import { formatCurrency } from '@/lib/utils/format';
-import { getImagePath } from '@/lib/utils/image';
+import { getImagePath, getBlurDataURL } from '@/lib/utils/image';
 import { PropertyActionsMenu } from './property-actions-menu';
 
 interface PropertyCardProps {
@@ -86,6 +86,8 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
             fill
             className="object-cover transition-transform group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            placeholder={getBlurDataURL(imageUrl) ? 'blur' : 'empty'}
+            blurDataURL={getBlurDataURL(imageUrl) || undefined}
           />
 
           {/* Status Badge (top right) */}

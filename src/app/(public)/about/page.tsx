@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Sobre Nosotros',
-  description: 'Conoce la historia, misión y valores de GYDI. La plataforma integral para vender propiedades y ganar comisiones por referidos vacacionales.',
+  description: 'Conoce la historia, misión y valores de GYDI. El complemento de Airbnb para anfitriones y afiliados que quieren ganar comisiones por referir propiedades en renta.',
 };
 
 export default function AboutPage() {
@@ -23,15 +23,15 @@ export default function AboutPage() {
             </div>
 
             <h1 className="animate-fade-in-up mb-6">
-              Revolucionando el{' '}
+              El complemento que{' '}
               <span className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Mercado Inmobiliario
+                Airbnb no tiene
               </span>
             </h1>
 
             <p className="animate-fade-in-up animation-delay-100 text-lg text-muted-foreground">
-              Conectamos vendedores, afiliados y viajeros en una plataforma integral que democratiza
-              el acceso al mercado inmobiliario y vacacional.
+              Conectamos anfitriones, afiliados y viajeros en una plataforma de referidos que convierte
+              el boca a boca en comisiones reales por reservas vacacionales.
             </p>
           </div>
         </div>
@@ -53,17 +53,18 @@ export default function AboutPage() {
               </p>
 
               <p>
-                Observamos que el sector inmobiliario tradicional estaba fragmentado. Por un lado,
-                propietarios y agentes luchaban por vender propiedades. Por otro, miles de personas
-                buscaban formas legítimas de generar ingresos pasivos. <span className="font-semibold text-foreground">Vimos
-                la oportunidad de unir ambos mundos.</span>
+                Observamos que Airbnb resolvió la visibilidad, pero dejó un vacío enorme: nadie ayudaba
+                a los anfitriones a activar su propia red de referidos. Por otro lado, miles de personas
+                querían ganar dinero recomendando alojamientos, pero no tenían herramientas para hacerlo.{' '}
+                <span className="font-semibold text-foreground">Vimos la oportunidad de unir ambos mundos.</span>
               </p>
 
               <p>
-                Hoy, GYDI es <span className="font-semibold text-primary">la plataforma integral</span> que permite tanto
-                <span className="font-semibold text-blue-600"> vender propiedades inmobiliarias</span> como
-                <span className="font-semibold text-purple-600"> ganar comisiones refiriendo destinos vacacionales</span>.
-                Dos modelos de negocio, una sola comunidad.
+                Hoy, GYDI es <span className="font-semibold text-primary">el complemento de Airbnb</span> que activa
+                una red de{' '}
+                <span className="font-semibold text-blue-600">afiliados motivados</span> que refieren
+                <span className="font-semibold text-purple-600"> propiedades en renta a huéspedes reales</span>.
+                Anfitriones consiguen más reservas. Afiliados generan comisiones. Todos ganan.
               </p>
 
               <p>

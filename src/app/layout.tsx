@@ -23,24 +23,24 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: {
     template: '%s | GYDI',
-    default: 'GYDI - Vende Propiedades y Gana Comisiones por Referidos',
+    default: 'GYDI - Refiere propiedades y gana comisiones reales',
   },
   description:
-    'La plataforma integral para vender propiedades inmobiliarias y ganar comisiones refiriendo destinos vacacionales. Dos modelos de negocio, una sola plataforma.',
-  keywords: ['venta propiedades', 'propiedades vacacionales', 'afiliados', 'comisiones', 'referidos', 'inmobiliaria', 'bienes raíces'],
+    'Plataforma de afiliados para rentals vacacionales. Genera links de referido, comparte propiedades en renta y cobra hasta 10% de comisión por cada reserva. Gratis para comenzar.',
+  keywords: ['plataforma de afiliados', 'referidos de propiedades', 'ganar comisiones rentals', 'complemento airbnb', 'propiedades en renta', 'referidos vacaciones'],
   authors: [{ name: 'GYDI' }],
   openGraph: {
     type: 'website',
-    locale: 'es_ES',
+    locale: 'es_MX',
     url: 'https://gydi.com',
     siteName: 'GYDI',
-    title: 'GYDI - Vende Propiedades y Gana Comisiones',
-    description: 'Vende propiedades inmobiliarias o gana hasta 10% de comisión refiriendo propiedades vacacionales',
+    title: 'GYDI - El complemento de Airbnb que te paga por referir',
+    description: 'Conecta viajeros con alojamientos increíbles y gana comisiones reales. Anfitriones de Airbnb: activa una red de afiliados que llena tus fechas disponibles.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GYDI - Vende Propiedades y Gana Comisiones',
-    description: 'Vende propiedades inmobiliarias o gana hasta 10% de comisión refiriendo propiedades vacacionales',
+    title: 'GYDI - El complemento de Airbnb que te paga por referir',
+    description: 'Refiere propiedades en renta y gana hasta 10% de comisión por cada reserva. Gratis para comenzar.',
   },
 };
 
@@ -51,6 +51,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+      </head>
       <body
         className={`${plusJakarta.variable} ${outfit.variable} font-sans antialiased`}
         suppressHydrationWarning

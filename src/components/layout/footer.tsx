@@ -17,12 +17,12 @@ export function Footer() {
           <div className="group">
             <div className="mb-4 flex items-center gap-2">
               <h3 className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-lg font-extrabold text-transparent">
-                GYDI Properties
+                GYDI
               </h3>
               <Sparkles className="h-4 w-4 text-primary opacity-0 transition-all duration-300 group-hover:animate-pulse-glow group-hover:opacity-100" />
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              La plataforma de afiliados líder para propiedades vacacionales.
+              El complemento de Airbnb que convierte tu red en comisiones reales por reservas vacacionales.
             </p>
             <div className="mt-4 flex space-x-3">
               <Link
@@ -172,7 +172,7 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()}{' '}
             <span className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text font-semibold text-transparent">
-              GYDI Properties
+              GYDI
             </span>
             . Todos los derechos reservados.
           </p>

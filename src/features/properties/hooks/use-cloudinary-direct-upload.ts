@@ -71,6 +71,7 @@ interface UploadResult {
   fileName: string;
   url: string;
   publicId: string;
+  durationSeconds?: number;
   success: boolean;
   error?: string;
 }
@@ -82,6 +83,7 @@ interface UseCloudinaryDirectUploadOptions {
   maxConcurrent?: number; // Max concurrent uploads (default: 6)
   timeout?: number;       // Upload timeout per file in ms (default: 300000 = 5 min)
   maxRetries?: number;    // Max retries on network error (default: 2)
+  mediaType?: 'IMAGE' | 'VIDEO'; // Media type for upload (default: 'IMAGE')
 }
 
 /**
@@ -103,6 +105,7 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
   const maxConcurrent = options?.maxConcurrent ?? 6;
   const timeout = options?.timeout ?? 300000; // 5 minutes
   const maxRetries = options?.maxRetries ?? 2;
+  const mediaType = options?.mediaType ?? 'IMAGE';
 
   /**
    * Step 1: Get signed upload parameters from backend
@@ -175,6 +178,7 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
                 fileName,
                 url: result.secure_url,
                 publicId: result.public_id,
+                durationSeconds: result.duration ? Math.round(result.duration) : undefined,
                 success: true,
               });
             } catch (error) {
@@ -259,14 +263,20 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
    */
   const saveUploadedUrls = async (
     propertyId: string,
-    urls: string[]
+    results: UploadResult[],
+    mediaType: 'IMAGE' | 'VIDEO'
   ): Promise<MediaUploadResponse[]> => {
+    const endpoint = mediaType === 'VIDEO'
+      ? `/api/properties/${propertyId}/media/videos/save-urls`
+      : `/api/properties/${propertyId}/media/images/save-urls`;
+
     const { data } = await apiClient.post<MediaUploadResponse[]>(
-      `/api/properties/${propertyId}/media/images/save-urls`,
+      endpoint,
       {
-        mediaUrls: urls.map((url, index) => ({
-          url,
+        mediaUrls: results.map((r, index) => ({
+          url: r.url,
           displayOrder: index,
+          ...(mediaType === 'VIDEO' && r.durationSeconds !== undefined ? { durationSeconds: r.durationSeconds } : {}),
         })),
       }
     );
@@ -347,7 +357,7 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
 
         // PRODUCTION: Cloudinary direct upload flow
         // Step 1: Get signatures from backend (one per file)
-        const signatureResponse = await getUploadSignatures(propertyId, files.length, 'IMAGE');
+        const signatureResponse = await getUploadSignatures(propertyId, files.length, mediaType);
 
         // Step 2: Upload files to Cloudinary in parallel (each file uses its own signature)
         const results = await uploadFilesInParallel(files, signatureResponse);
@@ -359,9 +369,8 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
           throw new Error(`Failed to upload: ${failedFiles}`);
         }
 
-        // Step 3: Notify backend with URLs
-        const urls = results.map((r) => r.url);
-        const savedMedia = await saveUploadedUrls(propertyId, urls);
+        // Step 3: Notify backend with results (includes durationSeconds for videos)
+        const savedMedia = await saveUploadedUrls(propertyId, results, mediaType);
 
         return savedMedia;
       } finally {
@@ -369,6 +378,26 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       }
     },
     onSuccess: (data, variables) => {
+      // Optimistic update: show new media immediately
+      if (data.length > 0) {
+        queryClient.setQueryData(
+          propertyKeys.detail(variables.propertyId),
+          (old: Record<string, unknown> | undefined) => {
+            if (!old) return old;
+            if (mediaType === 'VIDEO') {
+              return {
+                ...old,
+                videos: [...((old.videos as unknown[]) || []), ...data],
+              };
+            }
+            return {
+              ...old,
+              images: [...((old.images as unknown[]) || []), ...data],
+            };
+          }
+        );
+      }
+
       // Invalidate property detail to show new images
       queryClient.invalidateQueries({
         queryKey: propertyKeys.detail(variables.propertyId),
@@ -387,10 +416,11 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       // Show success toast
       const isCloudinaryConfigured = !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
       const uploadedCount = data.length > 0 ? data.length : variables.files.length;
-      toast.success('Images uploaded successfully', {
+      const mediaLabel = mediaType === 'VIDEO' ? 'video(s)' : 'image(s)';
+      toast.success(mediaType === 'VIDEO' ? 'Videos uploaded successfully' : 'Images uploaded successfully', {
         description: isCloudinaryConfigured
-          ? `${uploadedCount} image(s) have been uploaded to Cloudinary`
-          : `${uploadedCount} image(s) have been uploaded`,
+          ? `${uploadedCount} ${mediaLabel} have been uploaded to Cloudinary`
+          : `${uploadedCount} ${mediaLabel} have been uploaded`,
       });
     },
     onError: (error) => {

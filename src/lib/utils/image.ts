@@ -39,6 +39,20 @@ export function getImagePath(url: string | undefined | null): string {
 }
 
 /**
+ * Generates a Cloudinary blur placeholder URL.
+ * Returns a 20px wide, low quality version of the image for use as
+ * Next.js Image blurDataURL (progressive loading).
+ *
+ * @param url - A Cloudinary image URL
+ * @returns Low-res URL for blur placeholder, or empty string if not Cloudinary
+ */
+export function getBlurDataURL(cloudinaryUrl: string | undefined | null): string {
+  if (!cloudinaryUrl || !cloudinaryUrl.includes('res.cloudinary.com')) return '';
+  if (cloudinaryUrl.includes('/video/')) return ''; // Not for videos
+  return cloudinaryUrl.replace('/upload/', '/upload/w_20,h_20,q_10,f_auto/');
+}
+
+/**
  * Checks if an image URL is valid
  *
  * @param url - Image URL to validate

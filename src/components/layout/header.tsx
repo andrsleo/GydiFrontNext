@@ -55,7 +55,7 @@ export function Header() {
               <Sparkles className="h-4 w-4 text-primary opacity-0 transition-all duration-300 group-hover:animate-pulse-glow group-hover:opacity-100" />
             </div>
             <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/80 transition-colors group-hover:text-primary/80">
-              Properties
+              Refiere y gana
             </span>
           </div>
         </Link>

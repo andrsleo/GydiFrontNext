@@ -114,21 +114,21 @@ export const PLAN_LIMITS = {
  */
 export const PLAN_FEATURES = {
   FREE: {
-    name: 'Free',
+    name: 'Explorador',
     price: PLAN_PRICES.FREE,
     priceDisplay: 'Gratis',
-    tagline: 'Empieza sin riesgo',
+    tagline: 'Empieza gratis, aprende cómo funciona',
 
     // AFFILIATE benefits (what you RECEIVE from platform)
     affiliate: {
       commission: COMMISSION_RATES.FREE.affiliateEarns,
       commissionDisplay: '2%',
       benefits: [
-        'Ganas 2% de comisión por cada reserva que refier as',
-        'Plataforma te paga por tus referencias exitosas',
-        'Sin límite de referidos',
-        'Acceso a enlaces de referencia',
-        'Sin suscripción',
+        'Ganas 2% de comisión por cada reserva que refieres',
+        'La plataforma te paga por tus referencias exitosas',
+        'Links de referido ilimitados',
+        'Acceso al catálogo completo de propiedades en renta',
+        'Sin suscripción ni costos ocultos',
       ],
     },
 
@@ -137,26 +137,26 @@ export const PLAN_FEATURES = {
       platformFee: COMMISSION_RATES.FREE.platformChargesHost,
       platformFeeDisplay: '25%',
       benefits: [
-        'Plataforma cobra 25% por cada reserva generada por referido',
+        'Plataforma cobra 25% solo por reservas generadas por referido',
         'Recibes 75% del monto de la reserva',
-        'Tráfico adicional dirigido a la propiedad',
-        'Sin exclusividad',
-        'Solo pagas si hay reserva',
+        'Tráfico adicional desde nuestra red de afiliados',
+        'Sin exclusividad — sigue en Airbnb',
+        'Solo pagas si hay reserva confirmada',
       ],
     },
 
-    key: 'Puedes ser afiliado, anfitrión o ambos. Ideal para probar la plataforma.',
-    cta: 'Empezar gratis',
+    key: 'Prueba el modelo de referidos sin arriesgar nada. Ideal para anfitriones de Airbnb que quieren más alcance.',
+    cta: 'Comenzar gratis',
     badge: null,
     color: 'gray',
     popular: false,
   },
 
   PRO: {
-    name: 'Pro',
+    name: 'Conector',
     price: PLAN_PRICES.PRO,
     priceDisplay: '$19/mes',
-    tagline: 'Convierte tus referidos en ingresos constantes',
+    tagline: 'Más comisión, más herramientas, más resultados',
 
     // AFFILIATE benefits (what you RECEIVE from platform)
     affiliate: {
@@ -164,10 +164,10 @@ export const PLAN_FEATURES = {
       commissionDisplay: '5%',
       previousRate: '2%', // To show upgrade
       benefits: [
-        'Ganas 5% de comisión por cada reserva referida (upgrade de 2%)',
-        'Plataforma te paga más del doble que el plan Free',
-        'Sin límite de referidos',
-        'Ideal para actividad constante',
+        'Ganas 5% de comisión por reserva referida (2.5x más que Explorador)',
+        'Analytics avanzado con gráficas de tendencia',
+        'QR codes personalizados para materiales físicos',
+        'Soporte prioritario en menos de 24h',
       ],
     },
 
@@ -176,26 +176,26 @@ export const PLAN_FEATURES = {
       platformFee: COMMISSION_RATES.PRO.platformChargesHost,
       platformFeeDisplay: '20%',
       benefits: [
-        'Plataforma cobra 20% por cada reserva generada por referido',
-        'Ahorras 5% comparado con el plan Free (25% → 20%)',
+        'Plataforma cobra solo 20% por reserva generada por referido',
+        'Ahorras 5% vs. plan Explorador (25% → 20%)',
         'Recibes 80% del monto de la reserva',
-        'Tráfico adicional dirigido a la propiedad',
-        'Sin exclusividad',
+        'Mayor prioridad en búsquedas de afiliados',
+        'Sin exclusividad — sigue en Airbnb',
       ],
     },
 
-    key: 'Suscripción mensual, cancela cuando quieras. Beneficios aplican según el rol que ejerzas.',
-    cta: 'Pasar a PRO',
+    key: 'Sin contratos, cancela cuando quieras. Beneficios aplican según el rol que ejerzas.',
+    cta: 'Activar plan Conector',
     badge: 'Más popular',
     color: 'blue',
     popular: true,
   },
 
   ELITE: {
-    name: 'Elite',
+    name: 'Embajador',
     price: PLAN_PRICES.ELITE,
     priceDisplay: '$39/mes',
-    tagline: 'Maximiza ingresos y escala resultados',
+    tagline: 'El máximo retorno para quienes van en serio',
 
     // AFFILIATE benefits (what you RECEIVE from platform)
     affiliate: {
@@ -203,11 +203,11 @@ export const PLAN_FEATURES = {
       commissionDisplay: '10%',
       previousRates: ['2%', '5%'], // To show progression
       benefits: [
-        'Ganas 10% de comisión por cada reserva referida',
-        'La comisión más alta de la plataforma para afiliados',
-        'Duplicas las ganancias del plan PRO',
-        'Sin límite de referidos',
-        'Ideal para alto volumen y partners estratégicos',
+        'Ganas 10% de comisión — las más altas del mercado',
+        'Duplicas las ganancias del plan Conector',
+        'Reportes exportables (CSV, Excel, PDF)',
+        'Manager dedicado de cuenta',
+        'Acceso anticipado a nuevas funcionalidades',
       ],
     },
 
@@ -216,19 +216,18 @@ export const PLAN_FEATURES = {
       platformFee: COMMISSION_RATES.ELITE.platformChargesHost,
       platformFeeDisplay: '15%',
       benefits: [
-        'Plataforma cobra solo 15% por cada reserva generada por referido',
-        'Ahorras 10% comparado con el plan Free (25% → 15%)',
+        'Plataforma cobra solo 15% por reserva generada por referido',
+        'Ahorras 10% vs. plan Explorador (25% → 15%)',
         'Recibes 85% del monto de la reserva',
-        'Tráfico adicional dirigido a la propiedad',
-        'Sin exclusividad',
+        'Perfil destacado para la red de afiliados',
+        'Sin exclusividad — sigue en Airbnb',
         'Acceso prioritario a nuevas funcionalidades',
-        'Perfil destacado dentro de GYDI Properties',
       ],
     },
 
-    key: 'Suscripción mensual flexible. Diseñado para crecimiento y volumen.',
-    cta: 'Unirme a ELITE',
-    badge: 'Mejor valor',
+    key: 'Diseñado para influencers, anfitriones con portafolio grande y afiliados de alto volumen.',
+    cta: 'Convertirme en Embajador',
+    badge: 'Mayor ROI',
     color: 'purple',
     popular: false,
   },

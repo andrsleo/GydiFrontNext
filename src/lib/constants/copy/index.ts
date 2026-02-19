@@ -1,0 +1,9 @@
+export { HERO_COPY } from './hero';
+export { VALUE_PROPS } from './value-props';
+export { PLANS_COPY } from './plans-copy';
+export { REFERRALS_COPY } from './referrals';
+export { DASHBOARD_COPY } from './dashboard';
+export { AUTH_COPY } from './auth';
+export { NAV_COPY } from './navigation';
+export { SEO_COPY } from './seo';
+export { ERROR_PAGES_COPY } from './errors';

@@ -148,9 +148,14 @@ export const mediaApi = {
    * Reorder videos
    * Requires authentication + ownership
    */
-  async reorderVideos(propertyId: string, videoIds: string[]): Promise<void> {
-    await apiClient.put(`${BASE_PATH}/${propertyId}/media/videos/reorder`, {
-      videoIds,
-    });
+  async reorderVideos(
+    propertyId: string,
+    videoOrders: Array<{ videoId: string; displayOrder: number }>
+  ): Promise<{ success: boolean; updatedCount: number }> {
+    const { data } = await apiClient.patch(
+      `${BASE_PATH}/${propertyId}/videos/reorder`,
+      { videoOrders }
+    );
+    return data;
   },
 };

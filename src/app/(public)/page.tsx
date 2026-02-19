@@ -16,30 +16,31 @@ export default function HomePage() {
         <div className="container mx-auto flex flex-col items-center justify-center px-4 py-16 text-center sm:py-20 md:py-28 lg:py-36">
           {/* Badge */}
           <div className="animate-fade-in-down mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm transition-all hover:border-primary/30 hover:bg-primary/10 hover:scale-105 sm:mb-8">
-            <span className="text-base animate-pulse-glow">🎉</span>
-            <span>Únete a más de 500 afiliados activos</span>
+            <span className="text-base animate-pulse-glow">🏡</span>
+            <span>El complemento para anfitriones de Airbnb</span>
           </div>
 
           {/* Heading */}
           <h1 className="animate-fade-in-up animation-delay-100 mb-6 max-w-5xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl sm:leading-tight md:text-6xl md:leading-tight lg:text-7xl lg:leading-tight">
-            La Plataforma Integral para{' '}
+            Refiere propiedades.{' '}
             <span className="animate-gradient bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Propiedades Rentables
+              Gana en cada reserva.
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="animate-fade-in-up animation-delay-200 mb-10 max-w-2xl text-base text-muted-foreground sm:text-lg md:text-xl lg:max-w-3xl">
-            <span className="font-semibold text-primary">Vende propiedades inmobiliarias</span> o{' '}
-            <span className="font-semibold text-blue-600">refiere propiedades vacacionales</span> y gana hasta{' '}
-            <span className="font-semibold text-purple-600">10% de comisión</span>. Dos modelos de negocio, una sola plataforma.
+            Conecta a viajeros con los mejores alojamientos y gana{' '}
+            <span className="font-semibold text-purple-600">hasta 10% de comisión</span>{' '}
+            por cada reserva que generas.{' '}
+            <span className="font-semibold text-blue-600">El poder del boca a boca, digitalizado.</span>
           </p>
 
           {/* CTA Buttons */}
           <div className="animate-fade-in-up animation-delay-300 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4">
             <Button asChild size="lg" className="text-base font-semibold shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/30 sm:px-8">
               <Link href="/register">
-                Empezar Ahora Gratis
+                Empieza a ganar
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="text-base font-semibold sm:px-8">
@@ -52,7 +53,7 @@ export default function HomePage() {
             <div className="animate-scale-in animation-delay-400 group relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-card to-card/50 p-6 backdrop-blur-sm transition-all hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 sm:p-8">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <p className="relative text-4xl font-extrabold text-primary transition-transform group-hover:scale-110 sm:text-5xl lg:text-6xl">10%</p>
-              <p className="relative mt-2 text-sm font-medium text-muted-foreground sm:text-base">Comisión Promedio</p>
+              <p className="relative mt-2 text-sm font-medium text-muted-foreground sm:text-base">Comisión por referido</p>
             </div>
             <div className="animate-scale-in animation-delay-500 group relative overflow-hidden rounded-2xl border border-blue-500/10 bg-gradient-to-br from-card to-card/50 p-6 backdrop-blur-sm transition-all hover:border-blue-500/20 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-1 sm:p-8">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
@@ -74,10 +75,10 @@ export default function HomePage() {
           {/* Section Header */}
           <div className="mb-12 text-center sm:mb-16">
             <h2 className="animate-fade-in-up text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-              Cómo Funciona
+              Tres pasos para tu primer ingreso
             </h2>
             <p className="animate-fade-in-up animation-delay-100 mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg md:text-xl">
-              En 3 simples pasos empieza a vender o referir propiedades
+              No necesitas experiencia en ventas. Solo tener contactos y ganas de ganar.
             </p>
           </div>
 
@@ -92,9 +93,9 @@ export default function HomePage() {
                     1
                   </div>
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-foreground transition-colors duration-300 group-hover:text-primary sm:text-2xl">Regístrate Gratis</h3>
+                <h3 className="mb-3 text-xl font-bold text-foreground transition-colors duration-300 group-hover:text-primary sm:text-2xl">Genera tu link único</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Crea tu cuenta en menos de 2 minutos. Elige entre venta o referidos. Sin costos ocultos.
+                  Con un click obtienes tu URL personal de referido. Cada link rastrea automáticamente las visitas y reservas que generas.
                 </p>
               </div>
               {/* Connector line (hidden on mobile) */}
@@ -110,9 +111,9 @@ export default function HomePage() {
                     2
                   </div>
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-foreground transition-colors duration-300 group-hover:text-blue-600 sm:text-2xl">Publica o Comparte</h3>
+                <h3 className="mb-3 text-xl font-bold text-foreground transition-colors duration-300 group-hover:text-blue-600 sm:text-2xl">Comparte con quien confía en ti</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Publica propiedades en venta o genera enlaces de referidos para propiedades vacacionales.
+                  Manda el link por WhatsApp, Instagram o email. Tu recomendación personal tiene más peso que cualquier anuncio.
                 </p>
               </div>
               {/* Connector line (hidden on mobile) */}
@@ -128,9 +129,9 @@ export default function HomePage() {
                     3
                   </div>
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-foreground transition-colors duration-300 group-hover:text-purple-600 sm:text-2xl">Gana Dinero</h3>
+                <h3 className="mb-3 text-xl font-bold text-foreground transition-colors duration-300 group-hover:text-purple-600 sm:text-2xl">Cobra cuando ellos reservan</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Recibe comisiones por ventas inmobiliarias o hasta 10% por reservas vacacionales. Pagos seguros.
+                  Cada vez que alguien reserva usando tu link, la comisión se registra automáticamente y se acredita a tu cuenta.
                 </p>
               </div>
             </div>
@@ -139,7 +140,7 @@ export default function HomePage() {
           {/* CTA Button */}
           <div className="animate-fade-in-up animation-delay-500 mt-12 text-center sm:mt-16">
             <Button asChild size="lg" className="shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">
-              <Link href="/register">Empezar Ahora</Link>
+              <Link href="/register">Generar mi primer link</Link>
             </Button>
           </div>
         </div>
@@ -158,10 +159,10 @@ export default function HomePage() {
               <span>Propiedades Destacadas</span>
             </div>
             <h2 className="animate-fade-in-up mb-4 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
-              Propiedades para Vender y Referir
+              Propiedades en renta para referir
             </h2>
             <p className="animate-fade-in-up animation-delay-100 mx-auto max-w-2xl text-base text-muted-foreground sm:text-lg md:text-xl">
-              Propiedades inmobiliarias en venta y propiedades vacacionales premium para generar comisiones
+              Alojamientos vacacionales premium curados por nuestra comunidad. Refiere y gana comisión por cada reserva.
             </p>
           </div>
 
@@ -448,7 +449,7 @@ export default function HomePage() {
               ¿Por Qué Elegir GYDI?
             </h2>
             <p className="animate-fade-in-up animation-delay-100 mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg md:text-xl">
-              La plataforma integral para vender propiedades y generar comisiones por referidos
+              El complemento que potencia tu presencia en Airbnb y convierte tu red en ingresos reales
             </p>
           </div>
 
@@ -461,9 +462,9 @@ export default function HomePage() {
                 <div className="mb-4 inline-flex rounded-xl bg-primary/10 p-3 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110 group-hover:rotate-6">
                   <DollarSign className="h-8 w-8 text-primary transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-10" />
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-foreground sm:text-2xl">Doble Oportunidad</h3>
+                <h3 className="mb-2 text-xl font-bold text-foreground sm:text-2xl">Tu red vale dinero</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Vende propiedades inmobiliarias o gana hasta 10% por reserva vacacional. Tú decides.
+                  Comparte un link, alguien reserva, tú cobras. Gana hasta 10% de comisión sin inversión ni inventario.
                 </p>
               </div>
             </div>
@@ -503,9 +504,9 @@ export default function HomePage() {
                 <div className="mb-4 inline-flex rounded-xl bg-orange-500/10 p-3 transition-all duration-300 group-hover:bg-orange-500/20 group-hover:scale-110 group-hover:rotate-6">
                   <Building2 className="h-8 w-8 text-orange-600 transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-10" />
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-foreground sm:text-2xl">Amplio Catálogo</h3>
+                <h3 className="mb-2 text-xl font-bold text-foreground sm:text-2xl">Catálogo Curado</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Propiedades en venta y destinos vacacionales. Catálogo en constante crecimiento.
+                  Alojamientos vacacionales seleccionados. Propiedades en renta de calidad para referir con confianza.
                 </p>
               </div>
             </div>
@@ -555,10 +556,10 @@ export default function HomePage() {
               <span>Planes y Precios</span>
             </div>
             <h2 className="animate-fade-in-up text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-              Elige el Plan Perfecto para Ti
+              Elige cómo quieres crecer
             </h2>
             <p className="animate-fade-in-up animation-delay-100 mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg md:text-xl">
-              Sin compromisos. Cancela cuando quieras.
+              Sin contratos. Sin sorpresas. Cambia o cancela cuando quieras.
             </p>
           </div>
 
@@ -575,8 +576,8 @@ export default function HomePage() {
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Free</h3>
-                <p className="mb-6 text-sm text-muted-foreground">Perfecto para comenzar a vender o referir</p>
+                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Explorador</h3>
+                <p className="mb-6 text-sm text-muted-foreground">Empieza gratis, aprende cómo funciona</p>
 
                 {/* Price */}
                 <div className="mb-8">
@@ -628,7 +629,7 @@ export default function HomePage() {
                   className="w-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
                   variant="outline"
                 >
-                  Empezar Gratis
+                  Comenzar gratis
                 </PlanSelectButton>
               </div>
             </div>
@@ -649,8 +650,8 @@ export default function HomePage() {
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Pro</h3>
-                <p className="mb-6 text-sm text-muted-foreground">Para vendedores y afiliados activos</p>
+                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Conector</h3>
+                <p className="mb-6 text-sm text-muted-foreground">Más comisión, más herramientas, más resultados</p>
 
                 {/* Price */}
                 <div className="mb-8">
@@ -707,7 +708,7 @@ export default function HomePage() {
                   planCode="PRO"
                   className="w-full bg-gradient-to-r from-primary to-blue-600 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30"
                 >
-                  Comenzar Pro
+                  Activar plan Conector
                 </PlanSelectButton>
               </div>
             </div>
@@ -723,8 +724,8 @@ export default function HomePage() {
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Elite</h3>
-                <p className="mb-6 text-sm text-muted-foreground">Para profesionales inmobiliarios y afiliados de alto volumen</p>
+                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Embajador</h3>
+                <p className="mb-6 text-sm text-muted-foreground">El máximo retorno para quienes van en serio</p>
 
                 {/* Price */}
                 <div className="mb-8">
@@ -787,7 +788,7 @@ export default function HomePage() {
                   planCode="ELITE"
                   className="w-full bg-gradient-to-r from-purple-600 to-purple-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/30"
                 >
-                  Comenzar Elite
+                  Convertirme en Embajador
                 </PlanSelectButton>
               </div>
             </div>
@@ -804,10 +805,10 @@ export default function HomePage() {
 
         <div className="container relative mx-auto px-4 text-center">
           <h2 className="animate-fade-in-up text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
-            Empieza a Ganar Hoy Mismo
+            Tu siguiente comisión está a un mensaje de distancia
           </h2>
           <p className="animate-fade-in-up animation-delay-100 mt-4 text-base opacity-95 sm:text-lg md:text-xl lg:mt-6">
-            Únete a cientos de vendedores y afiliados que ya están generando ingresos con GYDI
+            Únete a cientos de afiliados y anfitriones que ya están generando ingresos con GYDI
           </p>
 
           <div className="animate-fade-in-up animation-delay-200 mt-8 flex flex-col items-center justify-center gap-3 sm:mt-10 sm:flex-row sm:gap-4">
@@ -817,7 +818,7 @@ export default function HomePage() {
               variant="secondary"
               className="w-full font-semibold shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl sm:w-auto sm:px-8"
             >
-              <Link href="/register">Crear Cuenta Gratis</Link>
+              <Link href="/register">Crear cuenta gratis</Link>
             </Button>
             <Button
               asChild
@@ -837,7 +838,7 @@ export default function HomePage() {
             </div>
             <div className="group flex items-center gap-2 transition-all duration-300 hover:scale-110">
               <Users className="h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
-              <span>500+ Afiliados</span>
+              <span>500+ Afiliados activos</span>
             </div>
             <div className="group flex items-center gap-2 transition-all duration-300 hover:scale-110">
               <DollarSign className="h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
