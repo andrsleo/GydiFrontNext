@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Términos y Condiciones',
-  description: 'Términos y condiciones de uso de la plataforma GYDI. Lee las reglas y responsabilidades para usuarios, vendedores y afiliados.',
+  description: 'Términos y condiciones de uso de la plataforma GYDI. Lee las reglas y responsabilidades para anfitriones y afiliados de propiedades en renta.',
 };
 
 export default function TermsPage() {
@@ -109,50 +109,50 @@ export default function TermsPage() {
 
               <div className="space-y-6">
                 <p className="text-muted-foreground">
-                  GYDI ofrece dos modelos de negocio principales:
+                  GYDI es una plataforma de referidos para propiedades en renta con dos roles principales:
                 </p>
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
-                    <h4 className="mb-3 font-semibold text-primary">Modelo 1: Venta de Propiedades Inmobiliarias</h4>
+                    <h4 className="mb-3 font-semibold text-primary">Rol Anfitrión: Publica tu propiedad en renta</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-primary">•</span>
-                        <span>Listado y publicación de propiedades en venta</span>
+                        <span>Publicas tu propiedad en renta en la plataforma</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-primary">•</span>
-                        <span>Conexión entre vendedores y compradores</span>
+                        <span>Los afiliados la refieren y consiguen reservas para ti</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-primary">•</span>
-                        <span>Herramientas de gestión de listados</span>
+                        <span>Por cada reserva generada por un afiliado, la plataforma retiene entre 15% y 25% según tu plan</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-primary">•</span>
-                        <span>Sistema de verificación de propiedades</span>
+                        <span>Solo pagas si hay reserva confirmada — sin reserva, sin costo</span>
                       </li>
                     </ul>
                   </div>
 
                   <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 p-6">
-                    <h4 className="mb-3 font-semibold text-purple-600">Modelo 2: Programa de Afiliados Vacacionales</h4>
+                    <h4 className="mb-3 font-semibold text-purple-600">Rol Afiliado: Refiere propiedades y gana</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-purple-600">•</span>
-                        <span>Generación de enlaces de referidos únicos</span>
+                        <span>Generates un link único para cada propiedad en renta</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-purple-600">•</span>
-                        <span>Comisiones por reservas completadas (2%-10%)</span>
+                        <span>Compartes el link con tu red de contactos y viajeros</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-purple-600">•</span>
-                        <span>Dashboard de estadísticas y ganancias</span>
+                        <span>Recibes entre 2% y 10% de comisión por cada reserva confirmada, según tu plan</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-purple-600">•</span>
-                        <span>Materiales de marketing y promoción</span>
+                        <span>Dashboard de estadísticas: clicks, conversiones y ganancias en tiempo real</span>
                       </li>
                     </ul>
                   </div>
@@ -197,7 +197,7 @@ export default function TermsPage() {
                 <div>
                   <h4 className="mb-3 font-semibold">3.2 Verificación de Identidad</h4>
                   <p className="mb-3 text-muted-foreground">
-                    Para ciertos servicios (especialmente afiliados y vendedores), podemos requerir:
+                    Para ciertos servicios (especialmente afiliados y anfitriones), podemos requerir:
                   </p>
                   <ul className="ml-6 space-y-2 text-muted-foreground">
                     <li className="list-disc">Identificación oficial con foto (pasaporte, licencia de conducir)</li>

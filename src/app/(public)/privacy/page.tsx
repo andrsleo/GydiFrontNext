@@ -65,7 +65,7 @@ export default function PrivacyPage() {
               <h3 className="mb-3 text-xl font-bold">Compromiso con tu Privacidad</h3>
               <p className="leading-relaxed text-muted-foreground">
                 GYDI ("nosotros", "nuestro") se compromete a proteger la privacidad de todos los usuarios
-                ("tú", "tu") de nuestra plataforma de venta de propiedades inmobiliarias y referidos vacacionales.
+                ("tú", "tu") de nuestra plataforma de referidos para propiedades en renta.
                 Esta política cumple con el Reglamento General de Protección de Datos (GDPR), la Ley de Privacidad
                 del Consumidor de California (CCPA) y otras leyes aplicables de protección de datos.
               </p>

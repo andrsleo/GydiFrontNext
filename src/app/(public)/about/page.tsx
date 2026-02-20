@@ -87,8 +87,7 @@ export default function AboutPage() {
               </div>
               <h3 className="mb-4">Nuestra Misión</h3>
               <p className="leading-relaxed text-muted-foreground">
-                Facilitar el acceso al mercado inmobiliario y crear oportunidades de ingresos sostenibles
-                para personas de todo el mundo, conectando propiedades con compradores y viajeros.
+                Crear oportunidades de ingresos reales para cualquier persona, conectando anfitriones con propiedades en renta y afiliados con viajeros a través de una plataforma de referidos transparente y justa.
               </p>
             </div>
 
@@ -99,8 +98,7 @@ export default function AboutPage() {
               </div>
               <h3 className="mb-4">Nuestra Visión</h3>
               <p className="leading-relaxed text-muted-foreground">
-                Ser la plataforma líder global que transforma la forma en que las personas compran,
-                venden y experimentan propiedades, creando una economía inmobiliaria más inclusiva y transparente.
+                Ser la red de referidos de propiedades en renta más grande de Latinoamérica, donde anfitriones de Airbnb y afiliados colaboran para generar ingresos reales de manera simple y transparente.
               </p>
             </div>
 
@@ -222,7 +220,7 @@ export default function AboutPage() {
             ¿Listo para Unirte a Nosotros?
           </h2>
           <p className="mb-8 text-lg text-muted-foreground">
-            Empieza a vender propiedades o gana comisiones refiriendo destinos vacacionales
+            Únete como afiliado y gana comisiones por referir propiedades en renta, o como anfitrión y amplía el alcance de tu propiedad con nuestra red de referidos
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">

@@ -57,8 +57,8 @@ export default function ContactPage() {
             </h1>
 
             <p className="animate-fade-in-up animation-delay-100 text-lg text-muted-foreground">
-              ¿Tienes preguntas? Estamos disponibles 24/7 para resolver tus dudas sobre venta de propiedades
-              o comisiones por referidos.
+              ¿Tienes preguntas? Estamos disponibles 24/7 para resolver tus dudas sobre propiedades en renta,
+              referidos y comisiones.
             </p>
           </div>
         </div>
@@ -194,7 +194,7 @@ export default function ContactPage() {
                       className="w-full rounded-xl border border-border/50 bg-background px-4 py-3 text-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
                       <option value="">Selecciona un tema</option>
-                      <option value="sales">Venta de Propiedades</option>
+                      <option value="hosting">Publicar propiedad en renta</option>
                       <option value="affiliate">Programa de Afiliados</option>
                       <option value="support">Soporte Técnico</option>
                       <option value="billing">Facturación y Pagos</option>

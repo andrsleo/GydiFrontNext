@@ -7,13 +7,15 @@ import { propertiesApi } from '@/features/properties/api/properties.api';
 import { PropertyCard } from '@/features/properties/components';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Plus } from 'lucide-react';
+import { Plus, CreditCard } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PropertyStatus } from '@/features/properties/types';
 import { propertyKeys } from '@/lib/constants/query-keys';
+import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
 
 export default function MyPropertiesPage() {
   const [statusTab, setStatusTab] = useState<PropertyStatus | 'all'>('all');
+  const { hasHostPaymentMethod, isLoading: isLoadingPayment } = useHostHasPaymentMethod();
 
   const filters = statusTab === 'all' ? {} : { status: statusTab };
   const { data, isLoading } = useQuery({
@@ -80,6 +82,25 @@ export default function MyPropertiesPage() {
           </Button>
         </Link>
       </div>
+
+      {/* Banner: método de pago requerido para publicar */}
+      {!isLoadingPayment && !hasHostPaymentMethod && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+          <CreditCard className="mt-0.5 h-5 w-5 flex-shrink-0" />
+          <div className="flex-1 text-sm">
+            <p className="font-medium">Agrega una tarjeta para publicar tus propiedades</p>
+            <p className="mt-1 text-xs leading-relaxed">
+              Para que tus propiedades sean visibles al público y puedan recibir reservas, debes registrar una tarjeta de crédito o débito.
+              La plataforma la utiliza para cobrar automáticamente las comisiones generadas por cada reserva exitosa.
+            </p>
+          </div>
+          <Link href="/dashboard/subscription">
+            <Button size="sm" variant="outline" className="flex-shrink-0 border-amber-400 text-amber-800 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-200 dark:hover:bg-amber-900">
+              Agregar tarjeta
+            </Button>
+          </Link>
+        </div>
+      )}
 
       {/* Status Tabs */}
       <Tabs value={statusTab} onValueChange={(v) => setStatusTab(v as PropertyStatus | 'all')}>

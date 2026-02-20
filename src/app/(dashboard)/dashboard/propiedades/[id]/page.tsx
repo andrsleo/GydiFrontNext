@@ -162,10 +162,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   <div className={property.listingType === PropertyListingType.BOTH ? 'text-xl sm:text-2xl font-bold' : 'text-2xl sm:text-3xl font-bold'}>
                     {formatCurrency(property.salePrice, property.currency)}
                   </div>
-                  <p className="text-sm text-muted-foreground">precio de venta</p>
-                  {property.listingType === PropertyListingType.BOTH && (
-                    <p className="text-xs text-muted-foreground mt-1">Para compra de propiedad</p>
-                  )}
+                  <p className="text-sm text-muted-foreground">precio de renta</p>
                 </div>
               )}
             </CardContent>

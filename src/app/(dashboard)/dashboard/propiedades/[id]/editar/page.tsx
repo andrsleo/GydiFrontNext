@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowLeft, Save, Upload, Eye, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { UpdatePropertyFormData } from '@/features/properties/schemas';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
 
 export default function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -21,6 +23,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
   const { uploadImagesAsync, isUploading: isUploadingImages, progress: uploadProgress } = useCloudinaryDirectUpload();
   const uploadVideos = useUploadVideos();
   const publishProperty = usePublishProperty();
+  const { hasHostPaymentMethod } = useHostHasPaymentMethod();
 
   // Transform nested backend data to flat form data
   const formDefaultValues = property ? {
@@ -119,13 +122,33 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
             </Button>
           )}
           {property.status === 'DRAFT' && (
-            <Button
-              className="flex-1 sm:flex-initial"
-              onClick={handlePublishProperty}
-              disabled={publishProperty.isPending}
-            >
-              {publishProperty.isPending ? 'Publicando...' : 'Publicar'}
-            </Button>
+            hasHostPaymentMethod ? (
+              <Button
+                className="flex-1 sm:flex-initial"
+                onClick={handlePublishProperty}
+                disabled={publishProperty.isPending}
+              >
+                {publishProperty.isPending ? 'Publicando...' : 'Publicar'}
+              </Button>
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="flex-1 sm:flex-initial">
+                      <Button
+                        className="w-full sm:w-auto"
+                        disabled
+                      >
+                        Publicar
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[260px]">
+                    <p>Agrega un método de pago para publicar. La plataforma cobra comisiones cuando se realizan reservas.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )
           )}
         </div>
       </div>

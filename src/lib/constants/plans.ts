@@ -114,120 +114,102 @@ export const PLAN_LIMITS = {
  */
 export const PLAN_FEATURES = {
   FREE: {
-    name: 'Explorador',
+    name: 'Free',
     price: PLAN_PRICES.FREE,
     priceDisplay: 'Gratis',
-    tagline: 'Empieza gratis, aprende cómo funciona',
+    tagline: 'Empieza sin riesgo y descubre cómo funciona',
 
-    // AFFILIATE benefits (what you RECEIVE from platform)
+    // AFFILIATE benefits — lo que RECIBES de la plataforma por referir
     affiliate: {
       commission: COMMISSION_RATES.FREE.affiliateEarns,
       commissionDisplay: '2%',
       benefits: [
-        'Ganas 2% de comisión por cada reserva que refieres',
-        'La plataforma te paga por tus referencias exitosas',
-        'Links de referido ilimitados',
-        'Acceso al catálogo completo de propiedades en renta',
-        'Sin suscripción ni costos ocultos',
+        'Recibes 2% de comisión por cada reserva generada con tu link',
+        'La plataforma te paga directo en cada reserva confirmada',
       ],
     },
 
-    // HOST benefits (what platform CHARGES you)
+    // HOST benefits — lo que la plataforma te DESCUENTA por cada reserva vía referido
     host: {
       platformFee: COMMISSION_RATES.FREE.platformChargesHost,
       platformFeeDisplay: '25%',
       benefits: [
-        'Plataforma cobra 25% solo por reservas generadas por referido',
-        'Recibes 75% del monto de la reserva',
-        'Tráfico adicional desde nuestra red de afiliados',
-        'Sin exclusividad — sigue en Airbnb',
-        'Solo pagas si hay reserva confirmada',
+        'GYDI descuenta 25% de cada reserva generada por afiliados',
+        'Tú recibes el 75% restante — solo pagas si hay reserva confirmada',
       ],
     },
 
-    key: 'Prueba el modelo de referidos sin arriesgar nada. Ideal para anfitriones de Airbnb que quieren más alcance.',
-    cta: 'Comenzar gratis',
+    key: 'Ideal para probar la plataforma sin compromiso. Funciona tanto si quieres referir propiedades como si tienes propiedades en renta.',
+    cta: 'Empezar gratis',
     badge: null,
     color: 'gray',
     popular: false,
   },
 
   PRO: {
-    name: 'Conector',
+    name: 'Pro',
     price: PLAN_PRICES.PRO,
     priceDisplay: '$19/mes',
     tagline: 'Más comisión, más herramientas, más resultados',
 
-    // AFFILIATE benefits (what you RECEIVE from platform)
+    // AFFILIATE benefits — lo que RECIBES de la plataforma por referir
     affiliate: {
       commission: COMMISSION_RATES.PRO.affiliateEarns,
       commissionDisplay: '5%',
-      previousRate: '2%', // To show upgrade
+      previousRate: '2%',
       benefits: [
-        'Ganas 5% de comisión por reserva referida (2.5x más que Explorador)',
-        'Analytics avanzado con gráficas de tendencia',
-        'QR codes personalizados para materiales físicos',
-        'Soporte prioritario en menos de 24h',
+        'Recibes 5% de comisión por cada reserva generada con tu link',
+        'Ganas 2.5x más que en el plan FREE por la misma reserva',
       ],
     },
 
-    // HOST benefits (what platform CHARGES you)
+    // HOST benefits — lo que la plataforma te DESCUENTA por cada reserva vía referido
     host: {
       platformFee: COMMISSION_RATES.PRO.platformChargesHost,
       platformFeeDisplay: '20%',
       benefits: [
-        'Plataforma cobra solo 20% por reserva generada por referido',
-        'Ahorras 5% vs. plan Explorador (25% → 20%)',
-        'Recibes 80% del monto de la reserva',
-        'Mayor prioridad en búsquedas de afiliados',
-        'Sin exclusividad — sigue en Airbnb',
+        'GYDI descuenta 20% de cada reserva generada por afiliados',
+        'Tú recibes el 80% restante — 5% más que en el plan FREE',
       ],
     },
 
-    key: 'Sin contratos, cancela cuando quieras. Beneficios aplican según el rol que ejerzas.',
-    cta: 'Activar plan Conector',
+    key: 'Sin contratos, cancela cuando quieras. Los beneficios aplican según el rol que uses: afiliado, anfitrión o ambos.',
+    cta: 'Pasar a PRO',
     badge: 'Más popular',
     color: 'blue',
     popular: true,
   },
 
   ELITE: {
-    name: 'Embajador',
+    name: 'Elite',
     price: PLAN_PRICES.ELITE,
     priceDisplay: '$39/mes',
     tagline: 'El máximo retorno para quienes van en serio',
 
-    // AFFILIATE benefits (what you RECEIVE from platform)
+    // AFFILIATE benefits — lo que RECIBES de la plataforma por referir
     affiliate: {
       commission: COMMISSION_RATES.ELITE.affiliateEarns,
       commissionDisplay: '10%',
-      previousRates: ['2%', '5%'], // To show progression
+      previousRates: ['2%', '5%'],
       benefits: [
-        'Ganas 10% de comisión — las más altas del mercado',
-        'Duplicas las ganancias del plan Conector',
-        'Reportes exportables (CSV, Excel, PDF)',
-        'Manager dedicado de cuenta',
-        'Acceso anticipado a nuevas funcionalidades',
+        'Recibes 10% de comisión — la tasa más alta de la plataforma',
+        'Duplicas las ganancias del plan PRO en cada referido exitoso',
       ],
     },
 
-    // HOST benefits (what platform CHARGES you)
+    // HOST benefits — lo que la plataforma te DESCUENTA por cada reserva vía referido
     host: {
       platformFee: COMMISSION_RATES.ELITE.platformChargesHost,
       platformFeeDisplay: '15%',
       benefits: [
-        'Plataforma cobra solo 15% por reserva generada por referido',
-        'Ahorras 10% vs. plan Explorador (25% → 15%)',
-        'Recibes 85% del monto de la reserva',
-        'Perfil destacado para la red de afiliados',
-        'Sin exclusividad — sigue en Airbnb',
-        'Acceso prioritario a nuevas funcionalidades',
+        'GYDI descuenta solo 15% de cada reserva generada por afiliados',
+        'Tú recibes el 85% restante — la mejor tarifa de la plataforma',
       ],
     },
 
-    key: 'Diseñado para influencers, anfitriones con portafolio grande y afiliados de alto volumen.',
-    cta: 'Convertirme en Embajador',
-    badge: 'Mayor ROI',
+    key: 'Diseñado para anfitriones con múltiples propiedades y afiliados de alto volumen que quieren maximizar cada reserva.',
+    cta: 'Unirme a ELITE',
+    badge: 'Mejor valor',
     color: 'purple',
     popular: false,
   },

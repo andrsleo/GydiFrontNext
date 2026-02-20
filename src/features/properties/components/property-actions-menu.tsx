@@ -19,6 +19,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { PropertyStatus } from '../types';
 import {
@@ -28,6 +34,7 @@ import {
   useDeleteProperty,
 } from '../hooks';
 import { useRouter } from 'next/navigation';
+import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
 
 interface PropertyActionsMenuProps {
   propertyId: string;
@@ -44,6 +51,7 @@ export function PropertyActionsMenu({ propertyId, status, onEdit }: PropertyActi
   const activateProperty = useActivateProperty();
   const deactivateProperty = useDeactivateProperty();
   const deleteProperty = useDeleteProperty();
+  const { hasHostPaymentMethod } = useHostHasPaymentMethod();
 
   const handleEdit = () => {
     if (onEdit) {
@@ -101,10 +109,32 @@ export function PropertyActionsMenu({ propertyId, status, onEdit }: PropertyActi
 
           {/* Publicar - solo para DRAFT */}
           {status === PropertyStatus.DRAFT && (
-            <DropdownMenuItem onClick={() => setShowPublishDialog(true)}>
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Publicar
-            </DropdownMenuItem>
+            hasHostPaymentMethod ? (
+              <DropdownMenuItem onClick={() => setShowPublishDialog(true)}>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Publicar
+              </DropdownMenuItem>
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="w-full">
+                      <DropdownMenuItem
+                        disabled
+                        onSelect={(e) => e.preventDefault()}
+                        className="cursor-not-allowed opacity-50"
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Publicar
+                      </DropdownMenuItem>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[250px]">
+                    <p>Agrega un método de pago para publicar. La plataforma cobra comisiones cuando se realizan reservas.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )
           )}
 
           {/* Inactivar - para DRAFT y PUBLISHED */}

@@ -2,6 +2,7 @@
 
 import { use, useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { usePropertyDetail } from '@/features/properties';
 import { PropertyGallery } from '@/features/properties/components';
 import { BookingModal } from '@/features/bookings';
@@ -12,6 +13,8 @@ import { MapPin, Bed, Bath, Users, Calendar, DollarSign } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
 import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/types';
 import { apiClient } from '@/lib/api/client';
+import { useAuthStore } from '@/store/auth-store';
+import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
 
 function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -19,6 +22,9 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
   const refParam = searchParams.get('ref');
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
+  const { user } = useAuthStore();
+  const { hasHostPaymentMethod, isLoading: isLoadingPayment } = useHostHasPaymentMethod();
 
   // Determine if ref is a valid numeric ID or a legacy JWE token
   const isNumericRef = refParam != null && /^\d+$/.test(refParam);
@@ -88,6 +94,13 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
       </div>
     );
   }
+
+  // Determine if the current user is the property owner and lacks a payment method
+  const isOwner =
+    user?.id != null &&
+    property?.hostId != null &&
+    String(user.id) === String(property.hostId);
+  const isBookingDisabled = isOwner && !hasHostPaymentMethod && !isLoadingPayment;
 
   // Badge configuration for listing type
   const listingTypeBadgeConfig = {
@@ -187,48 +200,32 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
         {/* Sidebar - Property Info */}
         <div className="md:col-span-2 lg:col-span-1">
           <div className="lg:sticky lg:top-4 border rounded-lg p-4 sm:p-6 space-y-4 bg-card shadow-lg">
-            {/* Precios Condicionales - Solo precio de VENTA (si aplica) */}
-            {(property.listingType === PropertyListingType.SALE ||
-              property.listingType === PropertyListingType.BOTH) && property.salePrice && (
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl sm:text-3xl font-bold">
-                        {formatCurrency(property.salePrice, property.currency)}
-                      </span>
-                      <span className="text-sm text-muted-foreground">precio de venta</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-            {/* Botón según tipo de publicación */}
-            {property.listingType === PropertyListingType.SALE ? (
-              <Button className="w-full" size="lg">
-                Contactar Vendedor
-              </Button>
-            ) : property.listingType === PropertyListingType.BOTH ? (
-              <div className="space-y-2">
-                <Button
-                  className="w-full"
-                  size="lg"
-                  onClick={() => setIsBookingModalOpen(true)}
+            {/* Banner de método de pago requerido (solo visible para el dueño sin método) */}
+            {isBookingDisabled && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                <p className="font-medium">Método de pago requerido</p>
+                <p className="mt-1 text-xs">
+                  Para que los huéspedes puedan reservar esta propiedad, debes agregar un método de pago.
+                  La plataforma cobra comisiones cuando se realizan reservas efectivas.
+                </p>
+                <Link
+                  href="/dashboard/subscription"
+                  className="mt-2 inline-block text-xs font-medium underline"
                 >
-                  Validar Disponibilidad
-                </Button>
-                <Button className="w-full" size="lg" variant="outline">
-                  Contactar Vendedor
-                </Button>
+                  Agregar método de pago →
+                </Link>
               </div>
-            ) : (
-              <Button
-                className="w-full"
-                size="lg"
-                onClick={() => setIsBookingModalOpen(true)}
-              >
-                Validar Disponibilidad
-              </Button>
             )}
+
+            {/* Botón de reserva */}
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={() => !isBookingDisabled && setIsBookingModalOpen(true)}
+              disabled={isBookingDisabled}
+            >
+              Verificar Disponibilidad
+            </Button>
 
             <div className="border-t pt-4 space-y-2 text-sm">
               <div className="flex items-start gap-2 text-muted-foreground">

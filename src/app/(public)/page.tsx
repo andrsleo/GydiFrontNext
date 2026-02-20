@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PlanSelectButton } from '@/components/shared/plan-select-button';
-import { Building2, TrendingUp, Users, Shield, Zap, DollarSign, Check, Star, Crown, Rocket, MapPin, Bed, Bath, Maximize, ArrowRight } from 'lucide-react';
+import { Building2, TrendingUp, Users, Shield, Zap, DollarSign, Check, Star, Crown, Rocket, MapPin, Bed, Bath, Maximize, ArrowRight, Home, CreditCard } from 'lucide-react';
 import Image from 'next/image';
 
 export default function HomePage() {
@@ -215,17 +215,6 @@ export default function HomePage() {
                       <div className="text-3xl font-extrabold text-white">$450</div>
                       <div className="text-sm text-white/70">por noche</div>
                     </div>
-
-                    <Button
-                      asChild
-                      className="group/btn opacity-0 shadow-xl transition-all duration-500 group-hover:opacity-100"
-                      size="lg"
-                    >
-                      <Link href="/propiedades/1">
-                        Ver Más
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                      </Link>
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -277,17 +266,6 @@ export default function HomePage() {
                       <div className="text-xl font-extrabold text-white">$320</div>
                       <div className="text-xs text-white/70">por noche</div>
                     </div>
-
-                    <Button
-                      asChild
-                      size="sm"
-                      variant="secondary"
-                      className="opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                    >
-                      <Link href="/propiedades/2">
-                        Ver
-                      </Link>
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -334,17 +312,6 @@ export default function HomePage() {
                       <div className="text-xl font-extrabold text-white">$280</div>
                       <div className="text-xs text-white/70">por noche</div>
                     </div>
-
-                    <Button
-                      asChild
-                      size="sm"
-                      variant="secondary"
-                      className="opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                    >
-                      <Link href="/propiedades/3">
-                        Ver
-                      </Link>
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -403,17 +370,6 @@ export default function HomePage() {
                       <div className="text-4xl font-extrabold text-white">$850</div>
                       <div className="text-sm text-white/70">por noche</div>
                     </div>
-
-                    <Button
-                      asChild
-                      className="group/btn bg-white text-primary shadow-xl transition-all duration-500 hover:bg-white/90"
-                      size="lg"
-                    >
-                      <Link href="/propiedades/4">
-                        Explorar
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                      </Link>
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -542,6 +498,129 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Host Section */}
+      <section className="border-t bg-gradient-to-b from-orange-50/40 to-white py-16 sm:py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+              {/* Left: Copy */}
+              <div>
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-sm font-medium text-orange-700">
+                  <Home className="h-4 w-4" />
+                  <span>Para Anfitriones</span>
+                </div>
+                <h2 className="mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
+                  Tienes propiedad en Airbnb.{' '}
+                  <span className="text-orange-600">Multiplica tus reservas.</span>
+                </h2>
+                <p className="mb-8 text-lg text-muted-foreground">
+                  Publica tu propiedad en GYDI y accede a una red de afiliados motivados a llenar
+                  tu calendario. Solo pagas una comisión cuando hay una reserva confirmada — cero riesgo.
+                </p>
+
+                <div className="mb-8 space-y-5">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-100">
+                      <Check className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Sin exclusividad</p>
+                      <p className="text-sm text-muted-foreground">
+                        Sigue en Airbnb. GYDI es un canal adicional que te trae más reservas, no un reemplazo.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-100">
+                      <Check className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Solo pagas por resultados</p>
+                      <p className="text-sm text-muted-foreground">
+                        La comisión se descuenta únicamente cuando hay reserva confirmada. Sin costos fijos ocultos.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-100">
+                      <Check className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Afiliados motivados a referirte</p>
+                      <p className="text-sm text-muted-foreground">
+                        Cada afiliado gana cuando tú ganas. Un modelo donde todos tienen incentivo para que las reservas ocurran.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Button asChild size="lg">
+                    <Link href="/register">Publicar mi propiedad</Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg">
+                    <Link href="#precios">Ver comisiones por plan</Link>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right: Fee comparison */}
+              <div className="space-y-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  Comisión de plataforma según tu plan
+                </p>
+
+                {/* FREE */}
+                <div className="flex items-center justify-between rounded-2xl border border-border/50 bg-card p-5 shadow-sm transition-all hover:shadow-md">
+                  <div>
+                    <p className="font-bold text-foreground">Plan FREE</p>
+                    <p className="text-sm text-muted-foreground">Gratis para empezar</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-extrabold text-orange-500">25%</p>
+                    <p className="text-xs text-muted-foreground">comisión plataforma</p>
+                  </div>
+                </div>
+
+                {/* PRO */}
+                <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary/5 p-5 shadow-md">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-foreground">Plan PRO</p>
+                      <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">Popular</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">$19/mes</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-extrabold text-orange-500">20%</p>
+                    <p className="text-xs text-muted-foreground">comisión plataforma</p>
+                  </div>
+                </div>
+
+                {/* ELITE */}
+                <div className="flex items-center justify-between rounded-2xl border border-purple-200 bg-purple-50/50 p-5 shadow-sm transition-all hover:shadow-md">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-foreground">Plan ELITE</p>
+                      <span className="rounded-full bg-purple-600 px-2 py-0.5 text-xs font-bold text-white">Mejor valor</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">$39/mes</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-extrabold text-orange-500">15%</p>
+                    <p className="text-xs text-muted-foreground">comisión plataforma</p>
+                  </div>
+                </div>
+
+                <p className="text-center text-xs text-muted-foreground">
+                  * Solo se descuenta cuando hay una reserva confirmada vía afiliado de GYDI.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="precios" className="relative overflow-hidden border-t bg-gradient-to-b from-white via-gray-50/50 to-white py-16 sm:py-20 md:py-24 lg:py-28">
         {/* Decorative elements */}
@@ -576,8 +655,8 @@ export default function HomePage() {
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Explorador</h3>
-                <p className="mb-6 text-sm text-muted-foreground">Empieza gratis, aprende cómo funciona</p>
+                <h3 className="mb-2 text-2xl font-extrabold text-foreground">FREE</h3>
+                <p className="mb-6 text-sm text-muted-foreground">Empieza sin riesgo, aprende cómo funciona</p>
 
                 {/* Price */}
                 <div className="mb-8">
@@ -587,41 +666,31 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Commission Badge */}
-                <div className="mb-8 rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 p-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-extrabold text-primary">2%</div>
-                    <div className="text-sm font-medium text-muted-foreground">Comisión por Referido</div>
+                {/* Dual Role Conditions */}
+                <div className="mb-8 space-y-3">
+                  {/* Como Afiliado */}
+                  <div className="rounded-xl border border-green-200 bg-green-50 p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-green-600" />
+                        <span className="text-xs font-bold uppercase tracking-wide text-green-700">Como Afiliado</span>
+                      </div>
+                      <span className="text-xl font-extrabold text-green-600">+2%</span>
+                    </div>
+                    <p className="mt-1 text-xs text-green-700">Ganas 2% por cada reserva que generas con tu link</p>
+                  </div>
+                  {/* Como Anfitrión */}
+                  <div className="rounded-xl border border-orange-200 bg-orange-50 p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Home className="h-4 w-4 text-orange-600" />
+                        <span className="text-xs font-bold uppercase tracking-wide text-orange-700">Como Anfitrión</span>
+                      </div>
+                      <span className="text-xl font-extrabold text-orange-600">-25%</span>
+                    </div>
+                    <p className="mt-1 text-xs text-orange-700">GYDI descuenta 25% de cada reserva vía afiliado</p>
                   </div>
                 </div>
-
-                {/* Features */}
-                <ul className="mb-8 space-y-3">
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                      <Check className="h-3 w-3 text-primary" />
-                    </div>
-                    <span className="text-foreground">Hasta 10 referidos/mes</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                      <Check className="h-3 w-3 text-primary" />
-                    </div>
-                    <span className="text-foreground">Dashboard básico</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                      <Check className="h-3 w-3 text-primary" />
-                    </div>
-                    <span className="text-foreground">Pagos mensuales</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                      <Check className="h-3 w-3 text-primary" />
-                    </div>
-                    <span className="text-foreground">Soporte por email</span>
-                  </li>
-                </ul>
 
                 {/* CTA Button */}
                 <PlanSelectButton
@@ -650,7 +719,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Conector</h3>
+                <h3 className="mb-2 text-2xl font-extrabold text-foreground">PRO</h3>
                 <p className="mb-6 text-sm text-muted-foreground">Más comisión, más herramientas, más resultados</p>
 
                 {/* Price */}
@@ -661,54 +730,38 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Commission Badge */}
-                <div className="mb-8 rounded-xl bg-gradient-to-br from-primary via-blue-600 to-blue-500 p-4 shadow-lg">
-                  <div className="text-center">
-                    <div className="text-3xl font-extrabold text-primary-foreground">5%</div>
-                    <div className="text-sm font-medium text-primary-foreground/90">Comisión por Referido</div>
+                {/* Dual Role Conditions */}
+                <div className="mb-8 space-y-3">
+                  {/* Como Afiliado */}
+                  <div className="rounded-xl border border-green-300 bg-green-50 p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-green-600" />
+                        <span className="text-xs font-bold uppercase tracking-wide text-green-700">Como Afiliado</span>
+                      </div>
+                      <span className="text-xl font-extrabold text-green-600">+5%</span>
+                    </div>
+                    <p className="mt-1 text-xs text-green-700">Ganas 2.5x más que en FREE por la misma reserva</p>
+                  </div>
+                  {/* Como Anfitrión */}
+                  <div className="rounded-xl border border-orange-300 bg-orange-50 p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Home className="h-4 w-4 text-orange-600" />
+                        <span className="text-xs font-bold uppercase tracking-wide text-orange-700">Como Anfitrión</span>
+                      </div>
+                      <span className="text-xl font-extrabold text-orange-600">-20%</span>
+                    </div>
+                    <p className="mt-1 text-xs text-orange-700">Ahorras 5% vs FREE — recibes el 80% de cada reserva</p>
                   </div>
                 </div>
-
-                {/* Features */}
-                <ul className="mb-8 space-y-3">
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Hasta 100 referidos/mes</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Dashboard avanzado</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Pagos quincenales</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Soporte prioritario</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Analytics en tiempo real</span>
-                  </li>
-                </ul>
 
                 {/* CTA Button */}
                 <PlanSelectButton
                   planCode="PRO"
                   className="w-full bg-gradient-to-r from-primary to-blue-600 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30"
                 >
-                  Activar plan Conector
+                  Pasar a PRO
                 </PlanSelectButton>
               </div>
             </div>
@@ -724,7 +777,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">Embajador</h3>
+                <h3 className="mb-2 text-2xl font-extrabold text-foreground">ELITE</h3>
                 <p className="mb-6 text-sm text-muted-foreground">El máximo retorno para quienes van en serio</p>
 
                 {/* Price */}
@@ -735,60 +788,38 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Commission Badge */}
-                <div className="mb-8 rounded-xl bg-gradient-to-br from-purple-600 to-purple-500 p-4 shadow-lg">
-                  <div className="text-center">
-                    <div className="text-3xl font-extrabold text-primary-foreground">10%</div>
-                    <div className="text-sm font-medium text-primary-foreground/90">Comisión por Referido</div>
+                {/* Dual Role Conditions */}
+                <div className="mb-8 space-y-3">
+                  {/* Como Afiliado */}
+                  <div className="rounded-xl border border-green-300 bg-green-50 p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-green-600" />
+                        <span className="text-xs font-bold uppercase tracking-wide text-green-700">Como Afiliado</span>
+                      </div>
+                      <span className="text-xl font-extrabold text-green-600">+10%</span>
+                    </div>
+                    <p className="mt-1 text-xs text-green-700">La tasa más alta — duplicas lo que ganas en PRO</p>
+                  </div>
+                  {/* Como Anfitrión */}
+                  <div className="rounded-xl border border-orange-300 bg-orange-50 p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Home className="h-4 w-4 text-orange-600" />
+                        <span className="text-xs font-bold uppercase tracking-wide text-orange-700">Como Anfitrión</span>
+                      </div>
+                      <span className="text-xl font-extrabold text-orange-600">-15%</span>
+                    </div>
+                    <p className="mt-1 text-xs text-orange-700">La mejor tarifa — recibes el 85% de cada reserva</p>
                   </div>
                 </div>
-
-                {/* Features */}
-                <ul className="mb-8 space-y-3">
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-600">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Referidos ilimitados</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-600">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Dashboard completo + API</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-600">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Pagos semanales</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-600">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Soporte 24/7 dedicado</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-600">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Manager de cuenta personal</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-600">
-                      <Check className="h-3 w-3 text-primary-foreground" />
-                    </div>
-                    <span className="font-medium text-foreground">Acceso prioritario a nuevas propiedades</span>
-                  </li>
-                </ul>
 
                 {/* CTA Button */}
                 <PlanSelectButton
                   planCode="ELITE"
                   className="w-full bg-gradient-to-r from-purple-600 to-purple-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/30"
                 >
-                  Convertirme en Embajador
+                  Unirme a ELITE
                 </PlanSelectButton>
               </div>
             </div>
