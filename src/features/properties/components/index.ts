@@ -4,6 +4,7 @@
  */
 
 export { PropertyCard } from './property-card';
+export { PropertyStatusBadge } from './property-status-badge';
 export { PropertyGallery } from './property-gallery';
 export { PropertyForm } from './property-form';
 export { PropertyActionsMenu } from './property-actions-menu';
@@ -14,4 +15,5 @@ export { ImageOrganizer } from './image-organizer';
 export { VideoOrganizer } from './video-organizer';
 export { ReferPropertiesTab } from './refer-properties-tab';
 export { AirbnbImportWizard } from './airbnb-import-wizard';
+export { CohostInstructionsDialog } from './cohost-instructions-dialog';
 

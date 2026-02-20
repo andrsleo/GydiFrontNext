@@ -63,11 +63,11 @@ export default function AdminConfigPage() {
               </div>
               <div>
                 <Label htmlFor="site-url">URL del Sitio</Label>
-                <Input id="site-url" defaultValue="https://gydi-front-next.vercel.app" className="mt-2" />
+                <Input id="site-url" defaultValue="https://gydi.app" className="mt-2" />
               </div>
               <div>
                 <Label htmlFor="support-email">Email de Soporte</Label>
-                <Input id="support-email" type="email" defaultValue="support@gydi.com" className="mt-2" />
+                <Input id="support-email" type="email" defaultValue="gydiproperties@gmail.com" className="mt-2" />
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">

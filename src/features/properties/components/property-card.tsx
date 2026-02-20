@@ -7,12 +7,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Bed, Bath, Users } from 'lucide-react';
+import { MapPin, Bed, Bath, Users, AlertCircle } from 'lucide-react';
 import type { PropertyResponse } from '../types';
-import { LISTING_TYPE_LABELS, PropertyListingType } from '../types';
+import { LISTING_TYPE_LABELS, PropertyListingType, PropertyStatus } from '../types';
 import { formatCurrency } from '@/lib/utils/format';
 import { getImagePath, getBlurDataURL } from '@/lib/utils/image';
 import { PropertyActionsMenu } from './property-actions-menu';
+import { PropertyStatusBadge } from './property-status-badge';
 
 interface PropertyCardProps {
   property: PropertyResponse;
@@ -49,6 +50,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
     status,
     propertyType,
     listingType,
+    denialReason,
   } = property;
 
   // Badge styling based on listing type
@@ -91,9 +93,29 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
           />
 
           {/* Status Badge (top right) */}
-          {status !== 'PUBLISHED' && (
+          {status !== PropertyStatus.PUBLISHED && (
             <div className="absolute right-2 top-2">
-              <Badge variant={status === 'DRAFT' ? 'warning' : 'secondary'}>{status}</Badge>
+              <PropertyStatusBadge status={status as PropertyStatus} />
+            </div>
+          )}
+
+          {/* Denial indicator overlay for DENY status */}
+          {status === PropertyStatus.DENY && (
+            <div className="absolute inset-0 bg-destructive/10 flex items-end justify-start p-2">
+              <div className="flex items-center gap-1 text-xs text-destructive font-medium bg-background/90 rounded px-2 py-1">
+                <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                <span>Requiere correcciones</span>
+              </div>
+            </div>
+          )}
+
+          {/* Cohost required indicator for SEND_GYDI_COHOST status */}
+          {status === PropertyStatus.SEND_GYDI_COHOST && (
+            <div className="absolute inset-0 bg-amber-500/10 flex items-end justify-start p-2">
+              <div className="flex items-center gap-1 text-xs text-amber-800 font-medium bg-background/90 rounded px-2 py-1">
+                <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                <span>Agregar co-host requerido</span>
+              </div>
             </div>
           )}
 
@@ -122,6 +144,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
                 <PropertyActionsMenu
                   propertyId={id}
                   status={status}
+                  denialReason={denialReason}
                 />
               </div>
             )}

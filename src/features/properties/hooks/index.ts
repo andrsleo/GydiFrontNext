@@ -14,9 +14,12 @@ export { useUploadVideos } from './use-upload-videos';
 export { useAmenities, useAmenitiesByCategory } from './use-amenities';
 export {
   usePublishProperty,
+  useSubmitForApproval,
   useActivateProperty,
   useDeactivateProperty,
   useDeleteProperty,
+  useAdminApproveProperty,
+  useAdminDenyProperty,
 } from './use-property-actions';
 export { useReorderImages } from './use-reorder-images';
 export { useValidateICalUrl } from './use-validate-ical-url';

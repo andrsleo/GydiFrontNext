@@ -8,10 +8,26 @@
  */
 export enum PropertyStatus {
   DRAFT = 'DRAFT',
+  SEND_GYDI_COHOST = 'SEND_GYDI_COHOST',
+  PENDING_APPROVAL = 'PENDING_APPROVAL',
   PUBLISHED = 'PUBLISHED',
   INACTIVE = 'INACTIVE',
+  DENY = 'DENY',
   DELETED = 'DELETED',
 }
+
+/**
+ * Status labels in Spanish for display in UI
+ */
+export const PROPERTY_STATUS_LABELS: Record<PropertyStatus, string> = {
+  [PropertyStatus.DRAFT]: 'Borrador',
+  [PropertyStatus.SEND_GYDI_COHOST]: 'Agregar Co-host',
+  [PropertyStatus.PENDING_APPROVAL]: 'En Revisión',
+  [PropertyStatus.PUBLISHED]: 'Publicada',
+  [PropertyStatus.INACTIVE]: 'Inactiva',
+  [PropertyStatus.DENY]: 'Rechazada',
+  [PropertyStatus.DELETED]: 'Eliminada',
+};
 
 /**
  * Import Mode Enum
@@ -155,8 +171,12 @@ export interface PropertyResponse {
   videoCount: number;
   mainImageUrl?: string;
   importMode?: ImportMode;
+  airbnbUrl?: string;
   createdAt: string;
   publishedAt?: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  denialReason?: string;
   icalUrlAirbnb?: string;
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MoreVertical, Edit, Trash2, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { MoreVertical, Edit, Trash2, Eye, EyeOff, SendHorizonal, AlertCircle, UserPlus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +20,13 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -28,26 +35,30 @@ import {
 import { Button } from '@/components/ui/button';
 import { PropertyStatus } from '../types';
 import {
-  usePublishProperty,
+  useSubmitForApproval,
   useActivateProperty,
   useDeactivateProperty,
   useDeleteProperty,
 } from '../hooks';
 import { useRouter } from 'next/navigation';
 import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
+import { CohostInstructionsDialog } from './cohost-instructions-dialog';
 
 interface PropertyActionsMenuProps {
   propertyId: string;
   status: PropertyStatus;
+  denialReason?: string;
   onEdit?: () => void;
 }
 
-export function PropertyActionsMenu({ propertyId, status, onEdit }: PropertyActionsMenuProps) {
+export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }: PropertyActionsMenuProps) {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+  const [showDenialReasonDialog, setShowDenialReasonDialog] = useState(false);
+  const [showCohostDialog, setShowCohostDialog] = useState(false);
 
-  const publishProperty = usePublishProperty();
+  const submitForApproval = useSubmitForApproval();
   const activateProperty = useActivateProperty();
   const deactivateProperty = useDeactivateProperty();
   const deleteProperty = useDeleteProperty();
@@ -61,9 +72,9 @@ export function PropertyActionsMenu({ propertyId, status, onEdit }: PropertyActi
     }
   };
 
-  const handlePublish = () => {
-    publishProperty.mutate(propertyId);
-    setShowPublishDialog(false);
+  const handleSubmitForApproval = () => {
+    submitForApproval.mutate(propertyId);
+    setShowSubmitDialog(false);
   };
 
   const handleActivate = () => {
@@ -80,10 +91,13 @@ export function PropertyActionsMenu({ propertyId, status, onEdit }: PropertyActi
   };
 
   const isPending =
-    publishProperty.isPending ||
+    submitForApproval.isPending ||
     activateProperty.isPending ||
     deactivateProperty.isPending ||
     deleteProperty.isPending;
+
+  const canSubmitForApproval = status === PropertyStatus.DENY;
+  const isCohostPending = status === PropertyStatus.SEND_GYDI_COHOST;
 
   return (
     <>
@@ -107,12 +121,20 @@ export function PropertyActionsMenu({ propertyId, status, onEdit }: PropertyActi
 
           <DropdownMenuSeparator />
 
-          {/* Publicar - solo para DRAFT */}
-          {status === PropertyStatus.DRAFT && (
+          {/* Ver instrucciones de co-host - para SEND_GYDI_COHOST */}
+          {isCohostPending && (
+            <DropdownMenuItem onClick={() => setShowCohostDialog(true)}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Ver instrucciones de co-host
+            </DropdownMenuItem>
+          )}
+
+          {/* Enviar a Revisión - para DRAFT y DENY */}
+          {canSubmitForApproval && (
             hasHostPaymentMethod ? (
-              <DropdownMenuItem onClick={() => setShowPublishDialog(true)}>
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Publicar
+              <DropdownMenuItem onClick={() => setShowSubmitDialog(true)}>
+                <SendHorizonal className="h-4 w-4 mr-2" />
+                {status === PropertyStatus.DENY ? 'Re-enviar a Revisión' : 'Enviar a Revisión'}
               </DropdownMenuItem>
             ) : (
               <TooltipProvider>
@@ -124,21 +146,29 @@ export function PropertyActionsMenu({ propertyId, status, onEdit }: PropertyActi
                         onSelect={(e) => e.preventDefault()}
                         className="cursor-not-allowed opacity-50"
                       >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Publicar
+                        <SendHorizonal className="h-4 w-4 mr-2" />
+                        {status === PropertyStatus.DENY ? 'Re-enviar a Revisión' : 'Enviar a Revisión'}
                       </DropdownMenuItem>
                     </span>
                   </TooltipTrigger>
                   <TooltipContent side="left" className="max-w-[250px]">
-                    <p>Agrega un método de pago para publicar. La plataforma cobra comisiones cuando se realizan reservas.</p>
+                    <p>Agrega una tarjeta para enviar a revisión. La plataforma cobra comisiones cuando se realizan reservas.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             )
           )}
 
-          {/* Inactivar - para DRAFT y PUBLISHED */}
-          {(status === PropertyStatus.DRAFT || status === PropertyStatus.PUBLISHED) && (
+          {/* Ver motivo de rechazo - solo para DENY */}
+          {status === PropertyStatus.DENY && denialReason && (
+            <DropdownMenuItem onClick={() => setShowDenialReasonDialog(true)}>
+              <AlertCircle className="h-4 w-4 mr-2" />
+              Ver motivo de rechazo
+            </DropdownMenuItem>
+          )}
+
+          {/* Inactivar - solo para PUBLISHED */}
+          {status === PropertyStatus.PUBLISHED && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -151,34 +181,93 @@ export function PropertyActionsMenu({ propertyId, status, onEdit }: PropertyActi
             </>
           )}
 
-          {/* Activar - solo para INACTIVE */}
+          {/* Reactivar - solo para INACTIVE */}
           {status === PropertyStatus.INACTIVE && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleActivate}>
                 <Eye className="h-4 w-4 mr-2" />
-                Activar
+                Reactivar
               </DropdownMenuItem>
             </>
+          )}
+
+          {/* PENDING_APPROVAL - solo info, sin acciones de transición */}
+          {status === PropertyStatus.PENDING_APPROVAL && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                disabled
+                onSelect={(e) => e.preventDefault()}
+                className="cursor-default opacity-70 text-xs"
+              >
+                En revisión por el equipo de GYDI
+              </DropdownMenuItem>
+            </>
+          )}
+
+          <DropdownMenuSeparator />
+
+          {/* Eliminar - disponible para todos excepto PENDING_APPROVAL y SEND_GYDI_COHOST */}
+          {status !== PropertyStatus.PENDING_APPROVAL && status !== PropertyStatus.SEND_GYDI_COHOST && (
+            <DropdownMenuItem
+              onClick={() => setShowDeleteDialog(true)}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Eliminar
+            </DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Diálogo de confirmación para publicar */}
-      <AlertDialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
+      {/* Diálogo de instrucciones de co-host */}
+      <CohostInstructionsDialog
+        open={showCohostDialog}
+        onClose={() => setShowCohostDialog(false)}
+        onConfirm={() => {
+          submitForApproval.mutate(propertyId, {
+            onSuccess: () => setShowCohostDialog(false),
+          });
+        }}
+        isConfirming={submitForApproval.isPending}
+      />
+
+      {/* Diálogo de confirmación para enviar a revisión */}
+      <AlertDialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Publicar propiedad?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {status === PropertyStatus.DENY ? '¿Re-enviar propiedad a revisión?' : '¿Enviar propiedad a revisión?'}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              La propiedad será visible en el catálogo público y los usuarios podrán verla y reservarla.
+              El equipo de GYDI revisará tu propiedad y te notificará cuando esté aprobada o si requiere cambios.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handlePublish}>Publicar</AlertDialogAction>
+            <AlertDialogAction onClick={handleSubmitForApproval}>Enviar</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Diálogo para ver motivo de rechazo */}
+      <Dialog open={showDenialReasonDialog} onOpenChange={setShowDenialReasonDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Motivo de rechazo</DialogTitle>
+            <DialogDescription>
+              El equipo de GYDI rechazó tu propiedad por el siguiente motivo:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-md border border-destructive/20 bg-destructive/5 p-4 text-sm text-foreground">
+            {denialReason}
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Edita tu propiedad para corregir los problemas y envíala nuevamente a revisión.
+          </p>
+        </DialogContent>
+      </Dialog>
 
       {/* Diálogo de confirmación para eliminar */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

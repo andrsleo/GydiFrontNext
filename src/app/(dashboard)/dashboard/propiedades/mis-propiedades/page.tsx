@@ -107,8 +107,11 @@ export default function MyPropertiesPage() {
         <TabsList>
           <TabsTrigger value="all">Todas</TabsTrigger>
           <TabsTrigger value={PropertyStatus.DRAFT}>Borradores</TabsTrigger>
+          <TabsTrigger value={PropertyStatus.SEND_GYDI_COHOST}>Agregar Co-host</TabsTrigger>
+          <TabsTrigger value={PropertyStatus.PENDING_APPROVAL}>En Revisión</TabsTrigger>
           <TabsTrigger value={PropertyStatus.PUBLISHED}>Publicadas</TabsTrigger>
           <TabsTrigger value={PropertyStatus.INACTIVE}>Inactivas</TabsTrigger>
+          <TabsTrigger value={PropertyStatus.DENY}>Rechazadas</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="mt-6">
@@ -119,11 +122,23 @@ export default function MyPropertiesPage() {
           {renderContent()}
         </TabsContent>
 
+        <TabsContent value={PropertyStatus.SEND_GYDI_COHOST} className="mt-6">
+          {renderContent()}
+        </TabsContent>
+
+        <TabsContent value={PropertyStatus.PENDING_APPROVAL} className="mt-6">
+          {renderContent()}
+        </TabsContent>
+
         <TabsContent value={PropertyStatus.PUBLISHED} className="mt-6">
           {renderContent()}
         </TabsContent>
 
         <TabsContent value={PropertyStatus.INACTIVE} className="mt-6">
+          {renderContent()}
+        </TabsContent>
+
+        <TabsContent value={PropertyStatus.DENY} className="mt-6">
           {renderContent()}
         </TabsContent>
       </Tabs>

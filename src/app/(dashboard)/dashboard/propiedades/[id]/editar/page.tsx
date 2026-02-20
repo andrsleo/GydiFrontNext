@@ -2,28 +2,34 @@
 
 import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { usePropertyById, useUpdateProperty, useUploadVideos, usePublishProperty, useCloudinaryDirectUpload } from '@/features/properties';
-import { PropertyForm, ImageUploader, VideoUploader, PropertyGallery, ImageOrganizer, VideoOrganizer } from '@/features/properties/components';
+import { usePropertyById, useUpdateProperty, useUploadVideos, useCloudinaryDirectUpload } from '@/features/properties';
+import { PropertyForm, ImageUploader, VideoUploader, PropertyGallery, ImageOrganizer, VideoOrganizer, PropertyStatusBadge } from '@/features/properties/components';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArrowLeft, Save, Upload, Eye, Trash2 } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { UpdatePropertyFormData } from '@/features/properties/schemas';
+import { PropertyStatus } from '@/features/properties/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
+import { useSubmitForApproval } from '@/features/properties/hooks';
+import { CohostInstructionsDialog } from '@/features/properties/components/cohost-instructions-dialog';
 
 export default function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
   const { data: property, isLoading } = usePropertyById({ id });
-  const updateProperty = useUpdateProperty();
+  const updateProperty = useUpdateProperty({
+    onCohostRequired: (propertyId) => {
+      setPendingCohostPropertyId(propertyId);
+      setShowCohostDialog(true);
+    },
+  });
   const { uploadImagesAsync, isUploading: isUploadingImages, progress: uploadProgress } = useCloudinaryDirectUpload();
   const uploadVideos = useUploadVideos();
-  const publishProperty = usePublishProperty();
-  const { hasHostPaymentMethod } = useHostHasPaymentMethod();
+  const submitForApproval = useSubmitForApproval();
+  const [showCohostDialog, setShowCohostDialog] = useState(false);
+  const [pendingCohostPropertyId, setPendingCohostPropertyId] = useState<string | null>(null);
 
   // Transform nested backend data to flat form data
   const formDefaultValues = property ? {
@@ -57,17 +63,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
     return updateProperty.mutateAsync({ id, data: sanitizedData });
   };
 
-  const handlePublishProperty = async () => {
-    try {
-      await publishProperty.mutateAsync(id);
-      // Optionally navigate to property detail or list after publish
-      // router.push('/dashboard/propiedades');
-    } catch (error) {
-      // Error is handled by the hook's onError callback with toast
-      console.error('Error publishing property:', error);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -98,9 +93,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Editar Propiedad</h1>
-              <Badge variant={property.status === 'PUBLISHED' ? 'default' : 'secondary'}>
-                {property.status}
-              </Badge>
+              <PropertyStatusBadge status={property.status as PropertyStatus} />
             </div>
             <p className="text-sm sm:text-base text-muted-foreground truncate">{property.title}</p>
           </div>
@@ -120,35 +113,6 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
               <span className="hidden sm:inline">Vista Previa</span>
               <span className="sm:hidden">Preview</span>
             </Button>
-          )}
-          {property.status === 'DRAFT' && (
-            hasHostPaymentMethod ? (
-              <Button
-                className="flex-1 sm:flex-initial"
-                onClick={handlePublishProperty}
-                disabled={publishProperty.isPending}
-              >
-                {publishProperty.isPending ? 'Publicando...' : 'Publicar'}
-              </Button>
-            ) : (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="flex-1 sm:flex-initial">
-                      <Button
-                        className="w-full sm:w-auto"
-                        disabled
-                      >
-                        Publicar
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-[260px]">
-                    <p>Agrega un método de pago para publicar. La plataforma cobra comisiones cuando se realizan reservas.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )
           )}
         </div>
       </div>
@@ -288,6 +252,19 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
           </Card>
         </TabsContent>
       </Tabs>
+
+      <CohostInstructionsDialog
+        open={showCohostDialog}
+        onClose={() => setShowCohostDialog(false)}
+        onConfirm={() => {
+          if (pendingCohostPropertyId) {
+            submitForApproval.mutate(pendingCohostPropertyId, {
+              onSuccess: () => setShowCohostDialog(false),
+            });
+          }
+        }}
+        isConfirming={submitForApproval.isPending}
+      />
     </div>
   );
 }

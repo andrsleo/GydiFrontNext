@@ -10,16 +10,21 @@ import { propertiesApi } from '../api/properties.api';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import { toast } from 'sonner';
 import type { UpdatePropertyRequest, PropertyResponse } from '../types';
+import { PropertyStatus } from '../types';
 
 interface UpdatePropertyVariables {
   id: string;
   data: UpdatePropertyRequest;
 }
 
+interface UseUpdatePropertyCallbacks {
+  onCohostRequired?: (propertyId: string) => void;
+}
+
 type UseUpdatePropertyOptions = Omit<
   UseMutationOptions<PropertyResponse, Error, UpdatePropertyVariables>,
   'mutationFn'
->;
+> & UseUpdatePropertyCallbacks;
 
 /**
  * Hook to update an existing property
@@ -43,10 +48,11 @@ type UseUpdatePropertyOptions = Omit<
  */
 export function useUpdateProperty(options?: UseUpdatePropertyOptions) {
   const queryClient = useQueryClient();
+  const { onCohostRequired, ...mutationOptions } = options ?? {};
 
   return useMutation<PropertyResponse, Error, UpdatePropertyVariables>({
     mutationFn: ({ id, data }) => propertiesApi.update(id, data),
-    ...options,
+    ...mutationOptions,
     onSuccess: (data, variables, context) => {
       // Invalidate and refetch specific property detail
       queryClient.invalidateQueries({
@@ -64,6 +70,12 @@ export function useUpdateProperty(options?: UseUpdatePropertyOptions) {
       toast.success('Propiedad actualizada', {
         description: `${data.title} se ha actualizado correctamente`,
       });
+
+      // Detect SEND_GYDI_COHOST transition and trigger callback
+      if (data.status === PropertyStatus.SEND_GYDI_COHOST) {
+        onCohostRequired?.(data.id);
+      }
+
     },
     onError: (error: any, variables, context) => {
       console.error('Update property error:', error);

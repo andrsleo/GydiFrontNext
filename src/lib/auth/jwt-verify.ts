@@ -69,8 +69,11 @@ export async function verifyJWT(token: string): Promise<JWTUserInfo | null> {
     const secretKey = new TextEncoder().encode(secret);
 
     // Verify token signature and expiration
+    // Backend auto-selects HMAC algorithm based on key size (JJWT 0.12.x):
+    // 256-383 bits = HS256, 384-511 bits = HS384, 512+ bits = HS512
+    // The default secret (88 bytes = 704 bits) results in HS512
     const { payload } = await jwtVerify<JWTClaims>(token, secretKey, {
-      algorithms: ['HS256'], // Backend uses HMAC-SHA256
+      algorithms: ['HS256', 'HS384', 'HS512'],
     });
 
     // Extract roles from token (backend includes roles as comma-separated string or array)
