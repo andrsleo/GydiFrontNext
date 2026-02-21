@@ -62,7 +62,6 @@ export function AuthVerifier({ children }: AuthVerifierProps) {
 
     // Case 2: No user in store AND no cookies → redirect to login
     if (!hasSessionCookie()) {
-      console.log('[AuthVerifier] No user in store and no cookies → redirect to login');
       router.push('/login');
       return;
     }
@@ -70,29 +69,12 @@ export function AuthVerifier({ children }: AuthVerifierProps) {
     // Case 3: Cookies exist but store is empty
     // → useCurrentUser will fetch user from backend (handled by React Query above)
     if (!isLoading && !fetchedUser && error) {
-      // Fetch failed → cookies are invalid/expired
-      console.error('[AuthVerifier] Failed to fetch user from backend:', error);
-      console.log('[AuthVerifier] Clearing invalid session and redirecting to login');
-
       // Clear everything
       clearSessionMarker();
       logout();
       router.push('/login?error=SessionExpired');
     }
   }, [hasHydrated, user, fetchedUser, isLoading, error, router, logout]);
-
-  // Log current state for debugging
-  useEffect(() => {
-    if (hasHydrated) {
-      console.log('[AuthVerifier] State:', {
-        hasUser: !!user,
-        hasCookies: hasSessionCookie(),
-        isLoading,
-        fetchedUser: !!fetchedUser,
-        error: !!error,
-      });
-    }
-  }, [hasHydrated, user, isLoading, fetchedUser, error]);
 
   return <>{children}</>;
 }

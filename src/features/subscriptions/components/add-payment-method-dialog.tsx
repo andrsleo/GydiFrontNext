@@ -19,14 +19,19 @@ import { AddPaymentMethodForm } from './add-payment-method-form';
 interface AddPaymentMethodDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
+  description?: string;
 }
 
 export function AddPaymentMethodDialog({
   open,
   onOpenChange,
+  onSuccess,
+  description,
 }: AddPaymentMethodDialogProps) {
   const handleSuccess = () => {
     onOpenChange(false);
+    onSuccess?.();
   };
 
   const handleCancel = () => {
@@ -39,7 +44,7 @@ export function AddPaymentMethodDialog({
         <DialogHeader>
           <DialogTitle>Add Payment Method</DialogTitle>
           <DialogDescription>
-            Add a credit or debit card to use for subscription payments.
+            {description ?? 'Add a credit or debit card to use for subscription payments.'}
           </DialogDescription>
         </DialogHeader>
 

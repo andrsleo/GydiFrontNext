@@ -60,10 +60,6 @@ function setSessionMarker(
   // Esto es mucho más corto que las 24 horas anteriores
   const maxAge = tokenExpiresIn || 3600; // Default: 1 hora
 
-  console.log(
-    `[Auth] 🍪 Setting gydi_session cookie with max-age: ${maxAge}s (${maxAge / 60} minutes)`
-  );
-
   document.cookie = `gydi_session=${value}; path=/; max-age=${maxAge}; SameSite=Lax; Secure`;
 }
 
@@ -75,7 +71,6 @@ function setSessionMarker(
  */
 export function clearSessionMarker() {
   if (typeof document === 'undefined') return;
-  console.log('[Auth] 🗑️ Clearing gydi_session cookie');
   document.cookie = 'gydi_session=; path=/; max-age=0; SameSite=Lax; Secure';
 }
 
@@ -146,7 +141,6 @@ export const authApi = {
     // Cross-origin: httpOnly cookies are on Railway domain, middleware needs a Vercel-domain cookie
     // ✅ NUEVA MEJORA: Sincroniza expiración con JWT (si el backend la envía)
     setSessionMarker(data.user, data.expiresIn);
-    console.log('[Auth] ✅ Session marker set on frontend domain');
 
     // Fetch CSRF token from response body and store in memory (Option B)
     try {

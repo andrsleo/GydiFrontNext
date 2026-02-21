@@ -43,6 +43,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
 import { CohostInstructionsDialog } from './cohost-instructions-dialog';
+import { AddPaymentMethodDialog } from '@/features/subscriptions/components/add-payment-method-dialog';
 
 interface PropertyActionsMenuProps {
   propertyId: string;
@@ -57,6 +58,7 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showDenialReasonDialog, setShowDenialReasonDialog] = useState(false);
   const [showCohostDialog, setShowCohostDialog] = useState(false);
+  const [showAddCardDialog, setShowAddCardDialog] = useState(false);
 
   const submitForApproval = useSubmitForApproval();
   const activateProperty = useActivateProperty();
@@ -123,7 +125,13 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
 
           {/* Ver instrucciones de co-host - para SEND_GYDI_COHOST */}
           {isCohostPending && (
-            <DropdownMenuItem onClick={() => setShowCohostDialog(true)}>
+            <DropdownMenuItem onClick={() => {
+              if (hasHostPaymentMethod) {
+                setShowCohostDialog(true);
+              } else {
+                setShowAddCardDialog(true);
+              }
+            }}>
               <UserPlus className="h-4 w-4 mr-2" />
               Ver instrucciones de co-host
             </DropdownMenuItem>
@@ -220,6 +228,14 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* Diálogo de agregar tarjeta (requerida antes de ver instrucciones de co-host) */}
+      <AddPaymentMethodDialog
+        open={showAddCardDialog}
+        onOpenChange={setShowAddCardDialog}
+        onSuccess={() => setShowCohostDialog(true)}
+        description="Para enviar tu propiedad a revisión necesitas agregar una tarjeta. La plataforma cobra comisiones cuando se realizan reservas en tu propiedad."
+      />
 
       {/* Diálogo de instrucciones de co-host */}
       <CohostInstructionsDialog

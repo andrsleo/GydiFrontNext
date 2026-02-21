@@ -90,7 +90,6 @@ export function SessionTimeoutProvider({
    */
   const handleWarning = useCallback(() => {
     setShowWarning(true);
-    console.log('[SessionTimeout] Warning triggered after', warningTimeout / 1000, 'seconds of inactivity');
   }, [warningTimeout]);
 
   /**
@@ -98,7 +97,6 @@ export function SessionTimeoutProvider({
    * Auto-logout user
    */
   const handleTimeout = useCallback(() => {
-    console.log('[SessionTimeout] Timeout triggered - logging out user');
     logout();
   }, [logout]);
 
@@ -120,8 +118,6 @@ export function SessionTimeoutProvider({
    * Reset inactivity timers
    */
   const handleContinue = useCallback(async () => {
-    console.log('[SessionTimeout] User clicked "Continue Session" - refreshing JWT token');
-
     setIsRefreshing(true);
 
     try {
@@ -132,8 +128,6 @@ export function SessionTimeoutProvider({
       // 3. Generate new access_token
       // 4. Set new access_token cookie
       await authApi.refresh();
-
-      console.log('[SessionTimeout] JWT token refreshed successfully');
 
       // Reset inactivity timers
       resetTimer();
@@ -158,7 +152,6 @@ export function SessionTimeoutProvider({
    * Handle "Logout" button click or countdown reaching zero
    */
   const handleLogout = useCallback(() => {
-    console.log('[SessionTimeout] User logged out manually from warning modal');
     logout();
   }, [logout]);
 

@@ -16,7 +16,7 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { CountryCitySelector } from '@/components/shared/country-city-selector';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertCircle, HelpCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 import {
   createPropertySchema,
   updatePropertySchema,
@@ -31,6 +31,11 @@ interface PropertyFormProps {
   defaultValues?: Partial<CreatePropertyFormData | UpdatePropertyFormData>;
   onSubmit: (data: CreatePropertyFormData | UpdatePropertyFormData) => Promise<any> | void;
   isSubmitting?: boolean;
+  hideSubmitButton?: boolean;
+}
+
+export interface PropertyFormHandle {
+  submit: () => void;
 }
 
 /**
@@ -46,12 +51,13 @@ interface PropertyFormProps {
  * />
  * ```
  */
-export function PropertyForm({
+export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(function PropertyForm({
   mode,
   defaultValues,
   onSubmit,
   isSubmitting = false,
-}: PropertyFormProps) {
+  hideSubmitButton = false,
+}: PropertyFormProps, ref) {
   const schema = mode === 'create' ? createPropertySchema : updatePropertySchema;
 
   const {
@@ -145,6 +151,10 @@ export function PropertyForm({
       }
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    submit: () => handleSubmit(handleFormSubmit)(),
+  }));
 
   return (
     <form
@@ -641,14 +651,16 @@ export function PropertyForm({
       </div>
 
       {/* Submit Button */}
-      <div className="flex justify-end gap-4">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create Property' : 'Update Property'}
-        </Button>
-      </div>
+      {!hideSubmitButton && (
+        <div className="flex justify-end gap-4">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create Property' : 'Update Property'}
+          </Button>
+        </div>
+      )}
     </form>
   );
-}
+});

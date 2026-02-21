@@ -71,16 +71,6 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
   // Filter menu sections by user role
   const visibleSections = filterSectionsByRole(MENU_SECTIONS, userRole);
 
-  // 🔍 DEBUG LOGS (temporary - remove after fixing)
-  console.log('🔍 Sidebar Debug:', {
-    userRole,
-    subscriptionPlan,
-    totalSections: MENU_SECTIONS.length,
-    visibleSections: visibleSections.length,
-    sectionNames: visibleSections.map(s => s.id),
-    totalMenuItems: visibleSections.reduce((acc, s) => acc + s.items.length, 0),
-  });
-
   // Toggle sub-menu expansion
   const toggleExpand = (itemId: string) => {
     setExpandedItems((prev) => {

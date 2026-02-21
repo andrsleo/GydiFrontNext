@@ -28,18 +28,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   // Get user from auth store
   const user = useUser();
 
-  // 🔍 DEBUG LOGS (temporary - remove after fixing)
-  console.log('🔍 DashboardShell Debug:', {
-    hasHydrated,
-    hasUser: !!user,
-    userRole: user?.role,
-    userPlan: user?.activePlan,
-    userName: user?.name,
-  });
-
   // Show skeleton while hydrating OR while AuthVerifier is fetching user
   if (!hasHydrated || !user) {
-    console.log('⏳ Showing skeleton:', { hasHydrated, hasUser: !!user });
     return (
       <AuthVerifier>
         <DashboardSkeleton />
@@ -51,12 +41,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   // Normalize role: Remove 'ROLE_' prefix if present (backend returns 'ROLE_USER', frontend expects 'USER')
   const userRole = normalizeRole(user.role);
   const subscriptionPlan = (user.activePlan as SubscriptionPlan) || 'FREE';
-
-  console.log('✅ Rendering sidebar with:', {
-    originalRole: user.role,
-    normalizedRole: userRole,
-    subscriptionPlan
-  });
 
   return (
     <AuthVerifier>

@@ -111,19 +111,12 @@ export function AuthVerifier() {
 
     // Verificación completada
     if (verifiedUser) {
-      // ✅ Token válido - actualizar store con datos frescos del backend
-      console.log('[AuthVerifier] ✅ Token válido - sesión actualizada');
       setUser(verifiedUser);
       setLoading(false);
     } else {
-      // ❌ Token expirado, inválido, o error de red - LIMPIAR TODO
+      // Token expirado, inválido, o error de red - LIMPIAR TODO
       // NOTA: authApi.getCurrentUser() retorna null cuando el token expira,
       // no lanza error, por eso usamos 'else' en lugar de 'else if (error)'
-      console.warn('[AuthVerifier] ❌ Token inválido o expirado - limpiando sesión');
-
-      if (error) {
-        console.warn('[AuthVerifier] Error de verificación:', error.message);
-      }
 
       // 1. Limpiar Zustand store + localStorage
       logout();

@@ -1,35 +1,56 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { usePropertyById, useUpdateProperty, useUploadVideos, useCloudinaryDirectUpload } from '@/features/properties';
 import { PropertyForm, ImageUploader, VideoUploader, PropertyGallery, ImageOrganizer, VideoOrganizer, PropertyStatusBadge } from '@/features/properties/components';
+import type { PropertyFormHandle } from '@/features/properties/components/property-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Eye } from 'lucide-react';
+import { ArrowLeft, Eye, Save } from 'lucide-react';
 import Link from 'next/link';
 import { UpdatePropertyFormData } from '@/features/properties/schemas';
 import { PropertyStatus } from '@/features/properties/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSubmitForApproval } from '@/features/properties/hooks';
 import { CohostInstructionsDialog } from '@/features/properties/components/cohost-instructions-dialog';
+import { AddPaymentMethodDialog } from '@/features/subscriptions/components/add-payment-method-dialog';
+import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
 
 export default function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
   const { data: property, isLoading } = usePropertyById({ id });
+  const { hasHostPaymentMethod } = useHostHasPaymentMethod();
   const updateProperty = useUpdateProperty({
     onCohostRequired: (propertyId) => {
       setPendingCohostPropertyId(propertyId);
-      setShowCohostDialog(true);
+      if (hasHostPaymentMethod) {
+        setShowCohostDialog(true);
+      } else {
+        setShowAddCardDialog(true);
+      }
     },
   });
   const { uploadImagesAsync, isUploading: isUploadingImages, progress: uploadProgress } = useCloudinaryDirectUpload();
   const uploadVideos = useUploadVideos();
   const submitForApproval = useSubmitForApproval();
   const [showCohostDialog, setShowCohostDialog] = useState(false);
+  const [showAddCardDialog, setShowAddCardDialog] = useState(false);
   const [pendingCohostPropertyId, setPendingCohostPropertyId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('details');
+  const formRef = useRef<PropertyFormHandle>(null);
+
+  const handleSave = () => {
+    if (activeTab !== 'details') {
+      // flushSync forces React to synchronously commit the tab switch,
+      // so PropertyForm is mounted and formRef.current is set before submit() runs.
+      flushSync(() => setActiveTab('details'));
+    }
+    formRef.current?.submit();
+  };
 
   // Transform nested backend data to flat form data
   const formDefaultValues = property ? {
@@ -114,10 +135,19 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
               <span className="sm:hidden">Preview</span>
             </Button>
           )}
+          <Button
+            onClick={handleSave}
+            disabled={updateProperty.isPending}
+            className="flex-1 sm:flex-initial"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">{updateProperty.isPending ? 'Guardando...' : 'Update Property'}</span>
+            <span className="sm:hidden">{updateProperty.isPending ? '...' : 'Guardar'}</span>
+          </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="details">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full grid grid-cols-2">
           <TabsTrigger value="details">Detalles</TabsTrigger>
           <TabsTrigger value="media" className="text-xs sm:text-sm">
@@ -140,10 +170,12 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
             </CardHeader>
             <CardContent>
               <PropertyForm
+                ref={formRef}
                 mode="edit"
                 defaultValues={formDefaultValues}
                 onSubmit={handleUpdateProperty}
                 isSubmitting={updateProperty.isPending}
+                hideSubmitButton
               />
             </CardContent>
           </Card>
@@ -252,6 +284,13 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AddPaymentMethodDialog
+        open={showAddCardDialog}
+        onOpenChange={setShowAddCardDialog}
+        onSuccess={() => setShowCohostDialog(true)}
+        description="Para enviar tu propiedad a revisión necesitas agregar una tarjeta. La plataforma cobra comisiones cuando se realizan reservas en tu propiedad."
+      />
 
       <CohostInstructionsDialog
         open={showCohostDialog}

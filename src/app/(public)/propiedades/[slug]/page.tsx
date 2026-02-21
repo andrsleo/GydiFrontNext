@@ -100,7 +100,8 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
     user?.id != null &&
     property?.hostId != null &&
     String(user.id) === String(property.hostId);
-  const isBookingDisabled = isOwner && !hasHostPaymentMethod && !isLoadingPayment;
+  const ownerMissingPaymentMethod = isOwner && !hasHostPaymentMethod && !isLoadingPayment;
+  const isBookingDisabled = property.status !== 'PUBLISHED' || ownerMissingPaymentMethod;
 
   // Badge configuration for listing type
   const listingTypeBadgeConfig = {
@@ -201,7 +202,7 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
         <div className="md:col-span-2 lg:col-span-1">
           <div className="lg:sticky lg:top-4 border rounded-lg p-4 sm:p-6 space-y-4 bg-card shadow-lg">
             {/* Banner de método de pago requerido (solo visible para el dueño sin método) */}
-            {isBookingDisabled && (
+            {ownerMissingPaymentMethod && (
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
                 <p className="font-medium">Método de pago requerido</p>
                 <p className="mt-1 text-xs">
