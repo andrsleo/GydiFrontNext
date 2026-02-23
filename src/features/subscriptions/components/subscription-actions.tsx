@@ -35,18 +35,15 @@ export function SubscriptionActions({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <Button
-          className="w-full"
-          variant="default"
-          onClick={onChangePlan}
-        >
+        {/* PRO_ELITE_DISABLED: Descomentar cuando se reactiven planes pagos
+        <Button className="w-full" variant="default" onClick={onChangePlan}>
           <TrendingUp className="mr-2 h-4 w-4" />
           Change Plan
         </Button>
-
         <Button className="w-full" variant="outline" asChild>
           <Link href="/dashboard/subscription/plans">View All Plans</Link>
         </Button>
+        */}
 
         {canCancel && (
           <Button

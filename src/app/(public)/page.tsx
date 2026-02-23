@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PlanSelectButton } from '@/components/shared/plan-select-button';
-import { Building2, TrendingUp, Users, Shield, Zap, DollarSign, Check, Star, Crown, Rocket, MapPin, Bed, Bath, Maximize, ArrowRight, Home, CreditCard } from 'lucide-react';
+import { Building2, TrendingUp, Users, Shield, Zap, DollarSign, Check, MapPin, Bed, Bath, Maximize, ArrowRight, Home } from 'lucide-react';
 import Image from 'next/image';
 
 export default function HomePage() {
@@ -31,7 +30,7 @@ export default function HomePage() {
           {/* Subtitle */}
           <p className="animate-fade-in-up animation-delay-200 mb-10 max-w-2xl text-base text-muted-foreground sm:text-lg md:text-xl lg:max-w-3xl">
             Conecta a viajeros con los mejores alojamientos y gana{' '}
-            <span className="font-semibold text-purple-600">hasta 10% de comisión</span>{' '}
+            <span className="font-semibold text-purple-600">6% de comisión</span>{' '}
             por cada reserva que generas.{' '}
             <span className="font-semibold text-blue-600">El poder del boca a boca, digitalizado.</span>
           </p>
@@ -52,7 +51,7 @@ export default function HomePage() {
           <div className="mt-16 grid w-full max-w-5xl grid-cols-1 gap-4 sm:mt-20 sm:grid-cols-3 sm:gap-6 lg:gap-8">
             <div className="animate-scale-in animation-delay-400 group relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-card to-card/50 p-6 backdrop-blur-sm transition-all hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 sm:p-8">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-              <p className="relative text-4xl font-extrabold text-primary transition-transform group-hover:scale-110 sm:text-5xl lg:text-6xl">10%</p>
+              <p className="relative text-4xl font-extrabold text-primary transition-transform group-hover:scale-110 sm:text-5xl lg:text-6xl">6%</p>
               <p className="relative mt-2 text-sm font-medium text-muted-foreground sm:text-base">Comisión por referido</p>
             </div>
             <div className="animate-scale-in animation-delay-500 group relative overflow-hidden rounded-2xl border border-blue-500/10 bg-gradient-to-br from-card to-card/50 p-6 backdrop-blur-sm transition-all hover:border-blue-500/20 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-1 sm:p-8">
@@ -63,7 +62,7 @@ export default function HomePage() {
             <div className="animate-scale-in animation-delay-600 group relative overflow-hidden rounded-2xl border border-purple-500/10 bg-gradient-to-br from-card to-card/50 p-6 backdrop-blur-sm transition-all hover:border-purple-500/20 hover:shadow-lg hover:shadow-purple-500/5 hover:-translate-y-1 sm:p-8">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <p className="relative text-4xl font-extrabold text-purple-600 transition-transform group-hover:scale-110 sm:text-5xl lg:text-6xl">$50K+</p>
-              <p className="relative mt-2 text-sm font-medium text-muted-foreground sm:text-base">Pagado a Afiliados</p>
+              <p className="relative mt-2 text-sm font-medium text-muted-foreground sm:text-base">Pagado a Referidos</p>
             </div>
           </div>
         </div>
@@ -420,7 +419,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="mb-2 text-xl font-bold text-foreground sm:text-2xl">Tu red vale dinero</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Comparte un link, alguien reserva, tú cobras. Gana hasta 10% de comisión sin inversión ni inventario.
+                  Comparte un link, alguien reserva, tú cobras. Una reserva de $500 te genera <strong className="text-primary">$30 automáticamente</strong> — sin inventario ni riesgo.
                 </p>
               </div>
             </div>
@@ -498,57 +497,58 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Host Section */}
-      <section className="border-t bg-gradient-to-b from-orange-50/40 to-white py-16 sm:py-20">
+      {/* Referidos Section */}
+      <section className="border-t bg-gradient-to-b from-green-50/30 to-white py-16 sm:py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-6xl">
             <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
               {/* Left: Copy */}
               <div>
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-sm font-medium text-orange-700">
-                  <Home className="h-4 w-4" />
-                  <span>Para Anfitriones</span>
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-1.5 text-sm font-medium text-green-700">
+                  <TrendingUp className="h-4 w-4" />
+                  <span>Para Referidos</span>
                 </div>
                 <h2 className="mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
-                  Tienes propiedad en Airbnb.{' '}
-                  <span className="text-orange-600">Multiplica tus reservas.</span>
+                  Refiere propiedades.{' '}
+                  <span className="text-green-600">Cobra en cada reserva.</span>
                 </h2>
                 <p className="mb-8 text-lg text-muted-foreground">
-                  Publica tu propiedad en GYDI y accede a una red de afiliados motivados a llenar
-                  tu calendario. Solo pagas una comisión cuando hay una reserva confirmada — cero riesgo.
+                  Comparte links de propiedades con viajeros de tu red. Cada vez que alguien
+                  reserva con tu link, GYDI te acredita el 6% automáticamente — sin inversión
+                  ni riesgo.
                 </p>
 
                 <div className="mb-8 space-y-5">
                   <div className="flex items-start gap-4">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-100">
-                      <Check className="h-4 w-4 text-orange-600" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-100">
+                      <Check className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">Sin exclusividad</p>
+                      <p className="font-semibold text-foreground">Links ilimitados</p>
                       <p className="text-sm text-muted-foreground">
-                        Sigue en Airbnb. GYDI es un canal adicional que te trae más reservas, no un reemplazo.
+                        Genera cuantos links quieras para diferentes propiedades y compártelos por WhatsApp, Instagram o donde quieras.
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-100">
-                      <Check className="h-4 w-4 text-orange-600" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-100">
+                      <Check className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">Solo pagas por resultados</p>
+                      <p className="font-semibold text-foreground">Cobra automáticamente</p>
                       <p className="text-sm text-muted-foreground">
-                        La comisión se descuenta únicamente cuando hay reserva confirmada. Sin costos fijos ocultos.
+                        Cuando la reserva se confirma, la comisión se acredita a tu cuenta sin que tengas que hacer nada más.
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-100">
-                      <Check className="h-4 w-4 text-orange-600" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-100">
+                      <Check className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">Afiliados motivados a referirte</p>
+                      <p className="font-semibold text-foreground">Trackea todo en tiempo real</p>
                       <p className="text-sm text-muted-foreground">
-                        Cada afiliado gana cuando tú ganas. Un modelo donde todos tienen incentivo para que las reservas ocurran.
+                        Dashboard completo para ver clicks, conversiones y cuánto llevas ganado — todo en un solo lugar.
                       </p>
                     </div>
                   </div>
@@ -556,271 +556,159 @@ export default function HomePage() {
 
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg">
-                    <Link href="/register">Publicar mi propiedad</Link>
-                  </Button>
-                  <Button asChild variant="outline" size="lg">
-                    <Link href="#precios">Ver comisiones por plan</Link>
+                    <Link href="/register">Registrarme gratis</Link>
                   </Button>
                 </div>
               </div>
 
-              {/* Right: Fee comparison */}
+              {/* Right: Earnings visualization */}
               <div className="space-y-4">
                 <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                  Comisión de plataforma según tu plan
+                  Tus ganancias por reserva generada
                 </p>
 
-                {/* FREE */}
-                <div className="flex items-center justify-between rounded-2xl border border-border/50 bg-card p-5 shadow-sm transition-all hover:shadow-md">
-                  <div>
-                    <p className="font-bold text-foreground">Plan FREE</p>
-                    <p className="text-sm text-muted-foreground">Gratis para empezar</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-3xl font-extrabold text-orange-500">25%</p>
-                    <p className="text-xs text-muted-foreground">comisión plataforma</p>
-                  </div>
-                </div>
-
-                {/* PRO */}
-                <div className="flex items-center justify-between rounded-2xl border-2 border-primary bg-primary/5 p-5 shadow-md">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-bold text-foreground">Plan PRO</p>
-                      <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">Popular</span>
+                {/* 6% earnings card */}
+                <div className="rounded-2xl border-2 border-green-200 bg-gradient-to-br from-green-50/60 to-white p-5 shadow-sm">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-foreground">Plan FREE</p>
+                      <p className="text-sm text-muted-foreground">Gratis para siempre</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">$19/mes</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-3xl font-extrabold text-orange-500">20%</p>
-                    <p className="text-xs text-muted-foreground">comisión plataforma</p>
-                  </div>
-                </div>
-
-                {/* ELITE */}
-                <div className="flex items-center justify-between rounded-2xl border border-purple-200 bg-purple-50/50 p-5 shadow-sm transition-all hover:shadow-md">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-bold text-foreground">Plan ELITE</p>
-                      <span className="rounded-full bg-purple-600 px-2 py-0.5 text-xs font-bold text-white">Mejor valor</span>
+                    <div className="text-right">
+                      <p className="text-4xl font-extrabold text-green-600">6%</p>
+                      <p className="text-xs font-medium text-green-700">de cada reserva</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">$39/mes</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-3xl font-extrabold text-orange-500">15%</p>
-                    <p className="text-xs text-muted-foreground">comisión plataforma</p>
+
+                  {/* Earnings examples table */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between rounded-lg bg-green-100/60 px-3 py-2 text-sm">
+                      <span className="text-green-800">Reserva de $500</span>
+                      <span className="font-bold text-green-700">→ $30 para ti</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-lg bg-green-100/60 px-3 py-2 text-sm">
+                      <span className="text-green-800">Reserva de $1,000</span>
+                      <span className="font-bold text-green-700">→ $60 para ti</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-lg bg-green-100/60 px-3 py-2 text-sm">
+                      <span className="text-green-800">10 reservas de $500/mes</span>
+                      <span className="font-bold text-green-700">→ $300 al mes</span>
+                    </div>
                   </div>
                 </div>
 
-                <p className="text-center text-xs text-muted-foreground">
-                  * Solo se descuenta cuando hay una reserva confirmada vía afiliado de GYDI.
-                </p>
+                <div className="flex items-start gap-2 rounded-xl border border-green-100 bg-green-50/70 p-3 text-xs text-green-800">
+                  <span>💡</span>
+                  <span>
+                    <strong>Sin inversión inicial.</strong> Regístrate gratis, genera tu link y empieza a ganar con cada reserva que inspiras.
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="precios" className="relative overflow-hidden border-t bg-gradient-to-b from-white via-gray-50/50 to-white py-16 sm:py-20 md:py-24 lg:py-28">
-        {/* Decorative elements */}
-        <div className="absolute left-0 top-1/4 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute right-0 bottom-1/4 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
+      {/* Para Anfitriones Section */}
+      <section className="border-t bg-gradient-to-b from-orange-50/30 to-white py-16 sm:py-20 md:py-24 lg:py-28">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            {/* Left: Content */}
+            <div className="flex flex-col gap-6">
+              {/* Badge */}
+              <div className="inline-flex w-fit items-center gap-2 rounded-full bg-orange-100 px-4 py-2 text-sm font-semibold text-orange-700">
+                <Home className="h-4 w-4" />
+                Para Anfitriones
+              </div>
 
-        <div className="container relative mx-auto px-4">
-          {/* Section Header */}
-          <div className="mb-12 text-center sm:mb-16">
-            <div className="animate-fade-in-down mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
-              <Star className="h-4 w-4" />
-              <span>Planes y Precios</span>
-            </div>
-            <h2 className="animate-fade-in-up text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-              Elige cómo quieres crecer
-            </h2>
-            <p className="animate-fade-in-up animation-delay-100 mt-3 text-base text-muted-foreground sm:mt-4 sm:text-lg md:text-xl">
-              Sin contratos. Sin sorpresas. Cambia o cancela cuando quieras.
-            </p>
-          </div>
+              <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+                Tienes propiedad en Airbnb.{' '}
+                <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
+                  Multiplica tus reservas.
+                </span>
+              </h2>
 
-          {/* Pricing Cards */}
-          <div className="grid gap-6 sm:gap-8 md:grid-cols-3 lg:gap-8">
-            {/* Free Plan */}
-            <div className="animate-scale-in animation-delay-200 group relative overflow-hidden rounded-3xl border-2 border-border/50 bg-card p-8 transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary/5 blur-2xl transition-all duration-500 group-hover:bg-primary/10" />
+              <p className="text-base text-muted-foreground sm:text-lg">
+                Publica tu propiedad en GYDI y accede a una red de referidos motivados a conseguirte huéspedes. Solo pagas cuando hay reserva.
+              </p>
 
-              <div className="relative">
-                {/* Icon */}
-                <div className="mb-6 inline-flex rounded-2xl bg-primary/10 p-4 transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/20">
-                  <Rocket className="h-8 w-8 text-primary" />
-                </div>
-
-                {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">FREE</h3>
-                <p className="mb-6 text-sm text-muted-foreground">Empieza sin riesgo, aprende cómo funciona</p>
-
-                {/* Price */}
-                <div className="mb-8">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-extrabold text-foreground">$0</span>
-                    <span className="text-muted-foreground">/mes</span>
-                  </div>
-                </div>
-
-                {/* Dual Role Conditions */}
-                <div className="mb-8 space-y-3">
-                  {/* Como Afiliado */}
-                  <div className="rounded-xl border border-green-200 bg-green-50 p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-green-600" />
-                        <span className="text-xs font-bold uppercase tracking-wide text-green-700">Como Afiliado</span>
-                      </div>
-                      <span className="text-xl font-extrabold text-green-600">+2%</span>
+              <ul className="flex flex-col gap-3">
+                {[
+                  { icon: '🤝', title: 'Sin exclusividad', desc: 'Mantén tu propiedad en Airbnb. GYDI no te exige exclusividad.' },
+                  { icon: '💰', title: 'Solo pagas por resultados', desc: 'Sin reserva generada por un referido, no hay descuento. Cero riesgo.' },
+                  { icon: '🚀', title: 'Referidos motivados a llenarte', desc: 'Nuestra red gana cuando tú ganas — alineación total de incentivos.' },
+                ].map((item) => (
+                  <li key={item.title} className="flex items-start gap-3 rounded-xl bg-orange-50/60 p-4">
+                    <span className="text-xl">{item.icon}</span>
+                    <div>
+                      <p className="font-semibold text-foreground">{item.title}</p>
+                      <p className="text-sm text-muted-foreground">{item.desc}</p>
                     </div>
-                    <p className="mt-1 text-xs text-green-700">Ganas 2% por cada reserva que generas con tu link</p>
-                  </div>
-                  {/* Como Anfitrión */}
-                  <div className="rounded-xl border border-orange-200 bg-orange-50 p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Home className="h-4 w-4 text-orange-600" />
-                        <span className="text-xs font-bold uppercase tracking-wide text-orange-700">Como Anfitrión</span>
-                      </div>
-                      <span className="text-xl font-extrabold text-orange-600">-25%</span>
-                    </div>
-                    <p className="mt-1 text-xs text-orange-700">GYDI descuenta 25% de cada reserva vía afiliado</p>
-                  </div>
-                </div>
+                  </li>
+                ))}
+              </ul>
 
-                {/* CTA Button */}
-                <PlanSelectButton
-                  planCode="FREE"
-                  className="w-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
-                  variant="outline"
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <a
+                  href="/register"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-orange-500/30 sm:w-auto"
                 >
-                  Comenzar gratis
-                </PlanSelectButton>
+                  Publicar mi propiedad sin riesgo
+                  <ArrowRight className="h-4 w-4" />
+                </a>
               </div>
             </div>
 
-            {/* Pro Plan - Featured */}
-            <div className="animate-scale-in animation-delay-300 group relative overflow-hidden rounded-3xl border-2 border-primary bg-gradient-to-b from-card to-primary/5 p-8 shadow-xl shadow-primary/20 transition-all duration-500 hover:border-primary hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-2">
-              {/* Popular Badge */}
-              <div className="absolute -right-12 top-8 rotate-45 bg-gradient-to-r from-primary to-blue-600 px-12 py-1 text-xs font-bold text-primary-foreground shadow-lg">
-                Popular
-              </div>
-
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-500/10 blur-2xl transition-all duration-500 group-hover:bg-blue-500/20" />
-
-              <div className="relative">
-                {/* Icon */}
-                <div className="mb-6 inline-flex rounded-2xl bg-gradient-to-br from-primary to-blue-600 p-4 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
-                  <Star className="h-8 w-8 text-primary-foreground" />
+            {/* Right: Visual — fee split */}
+            <div className="flex flex-col gap-6">
+              <div className="overflow-hidden rounded-2xl border border-orange-100 bg-white shadow-xl shadow-orange-500/10">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                  <p className="text-sm font-semibold text-white/90">Ejemplo: Reserva de $500</p>
+                  <p className="mt-1 text-2xl font-extrabold text-white">¿Cuánto recibes?</p>
                 </div>
 
-                {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">PRO</h3>
-                <p className="mb-6 text-sm text-muted-foreground">Más comisión, más herramientas, más resultados</p>
-
-                {/* Price */}
-                <div className="mb-8">
-                  <div className="flex items-baseline gap-2">
-                    <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-5xl font-extrabold text-transparent">$15</span>
-                    <span className="text-muted-foreground">/mes</span>
-                  </div>
-                </div>
-
-                {/* Dual Role Conditions */}
-                <div className="mb-8 space-y-3">
-                  {/* Como Afiliado */}
-                  <div className="rounded-xl border border-green-300 bg-green-50 p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-green-600" />
-                        <span className="text-xs font-bold uppercase tracking-wide text-green-700">Como Afiliado</span>
-                      </div>
-                      <span className="text-xl font-extrabold text-green-600">+5%</span>
+                {/* Split bar */}
+                <div className="px-6 py-5">
+                  <div className="flex h-10 overflow-hidden rounded-full">
+                    <div
+                      className="flex items-center justify-center bg-gradient-to-r from-emerald-400 to-green-500 text-xs font-bold text-white"
+                      style={{ width: '85%' }}
+                    >
+                      85%
                     </div>
-                    <p className="mt-1 text-xs text-green-700">Ganas 2.5x más que en FREE por la misma reserva</p>
-                  </div>
-                  {/* Como Anfitrión */}
-                  <div className="rounded-xl border border-orange-300 bg-orange-50 p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Home className="h-4 w-4 text-orange-600" />
-                        <span className="text-xs font-bold uppercase tracking-wide text-orange-700">Como Anfitrión</span>
-                      </div>
-                      <span className="text-xl font-extrabold text-orange-600">-20%</span>
+                    <div
+                      className="flex items-center justify-center bg-orange-200 text-xs font-semibold text-orange-700"
+                      style={{ width: '15%' }}
+                    >
+                      15%
                     </div>
-                    <p className="mt-1 text-xs text-orange-700">Ahorras 5% vs FREE — recibes el 80% de cada reserva</p>
+                  </div>
+                  <div className="mt-3 flex justify-between text-xs text-muted-foreground">
+                    <span className="font-medium text-emerald-600">Para ti: $425</span>
+                    <span className="font-medium text-orange-500">Comisión GYDI: $75</span>
                   </div>
                 </div>
 
-                {/* CTA Button */}
-                <PlanSelectButton
-                  planCode="PRO"
-                  className="w-full bg-gradient-to-r from-primary to-blue-600 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30"
-                >
-                  Pasar a PRO
-                </PlanSelectButton>
-              </div>
-            </div>
-
-            {/* Elite Plan */}
-            <div className="animate-scale-in animation-delay-400 group relative overflow-hidden rounded-3xl border-2 border-purple-500/50 bg-gradient-to-b from-card to-purple-500/5 p-8 transition-all duration-500 hover:border-purple-500 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-2">
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-purple-500/10 blur-2xl transition-all duration-500 group-hover:bg-purple-500/20" />
-
-              <div className="relative">
-                {/* Icon */}
-                <div className="mb-6 inline-flex rounded-2xl bg-gradient-to-br from-purple-600 to-purple-500 p-4 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl">
-                  <Crown className="h-8 w-8 text-primary-foreground" />
-                </div>
-
-                {/* Plan Name */}
-                <h3 className="mb-2 text-2xl font-extrabold text-foreground">ELITE</h3>
-                <p className="mb-6 text-sm text-muted-foreground">El máximo retorno para quienes van en serio</p>
-
-                {/* Price */}
-                <div className="mb-8">
-                  <div className="flex items-baseline gap-2">
-                    <span className="bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-5xl font-extrabold text-transparent">$30</span>
-                    <span className="text-muted-foreground">/mes</span>
+                {/* Breakdown */}
+                <div className="space-y-3 border-t border-orange-50 px-6 pb-6 pt-4">
+                  <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-4 py-3">
+                    <span className="text-sm font-medium text-emerald-800">Tú recibes</span>
+                    <span className="text-lg font-extrabold text-emerald-700">$425 <span className="text-sm font-normal">(85%)</span></span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg bg-orange-50 px-4 py-3">
+                    <span className="text-sm font-medium text-orange-800">Comisión plataforma</span>
+                    <span className="text-base font-bold text-orange-600">$75 <span className="text-sm font-normal">(15%)</span></span>
                   </div>
                 </div>
 
-                {/* Dual Role Conditions */}
-                <div className="mb-8 space-y-3">
-                  {/* Como Afiliado */}
-                  <div className="rounded-xl border border-green-300 bg-green-50 p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-green-600" />
-                        <span className="text-xs font-bold uppercase tracking-wide text-green-700">Como Afiliado</span>
-                      </div>
-                      <span className="text-xl font-extrabold text-green-600">+10%</span>
-                    </div>
-                    <p className="mt-1 text-xs text-green-700">La tasa más alta — duplicas lo que ganas en PRO</p>
-                  </div>
-                  {/* Como Anfitrión */}
-                  <div className="rounded-xl border border-orange-300 bg-orange-50 p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Home className="h-4 w-4 text-orange-600" />
-                        <span className="text-xs font-bold uppercase tracking-wide text-orange-700">Como Anfitrión</span>
-                      </div>
-                      <span className="text-xl font-extrabold text-orange-600">-15%</span>
-                    </div>
-                    <p className="mt-1 text-xs text-orange-700">La mejor tarifa — recibes el 85% de cada reserva</p>
-                  </div>
+                {/* Callout */}
+                <div className="flex items-start gap-2 border-t border-orange-50 bg-orange-50/60 px-6 py-4 text-xs text-orange-800">
+                  <span>💡</span>
+                  <span>
+                    <strong>Sin reserva = sin costo.</strong> Solo se descuenta la comisión cuando un referido GYDI genera una reserva confirmada.
+                  </span>
                 </div>
-
-                {/* CTA Button */}
-                <PlanSelectButton
-                  planCode="ELITE"
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/30"
-                >
-                  Unirme a ELITE
-                </PlanSelectButton>
               </div>
             </div>
           </div>
@@ -839,7 +727,7 @@ export default function HomePage() {
             Tu siguiente comisión está a un mensaje de distancia
           </h2>
           <p className="animate-fade-in-up animation-delay-100 mt-4 text-base opacity-95 sm:text-lg md:text-xl lg:mt-6">
-            Únete a cientos de afiliados y anfitriones que ya están generando ingresos con GYDI
+            Únete a cientos de referidos y anfitriones que ya están generando ingresos con GYDI
           </p>
 
           <div className="animate-fade-in-up animation-delay-200 mt-8 flex flex-col items-center justify-center gap-3 sm:mt-10 sm:flex-row sm:gap-4">
@@ -869,7 +757,7 @@ export default function HomePage() {
             </div>
             <div className="group flex items-center gap-2 transition-all duration-300 hover:scale-110">
               <Users className="h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
-              <span>500+ Afiliados activos</span>
+              <span>500+ Referidos activos</span>
             </div>
             <div className="group flex items-center gap-2 transition-all duration-300 hover:scale-110">
               <DollarSign className="h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />

@@ -38,16 +38,16 @@ export const PLANS_COPY = {
       },
       roles: {
         affiliate: {
-          headline: 'Recibes 2% por cada reserva que refieres',
+          headline: 'Recibes 6% por cada reserva que refieres',
           explanation:
-            'Cuando alguien reserva usando tu link, GYDI te paga el 2% del valor de la reserva. Tú no inviertes nada — solo compartes.',
-          example: 'En una reserva de $500, ganas $10.',
+            'Cuando alguien reserva usando tu link, GYDI te paga el 6% del valor de la reserva. Tú no inviertes nada — solo compartes.',
+          example: 'En una reserva de $500, ganas $30.',
         },
         host: {
-          headline: 'Se descuenta 25% de reservas generadas por afiliados',
+          headline: 'Se descuenta 15% de reservas generadas por afiliados',
           explanation:
-            'Por cada reserva que un afiliado te consiga a través de GYDI, la plataforma retiene el 25%. Recibes el 75% restante. Si no hay reserva, no hay descuento.',
-          example: 'En una reserva de $500, recibes $375.',
+            'Por cada reserva que un afiliado te consiga a través de GYDI, la plataforma retiene el 15%. Recibes el 85% restante. Si no hay reserva, no hay descuento.',
+          example: 'En una reserva de $500, recibes $425.',
         },
       },
       benefits: [

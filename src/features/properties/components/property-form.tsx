@@ -73,6 +73,7 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
     reValidateMode: 'onChange', // Re-validate on every change after first validation
     defaultValues: defaultValues || {
       currency: Currency.USD,
+      pricePerNight: 1,
       propertyType: PropertyType.APARTMENT,
       listingType: PropertyListingType.SHORT_TERM_RENTAL,
       bedrooms: 1,
@@ -235,126 +236,6 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
         <p className="text-sm text-muted-foreground">
           Define si la propiedad es para renta corta, venta, o ambas opciones
         </p>
-      </div>
-
-      {/* Precios Condicionales */}
-      <div className="space-y-4">
-        {/* Precio por Noche - Si es RENTA CORTA o AMBAS */}
-        {(watch('listingType') === PropertyListingType.SHORT_TERM_RENTAL ||
-          watch('listingType') === PropertyListingType.BOTH) && (
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="pricePerNight">
-                  Precio por Noche <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="pricePerNight"
-                  type="number"
-                  step="0.01"
-                  {...register('pricePerNight', { valueAsNumber: true })}
-                  placeholder="150"
-                  disabled={isSubmitting}
-                  error={!!errors.pricePerNight}
-                  aria-describedby={errors.pricePerNight ? 'pricePerNight-error' : undefined}
-                />
-                {errors.pricePerNight && (
-                  <p id="pricePerNight-error" className="text-sm text-red-600 font-bold flex items-center gap-1" style={{ color: '#dc2626' }}>
-                    <AlertCircle className="h-4 w-4" style={{ color: '#dc2626' }} />
-                    {errors.pricePerNight.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="currency">
-                  Moneda <span className="text-destructive">*</span>
-                </Label>
-                <select
-                  id="currency"
-                  {...register('currency')}
-                  className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${errors.currency
-                    ? 'border-destructive focus-visible:ring-destructive'
-                    : 'border-input focus-visible:ring-ring'
-                    }`}
-                  disabled={isSubmitting}
-                  aria-invalid={errors.currency ? 'true' : 'false'}
-                  aria-describedby={errors.currency ? 'currency-error' : undefined}
-                >
-                  {Object.values(Currency).map((curr) => (
-                    <option key={curr} value={curr}>
-                      {curr}
-                    </option>
-                  ))}
-                </select>
-                {errors.currency && (
-                  <p id="currency-error" className="text-sm text-red-600 font-bold flex items-center gap-1" style={{ color: '#dc2626' }}>
-                    <AlertCircle className="h-4 w-4" style={{ color: '#dc2626' }} />
-                    {errors.currency.message}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-        {/* Precio de Venta - Si es VENTA o AMBAS */}
-        {(watch('listingType') === PropertyListingType.SALE ||
-          watch('listingType') === PropertyListingType.BOTH) && (
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="salePrice">
-                  Precio de Venta <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="salePrice"
-                  type="number"
-                  step="0.01"
-                  {...register('salePrice', { valueAsNumber: true })}
-                  placeholder="250000"
-                  disabled={isSubmitting}
-                  error={!!errors.salePrice}
-                  aria-describedby={errors.salePrice ? 'salePrice-error' : undefined}
-                />
-                {errors.salePrice && (
-                  <p id="salePrice-error" className="text-sm text-red-600 font-bold flex items-center gap-1" style={{ color: '#dc2626' }}>
-                    <AlertCircle className="h-4 w-4" style={{ color: '#dc2626' }} />
-                    {errors.salePrice.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Moneda solo aparece si NO se mostró arriba */}
-              {watch('listingType') !== PropertyListingType.BOTH && (
-                <div className="space-y-2">
-                  <Label htmlFor="currency">
-                    Moneda <span className="text-destructive">*</span>
-                  </Label>
-                  <select
-                    id="currency"
-                    {...register('currency')}
-                    className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${errors.currency
-                      ? 'border-destructive focus-visible:ring-destructive'
-                      : 'border-input focus-visible:ring-ring'
-                      }`}
-                    disabled={isSubmitting}
-                    aria-invalid={errors.currency ? 'true' : 'false'}
-                    aria-describedby={errors.currency ? 'currency-error' : undefined}
-                  >
-                    {Object.values(Currency).map((curr) => (
-                      <option key={curr} value={curr}>
-                        {curr}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.currency && (
-                    <p id="currency-error" className="text-sm text-red-600 font-bold flex items-center gap-1" style={{ color: '#dc2626' }}>
-                      <AlertCircle className="h-4 w-4" style={{ color: '#dc2626' }} />
-                      {errors.currency.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
       </div>
 
       {/* Property Type */}

@@ -12,7 +12,8 @@ import { z } from 'zod';
  * Subscribe to plan form schema
  */
 export const subscribeToPlanSchema = z.object({
-  planCode: z.enum(['FREE', 'PRO', 'ELITE'], {
+  // PRO_ELITE_DISABLED: Cambiar a z.enum(['FREE', 'PRO', 'ELITE']) para reactivar planes pagos
+  planCode: z.enum(['FREE'], {
     required_error: 'Please select a plan',
   }),
   paymentMethodId: z.number().nullable(),
@@ -25,7 +26,8 @@ export type SubscribeToPlanFormData = z.infer<typeof subscribeToPlanSchema>;
  * Change plan form schema
  */
 export const changePlanSchema = z.object({
-  newPlanCode: z.enum(['FREE', 'PRO', 'ELITE'], {
+  // PRO_ELITE_DISABLED: Cambiar a z.enum(['FREE', 'PRO', 'ELITE']) para reactivar planes pagos
+  newPlanCode: z.enum(['FREE'], {
     required_error: 'Please select a new plan',
   }),
   paymentMethodId: z.number().nullable(),
@@ -83,7 +85,8 @@ export type CreatePaymentMethodSchemaData = z.infer<typeof createPaymentMethodSc
 /**
  * Allowed plan codes
  */
-export const PLAN_CODES = ['FREE', 'PRO', 'ELITE'] as const;
+// PRO_ELITE_DISABLED: Cambiar a ['FREE', 'PRO', 'ELITE'] para reactivar planes pagos
+export const PLAN_CODES = ['FREE'] as const;
 export type PlanCode = (typeof PLAN_CODES)[number];
 
 /**

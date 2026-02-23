@@ -21,10 +21,11 @@ export function PlansComparison({
   onSelectPlan,
   isLoading = false,
 }: PlansComparisonProps) {
+  // PRO_ELITE_DISABLED: Descomentar PRO y ELITE para reactivar planes pagos
   const plans: SubscriptionPlan[] = [
     SUBSCRIPTION_PLANS.FREE,
-    SUBSCRIPTION_PLANS.PRO,
-    SUBSCRIPTION_PLANS.ELITE,
+    // SUBSCRIPTION_PLANS.PRO,
+    // SUBSCRIPTION_PLANS.ELITE,
   ];
 
   return (
@@ -41,7 +42,8 @@ export function PlansComparison({
       </div>
 
       {/* Plans Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
+      {/* PRO_ELITE_DISABLED: Cambiar a md:grid-cols-3 max-w-7xl cuando se reactiven PRO y ELITE */}
+      <div className="grid grid-cols-1 gap-6 lg:gap-8 max-w-md mx-auto">
         {plans.map((plan) => (
           <PlanCardDetailed
             key={plan}

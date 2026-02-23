@@ -43,7 +43,7 @@ export function Header() {
       {/* Animated gradient line */}
       <div className="absolute inset-x-0 top-0 h-0.5 animate-gradient bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-[length:200%_100%]" />
 
-      <nav className="container mx-auto flex h-16 items-center justify-between px-4">
+      <nav className="container relative mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="group relative flex items-center gap-2 transition-all hover:scale-105">
           <div className="absolute -inset-2 rounded-lg bg-primary/10 opacity-0 blur-xl transition-all duration-500 group-hover:opacity-100" />
@@ -60,8 +60,8 @@ export function Header() {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden items-center space-x-1 md:flex">
+        {/* Desktop Navigation — centered absolutely */}
+        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center space-x-1 md:flex">
           <Link
             href="/propiedades"
             className="group relative overflow-hidden rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105"
@@ -81,16 +81,6 @@ export function Header() {
             </span>
             <div className="absolute inset-0 -z-0 bg-blue-500/5 opacity-0 transition-all duration-300 group-hover:opacity-100" />
             <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-transform duration-300 group-hover:scale-x-100" />
-          </Link>
-          <Link
-            href="/#precios"
-            className="group relative overflow-hidden rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105"
-          >
-            <span className="relative z-10 transition-colors group-hover:text-purple-600">
-              Precios
-            </span>
-            <div className="absolute inset-0 -z-0 bg-purple-500/5 opacity-0 transition-all duration-300 group-hover:opacity-100" />
-            <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-purple-500 to-primary transition-transform duration-300 group-hover:scale-x-100" />
           </Link>
         </div>
 
@@ -166,14 +156,6 @@ export function Header() {
             >
               <span className="relative z-10 transition-colors group-hover:text-blue-600">Cómo Funciona</span>
               <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-transform duration-300 group-hover:scale-x-100" />
-            </Link>
-            <Link
-              href="/#precios"
-              className="group relative block overflow-hidden rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105 hover:bg-purple-500/5"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <span className="relative z-10 transition-colors group-hover:text-purple-600">Precios</span>
-              <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-purple-500 to-primary transition-transform duration-300 group-hover:scale-x-100" />
             </Link>
 
             <div className="space-y-3 border-t border-border/40 pt-4">

@@ -32,8 +32,9 @@ import type { SubscriptionPlan } from '@/types/user';
 
 export function CommissionCalculator() {
   const [bookingAmount, setBookingAmount] = useState<string>('100');
-  const [hostPlan, setHostPlan] = useState<SubscriptionPlan>('PRO');
-  const [affiliatePlan, setAffiliatePlan] = useState<SubscriptionPlan>('PRO');
+  // PRO_ELITE_DISABLED: Cambiar default a 'PRO' cuando se reactiven planes pagos
+  const [hostPlan, setHostPlan] = useState<SubscriptionPlan>('FREE');
+  const [affiliatePlan, setAffiliatePlan] = useState<SubscriptionPlan>('FREE');
 
   // Parse booking amount safely
   const amount = parseFloat(bookingAmount) || 0;
@@ -107,12 +108,14 @@ export function CommissionCalculator() {
                 <SelectItem value="FREE">
                   FREE (Paga {formatHostFeeRate('FREE')})
                 </SelectItem>
+                {/* PRO_ELITE_DISABLED: Descomentar cuando se reactiven planes pagos
                 <SelectItem value="PRO">
                   PRO (Paga {formatHostFeeRate('PRO')})
                 </SelectItem>
                 <SelectItem value="ELITE">
                   ELITE (Paga {formatHostFeeRate('ELITE')})
                 </SelectItem>
+                */}
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">Quien tiene la propiedad</p>
@@ -132,12 +135,14 @@ export function CommissionCalculator() {
                 <SelectItem value="FREE">
                   FREE (Gana {formatAffiliateRate('FREE')})
                 </SelectItem>
+                {/* PRO_ELITE_DISABLED: Descomentar cuando se reactiven planes pagos
                 <SelectItem value="PRO">
                   PRO (Gana {formatAffiliateRate('PRO')})
                 </SelectItem>
                 <SelectItem value="ELITE">
                   ELITE (Gana {formatAffiliateRate('ELITE')})
                 </SelectItem>
+                */}
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">Quien refirió la reserva</p>
@@ -290,35 +295,28 @@ export function CommissionCalculator() {
         {/* Example presets */}
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => {
-              setBookingAmount('100');
-              setHostPlan('PRO');
-              setAffiliatePlan('PRO');
-            }}
+            onClick={() => { setBookingAmount('100'); setHostPlan('FREE'); setAffiliatePlan('FREE'); }}
             className="text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 transition-colors"
           >
-            Ejemplo: $100 - PRO/PRO
+            Ejemplo: $100 - FREE/FREE
           </button>
           <button
-            onClick={() => {
-              setBookingAmount('250');
-              setHostPlan('ELITE');
-              setAffiliatePlan('ELITE');
-            }}
+            onClick={() => { setBookingAmount('250'); setHostPlan('FREE'); setAffiliatePlan('FREE'); }}
             className="text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 transition-colors"
           >
-            Ejemplo: $250 - ELITE/ELITE
+            Ejemplo: $250 - FREE/FREE
           </button>
           <button
-            onClick={() => {
-              setBookingAmount('500');
-              setHostPlan('PRO');
-              setAffiliatePlan('ELITE');
-            }}
+            onClick={() => { setBookingAmount('500'); setHostPlan('FREE'); setAffiliatePlan('FREE'); }}
             className="text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 transition-colors"
           >
-            Ejemplo: $500 - PRO/ELITE
+            Ejemplo: $500 - FREE/FREE
           </button>
+          {/* PRO_ELITE_DISABLED: Descomentar presets PRO/ELITE cuando se reactiven planes pagos
+          <button onClick={() => { setBookingAmount('100'); setHostPlan('PRO'); setAffiliatePlan('PRO'); }} className="text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 transition-colors">Ejemplo: $100 - PRO/PRO</button>
+          <button onClick={() => { setBookingAmount('250'); setHostPlan('ELITE'); setAffiliatePlan('ELITE'); }} className="text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 transition-colors">Ejemplo: $250 - ELITE/ELITE</button>
+          <button onClick={() => { setBookingAmount('500'); setHostPlan('PRO'); setAffiliatePlan('ELITE'); }} className="text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 transition-colors">Ejemplo: $500 - PRO/ELITE</button>
+          */}
         </div>
       </CardContent>
     </Card>

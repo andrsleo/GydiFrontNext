@@ -7,10 +7,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Bed, Bath, Users, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MapPin, Bed, Bath, Users, AlertCircle, ExternalLink } from 'lucide-react';
 import type { PropertyResponse } from '../types';
 import { LISTING_TYPE_LABELS, PropertyListingType, PropertyStatus } from '../types';
-import { formatCurrency } from '@/lib/utils/format';
 import { getImagePath, getBlurDataURL } from '@/lib/utils/image';
 import { PropertyActionsMenu } from './property-actions-menu';
 import { PropertyStatusBadge } from './property-status-badge';
@@ -39,9 +39,6 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
     slug,
     title,
     mainImageUrl,
-    pricePerNight,
-    salePrice,
-    currency,
     city,
     country,
     bedrooms,
@@ -51,6 +48,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
     propertyType,
     listingType,
     denialReason,
+    airbnbUrl,
   } = property;
 
   // Badge styling based on listing type
@@ -177,33 +175,26 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
           </div>
         </CardContent>
 
-        <CardFooter className="pt-0">
-          {/* Price - Conditional based on listing type */}
-          <div className="w-full space-y-2">
-            {/* Precio por Noche - Si es RENTA o AMBAS */}
-            {(listingType === PropertyListingType.SHORT_TERM_RENTAL ||
-              listingType === PropertyListingType.BOTH) && (
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold">
-                  {formatCurrency(pricePerNight, currency)}
-                </span>
-                <span className="text-sm text-muted-foreground">aproximado</span>
-              </div>
-            )}
-
-            {/* Precio de Venta - Si es VENTA o AMBAS */}
-            {(listingType === PropertyListingType.SALE ||
-              listingType === PropertyListingType.BOTH) && salePrice && (
-              <div className="flex items-baseline gap-1">
-                <span className={listingType === PropertyListingType.BOTH ? 'text-lg font-semibold' : 'text-2xl font-bold'}>
-                  {formatCurrency(salePrice, currency)}
-                </span>
-                <span className="text-sm text-muted-foreground">precio de venta</span>
-              </div>
-            )}
-          </div>
-        </CardFooter>
       </Link>
+
+      {/* Validar precio button - outside Link to avoid nested interactive elements */}
+      <CardFooter className="pt-0 pb-4">
+        {airbnbUrl ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full gap-2"
+            onClick={() => window.open(airbnbUrl, '_blank', 'noopener,noreferrer')}
+          >
+            <ExternalLink className="h-4 w-4" />
+            Validar precio
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm" className="w-full" disabled>
+            Validar precio
+          </Button>
+        )}
+      </CardFooter>
     </Card>
   );
 }

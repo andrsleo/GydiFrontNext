@@ -50,8 +50,8 @@ export const COMMISSION_RATES: Record<
   }
 > = {
   FREE: {
-    affiliateEarns: 0.02,         // Platform PAYS 2% to affiliate
-    platformChargesHost: 0.25,    // Platform CHARGES 25% to host
+    affiliateEarns: 0.06,         // Platform PAYS 6% to affiliate
+    platformChargesHost: 0.15,    // Platform CHARGES 15% to host
   },
   PRO: {
     affiliateEarns: 0.05,         // Platform PAYS 5% to affiliate
@@ -68,7 +68,7 @@ export const COMMISSION_RATES: Record<
  * Legacy keys for backward compatibility
  */
 export const COMMISSION_RATES_LEGACY = {
-  FREE: { affiliate: 0.02, host: 0.25 },
+  FREE: { affiliate: 0.06, host: 0.15 },
   PRO: { affiliate: 0.05, host: 0.20 },
   ELITE: { affiliate: 0.10, host: 0.15 },
 } as const;
@@ -122,9 +122,9 @@ export const PLAN_FEATURES = {
     // AFFILIATE benefits — lo que RECIBES de la plataforma por referir
     affiliate: {
       commission: COMMISSION_RATES.FREE.affiliateEarns,
-      commissionDisplay: '2%',
+      commissionDisplay: '6%',
       benefits: [
-        'Recibes 2% de comisión por cada reserva generada con tu link',
+        'Recibes 6% de comisión por cada reserva generada con tu link',
         'La plataforma te paga directo en cada reserva confirmada',
       ],
     },
@@ -132,10 +132,10 @@ export const PLAN_FEATURES = {
     // HOST benefits — lo que la plataforma te DESCUENTA por cada reserva vía referido
     host: {
       platformFee: COMMISSION_RATES.FREE.platformChargesHost,
-      platformFeeDisplay: '25%',
+      platformFeeDisplay: '15%',
       benefits: [
-        'GYDI descuenta 25% de cada reserva generada por afiliados',
-        'Tú recibes el 75% restante — solo pagas si hay reserva confirmada',
+        'GYDI descuenta 15% de cada reserva generada por afiliados',
+        'Tú recibes el 85% restante — solo pagas si hay reserva confirmada',
       ],
     },
 
