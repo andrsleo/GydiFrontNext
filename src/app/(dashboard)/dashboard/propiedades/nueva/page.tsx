@@ -76,7 +76,7 @@ export default function NewPropertyPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Nueva Propiedad</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Nueva Propiedad</h1>
           <p className="text-muted-foreground">
             Crea una nueva propiedad en 3 pasos
           </p>

@@ -201,7 +201,7 @@ function DashboardContent() {
     <div className="space-y-8">
       {/* Welcome Section */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
           Bienvenido, {displayName}
         </h1>
         <p className="text-muted-foreground">
@@ -295,7 +295,7 @@ function DashboardContent() {
                         {formatDate(commission.createdAt)}
                       </p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4">
                       <span className="font-semibold">
                         {formatCurrency(commission.commissionAmount)}
                       </span>

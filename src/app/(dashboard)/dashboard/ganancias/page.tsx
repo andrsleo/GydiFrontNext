@@ -146,7 +146,7 @@ export default function GananciasPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Ganancias de Afiliado</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Ganancias de Afiliado</h1>
           <p className="text-muted-foreground">
             Monitorea tus comisiones y próximos pagos
           </p>

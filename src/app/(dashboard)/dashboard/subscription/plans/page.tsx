@@ -66,7 +66,7 @@ export default function SubscriptionPlansPage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">
+        <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-4">
           Choose Your Plan
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

@@ -20,7 +20,7 @@ export default function ReferralsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Referrals</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Referrals</h1>
         <p className="text-muted-foreground mt-2">
           Generate referral links, track clicks, and manage your earnings
         </p>

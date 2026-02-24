@@ -23,7 +23,7 @@ export default function AdminCommissionsPage() {
     <div className="container mx-auto py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Gestión de Comisiones</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Gestión de Comisiones</h1>
         <p className="text-muted-foreground mt-2">
           Monitorea comisiones cobradas a hosts y pagadas a afiliados
         </p>

@@ -77,7 +77,7 @@ function RegisterForm() {
         )}
 
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="mt-6 text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
             Crea tu cuenta en GYDI
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
@@ -130,7 +130,7 @@ function RegisterForm() {
           )}
 
           <div className="space-y-4 rounded-md shadow-sm">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <Label htmlFor="firstName">Nombre</Label>
                 <Input

@@ -426,7 +426,7 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Property Details</h3>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <div className="space-y-2">
             <Label htmlFor="bedrooms">
               Bedrooms <span className="text-destructive">*</span>
@@ -533,7 +533,7 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
 
       {/* Submit Button */}
       {!hideSubmitButton && (
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-4">
           <Button
             type="submit"
             disabled={isSubmitting}

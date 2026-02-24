@@ -170,7 +170,7 @@ export default function ConfiguracionPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Configuración</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Configuración</h1>
         <p className="text-muted-foreground">
           Administra tu cuenta y preferencias
         </p>
@@ -178,7 +178,7 @@ export default function ConfiguracionPage() {
 
       {/* Tabs */}
       <div className="border-b">
-        <nav className="flex gap-4">
+        <nav className="flex gap-2 sm:gap-4 overflow-x-auto pb-px">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (

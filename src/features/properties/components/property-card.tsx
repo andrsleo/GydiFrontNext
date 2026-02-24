@@ -132,7 +132,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
         <CardHeader className="pb-3">
           {/* Title Row with Actions Menu */}
           <div className="flex items-start justify-between gap-2">
-            <h3 className="line-clamp-2 flex-1 text-lg font-semibold leading-tight group-hover:text-primary">
+            <h3 className="line-clamp-2 flex-1 min-w-0 text-lg font-semibold leading-tight group-hover:text-primary">
               {title}
             </h3>
 

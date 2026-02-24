@@ -68,9 +68,9 @@ export default function MyPropertiesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold">Mis Propiedades</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Mis Propiedades</h1>
           <p className="text-muted-foreground">
             Gestiona tus propiedades en renta
           </p>
@@ -104,7 +104,8 @@ export default function MyPropertiesPage() {
 
       {/* Status Tabs */}
       <Tabs value={statusTab} onValueChange={(v) => setStatusTab(v as PropertyStatus | 'all')}>
-        <TabsList>
+        <div className="overflow-x-auto pb-0.5">
+        <TabsList className="min-w-max">
           <TabsTrigger value="all">Todas</TabsTrigger>
           <TabsTrigger value={PropertyStatus.DRAFT}>Borradores</TabsTrigger>
           <TabsTrigger value={PropertyStatus.SEND_GYDI_COHOST}>Agregar Co-host</TabsTrigger>
@@ -113,6 +114,7 @@ export default function MyPropertiesPage() {
           <TabsTrigger value={PropertyStatus.INACTIVE}>Inactivas</TabsTrigger>
           <TabsTrigger value={PropertyStatus.DENY}>Rechazadas</TabsTrigger>
         </TabsList>
+        </div>
 
         <TabsContent value="all" className="mt-6">
           {renderContent()}

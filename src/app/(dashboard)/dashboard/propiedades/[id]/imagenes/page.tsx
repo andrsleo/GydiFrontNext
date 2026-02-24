@@ -23,7 +23,7 @@ export default async function PropertyImagesPage({ params }: Props) {
   return (
     <div className="container max-w-6xl py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Manage Images</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Manage Images</h1>
         <p className="text-muted-foreground mt-2">
           Organize your property images and set the cover photo
         </p>

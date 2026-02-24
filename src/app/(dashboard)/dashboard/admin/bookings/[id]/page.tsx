@@ -34,7 +34,7 @@ export default async function AdminBookingDetailPage({ params }: PageProps) {
     <div className="container mx-auto py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Reserva #{bookingId}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Reserva #{bookingId}</h1>
         <p className="text-muted-foreground mt-2">Detalles completos de la reserva</p>
       </div>
 

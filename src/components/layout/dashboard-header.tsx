@@ -50,12 +50,12 @@ export function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-layout-sticky border-b bg-background">
-      <div className="flex h-16 items-center justify-between px-6">
-        <div className="flex-1">
-          <h2 className="text-2xl font-semibold">Dashboard</h2>
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+        <div className="flex-1 pl-12 lg:pl-0">
+          <h2 className="text-lg sm:text-2xl font-semibold">Dashboard</h2>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />

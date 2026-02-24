@@ -61,7 +61,7 @@ export default function UserCommissionsPage() {
     <div className="container mx-auto py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Mis Comisiones</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Mis Comisiones</h1>
         <p className="text-muted-foreground mt-2">
           Gestiona tus comisiones como{' '}
           {canRefer && canPublish

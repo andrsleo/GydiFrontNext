@@ -44,7 +44,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthVerifier>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen w-full overflow-x-hidden">
         {/* New Sidebar with role-based filtering */}
         <Sidebar
           userRole={userRole}
@@ -52,7 +52,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         />
 
         {/* Main Content Area */}
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col min-w-0">
           {children}
         </div>
       </div>

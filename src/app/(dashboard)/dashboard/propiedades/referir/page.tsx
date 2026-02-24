@@ -7,7 +7,7 @@ export default function ReferPropertiesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Referir Propiedades</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Referir Propiedades</h1>
         <p className="text-muted-foreground">
           Refiere propiedades y gana comisiones
         </p>

@@ -7,7 +7,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, AlertCircle, Check, ArrowRight } from 'lucide-react';
 
@@ -16,6 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { CountryCitySelector } from '@/components/shared/country-city-selector';
 
 import { useValidateAirbnbUrl } from '../hooks/use-validate-airbnb-url';
 import { useImportFromAirbnb } from '../hooks/use-import-from-airbnb';
@@ -54,6 +55,11 @@ export function AirbnbImportWizard() {
       listingType: PropertyListingType.SHORT_TERM_RENTAL,
     },
   });
+
+  const {
+    control: importControl,
+    formState: { errors: importErrors },
+  } = importForm;
 
   // Mutations
   const validateMutation = useValidateAirbnbUrl({
@@ -106,7 +112,6 @@ export function AirbnbImportWizard() {
   const importMutation = useImportFromAirbnb({
     onSuccess: (data) => {
       router.push(`/dashboard/propiedades/${data.id}`);
-
     },
   });
 
@@ -200,7 +205,7 @@ export function AirbnbImportWizard() {
               {/* Additional information form */}
               <Form {...importForm}>
                 <form onSubmit={importForm.handleSubmit(handleImport)} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <FormField
                       control={importForm.control}
                       name="priceAmount"
@@ -240,31 +245,28 @@ export function AirbnbImportWizard() {
                     />
                   </div>
 
-                  <FormField
-                    control={importForm.control}
+                  {/* Country + City using CountryCitySelector */}
+                  <Controller
                     name="country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={importForm.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>City</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                    control={importControl}
+                    render={({ field: countryField }) => (
+                      <Controller
+                        name="city"
+                        control={importControl}
+                        render={({ field: cityField }) => (
+                          <CountryCitySelector
+                            countryValue={countryField.value || ''}
+                            cityValue={cityField.value || ''}
+                            onCountryChange={countryField.onChange}
+                            onCityChange={cityField.onChange}
+                            disabled={importMutation.isPending}
+                            required
+                            countryError={importErrors.country?.message}
+                            cityError={importErrors.city?.message}
+                            showLabels
+                          />
+                        )}
+                      />
                     )}
                   />
 
@@ -282,7 +284,7 @@ export function AirbnbImportWizard() {
                     )}
                   />
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <FormField
                       control={importForm.control}
                       name="bedrooms"
@@ -359,7 +361,7 @@ export function AirbnbImportWizard() {
                     )}
                   />
 
-                  <div className="flex gap-4">
+                  <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-4">
                     <Button
                       type="button"
                       variant="outline"
