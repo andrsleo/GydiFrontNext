@@ -55,3 +55,14 @@ export const earningsKeys = {
   stats: () => [...earningsKeys.all, 'stats'] as const,
   history: (filters?: any) => [...earningsKeys.all, 'history', filters] as const,
 };
+
+/**
+ * Dashboard Query Keys
+ */
+export const dashboardKeys = {
+  all: ['dashboard'] as const,
+  affiliateStats: () => [...dashboardKeys.all, 'affiliate-stats'] as const,
+  earnings: () => [...dashboardKeys.all, 'earnings'] as const,
+  bookingStats: () => [...dashboardKeys.all, 'booking-stats'] as const,
+  commissionStats: () => [...dashboardKeys.all, 'commission-stats'] as const,
+};

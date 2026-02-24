@@ -1,36 +1,54 @@
 /**
- * Subscription Management Page
+ * Medios de Pago Page
  *
- * Main page for managing user subscription and payment methods.
+ * Gestión de tarjetas de crédito y débito del usuario.
+ *
+ * MEMBERSHIPS_DISABLED — La sección de membresías/suscripción está
+ * deshabilitada temporalmente. Para re-habilitarla, busca el tag
+ * MEMBERSHIPS_DISABLED en este archivo y descomenta los bloques marcados.
+ * Componentes a re-habilitar:
+ *   - SubscriptionStatus
+ *   - SubscriptionActions
+ *   - BillingInfo
+ *   - ChangePlanDialog
+ *   - CancelSubscriptionDialog
+ *   - getRecommendedUpgradePlan
+ *   - Layout grid de 2 columnas
  */
 
 'use client';
 
-import Link from 'next/link';
 import { LoadingSpinner } from '@/components/shared/loading-spinner';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { SubscriptionStatus } from '@/features/subscriptions/components/subscription-status';
-import { SubscriptionActions } from '@/features/subscriptions/components/subscription-actions';
 import { PaymentMethodsSection } from '@/features/subscriptions/components/payment-methods-section';
-import { BillingInfo } from '@/features/subscriptions/components/billing-info';
-import { ChangePlanDialog } from '@/features/subscriptions/components/change-plan-dialog';
-import { CancelSubscriptionDialog } from '@/features/subscriptions/components/cancel-subscription-dialog';
 import { AddPaymentMethodDialog } from '@/features/subscriptions/components/add-payment-method-dialog';
 import { DeletePaymentMethodDialog } from '@/features/subscriptions/components/delete-payment-method-dialog';
 import { useSubscriptionPage } from '@/features/subscriptions/hooks/use-subscription-page';
+import { CreditCard } from 'lucide-react';
+
+/* MEMBERSHIPS_DISABLED — descomentar cuando se reactiven membresías
+import Link from 'next/link';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { SubscriptionStatus } from '@/features/subscriptions/components/subscription-status';
+import { SubscriptionActions } from '@/features/subscriptions/components/subscription-actions';
+import { BillingInfo } from '@/features/subscriptions/components/billing-info';
+import { ChangePlanDialog } from '@/features/subscriptions/components/change-plan-dialog';
+import { CancelSubscriptionDialog } from '@/features/subscriptions/components/cancel-subscription-dialog';
 import { getRecommendedUpgradePlan } from '@/lib/utils/subscription';
+*/
 
 export default function SubscriptionPage() {
   const {
     dialogs,
     methodToDelete,
     methodIdToSetDefault,
+    /* MEMBERSHIPS_DISABLED — descomentar cuando se reactiven membresías
     subscription,
     subscriptionLoading,
     subscriptionError,
+    plans,
+    */
     paymentMethods,
     paymentMethodsLoading,
-    plans,
     isDeleting,
     isSettingDefault,
     openDialog,
@@ -40,23 +58,21 @@ export default function SubscriptionPage() {
     handleSetDefault,
   } = useSubscriptionPage();
 
-  if (subscriptionLoading) {
+  if (paymentMethodsLoading) {
     return <LoadingSpinner size="lg" variant="centered" />;
   }
 
+  /* MEMBERSHIPS_DISABLED — bloque de error de suscripción
   if (subscriptionError || !subscription) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Alert>
           <AlertDescription>
-            You don&apos;t have an active subscription yet.{' '}
-            <Link
-              href="/dashboard/subscription/plans"
-              className="font-medium underline"
-            >
-              Choose a plan
+            No tienes una suscripción activa.{' '}
+            <Link href="/dashboard/subscription/plans" className="font-medium underline">
+              Elige un plan
             </Link>{' '}
-            to get started.
+            para empezar.
           </AlertDescription>
         </Alert>
       </div>
@@ -66,14 +82,15 @@ export default function SubscriptionPage() {
   const recommendedPlan = plans
     ? getRecommendedUpgradePlan(plans, subscription.planCode)
     : undefined;
+  */
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
+    <div className="container mx-auto max-w-2xl px-4 py-8 space-y-8">
       {/* Header */}
       <PageHeader />
 
+      {/* MEMBERSHIPS_DISABLED — cuando se reactiven, volver a grid de 2 columnas:
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Left Column - Subscription Status & Actions */}
         <div className="space-y-6">
           <SubscriptionStatus subscription={subscription} />
           <SubscriptionActions
@@ -82,24 +99,40 @@ export default function SubscriptionPage() {
             onCancel={() => openDialog('cancel')}
           />
         </div>
-
-        {/* Right Column - Payment Methods & Billing Info */}
         <div className="space-y-6">
-          <PaymentMethodsSection
-            paymentMethods={paymentMethods}
-            isLoading={paymentMethodsLoading}
-            onAdd={() => openDialog('addPayment')}
-            onDelete={handleDeleteClick}
-            onSetDefault={handleSetDefault}
-            deletingMethodId={methodToDelete?.id}
-            settingDefaultMethodId={methodIdToSetDefault ?? undefined}
-            isDeleting={isDeleting}
-            isSettingDefault={isSettingDefault}
-          />
+          <PaymentMethodsSection ... />
         </div>
       </div>
+      */}
 
-      {/* Dialogs */}
+      {/* Tarjetas — columna única */}
+      <PaymentMethodsSection
+        paymentMethods={paymentMethods}
+        isLoading={paymentMethodsLoading}
+        onAdd={() => openDialog('addPayment')}
+        onDelete={handleDeleteClick}
+        onSetDefault={handleSetDefault}
+        deletingMethodId={methodToDelete?.id}
+        settingDefaultMethodId={methodIdToSetDefault ?? undefined}
+        isDeleting={isDeleting}
+        isSettingDefault={isSettingDefault}
+      />
+
+      {/* Dialogs de tarjetas */}
+      <AddPaymentMethodDialog
+        open={dialogs.addPayment}
+        onOpenChange={(open) => !open && closeDialog('addPayment')}
+      />
+
+      <DeletePaymentMethodDialog
+        paymentMethod={methodToDelete}
+        open={dialogs.deletePayment}
+        onOpenChange={(open) => !open && closeDialog('deletePayment')}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
+
+      {/* MEMBERSHIPS_DISABLED — diálogos de membresía
       {dialogs.changePlan && (
         <ChangePlanDialog
           open={dialogs.changePlan}
@@ -114,32 +147,25 @@ export default function SubscriptionPage() {
         onOpenChange={(open) => !open && closeDialog('cancel')}
         planName={subscription.planName}
       />
-
-      <AddPaymentMethodDialog
-        open={dialogs.addPayment}
-        onOpenChange={(open) => !open && closeDialog('addPayment')}
-      />
-
-      <DeletePaymentMethodDialog
-        paymentMethod={methodToDelete}
-        open={dialogs.deletePayment}
-        onOpenChange={(open) => !open && closeDialog('deletePayment')}
-        onConfirm={handleConfirmDelete}
-        isDeleting={isDeleting}
-      />
+      */}
     </div>
   );
 }
 
 function PageHeader() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold tracking-tight">
-        Subscription Management
-      </h1>
-      <p className="text-muted-foreground mt-2">
-        Manage your subscription plan and payment methods
-      </p>
+    <div className="flex items-start gap-4">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+        <CreditCard className="h-6 w-6 text-primary" />
+      </div>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          Medios de Pago
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+          Agrega o elimina tus tarjetas de crédito o débito. Tu tarjeta activa se usará para cualquier cargo de la plataforma.
+        </p>
+      </div>
     </div>
   );
 }

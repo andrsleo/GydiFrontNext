@@ -111,12 +111,13 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
 export const MANAGEMENT_MENU_ITEMS: MenuItem[] = [
   {
     id: 'subscription',
-    label: 'Suscripción',
+    label: 'Medios de Pago',
     href: '/dashboard/subscription',
-    icon: Crown,
-    description: 'Gestión de plan de suscripción y beneficios',
+    icon: CreditCard,
+    description: 'Administra tus tarjetas de crédito y débito',
     roles: ['ADMIN', 'USER'],
-    highlighted: true, // Highlight for upgrade CTA
+    /* PRO_ELITE_DISABLED — remove highlighted when memberships are re-enabled */
+    // highlighted: true,
   },
   {
     id: 'settings',
@@ -212,6 +213,7 @@ export const USER_MENU_ITEMS: MenuItem[] = [
     description: 'Ver y editar perfil público',
     roles: ['ADMIN', 'USER'],
   },
+  /* MEMBERSHIPS_DISABLED — re-enable when subscription management is launched
   {
     id: 'my-plan',
     label: 'Mi Plan',
@@ -220,6 +222,7 @@ export const USER_MENU_ITEMS: MenuItem[] = [
     description: 'Detalles del plan de suscripción',
     roles: ['ADMIN', 'USER'],
   },
+  */
   {
     id: 'settings-profile',
     label: 'Configuración',

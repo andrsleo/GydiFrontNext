@@ -8,90 +8,99 @@ import {
   DollarSign,
   Users,
   MousePointerClick,
-  ArrowUpRight,
-  ArrowDownRight,
+  AlertCircle,
 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useProfileByUserId } from '@/features/auth/hooks/use-profile';
 import { useSubscription } from '@/features/subscriptions/hooks/use-subscription';
 import { UpgradeModal } from '@/features/subscriptions/components/upgrade-modal';
+import { useAffiliateDashboard } from '@/features/dashboard/hooks/use-dashboard-stats';
 import type { PlanCode } from '@/lib/utils/plan-selection';
 
-// Mock data - replace with real API calls
-const stats = [
-  {
-    name: 'Comisiones del Mes',
-    value: '$2,450',
-    change: '+12.5%',
-    trend: 'up',
-    icon: DollarSign,
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
-  },
-  {
-    name: 'Referidos Activos',
-    value: '48',
-    change: '+8',
-    trend: 'up',
-    icon: Users,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-  },
-  {
-    name: 'Clicks Totales',
-    value: '1,234',
-    change: '+23.1%',
-    trend: 'up',
-    icon: MousePointerClick,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50',
-  },
-  {
-    name: 'Tasa de Conversión',
-    value: '3.8%',
-    change: '-0.4%',
-    trend: 'down',
-    icon: TrendingUp,
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-50',
-  },
-];
+// ─── Status badge configuration ────────────────────────────────────────────────
 
-const recentReferrals = [
-  {
-    id: 1,
-    property: 'Villa Paradise - Cancún',
-    date: '2025-10-18',
-    commission: '$350',
-    status: 'pending',
-  },
-  {
-    id: 2,
-    property: 'Beach House - Playa del Carmen',
-    date: '2025-10-15',
-    commission: '$280',
-    status: 'approved',
-  },
-  {
-    id: 3,
-    property: 'Mountain Cabin - Valle de Bravo',
-    date: '2025-10-12',
-    commission: '$420',
-    status: 'paid',
-  },
-  {
-    id: 4,
-    property: 'City Loft - CDMX',
-    date: '2025-10-10',
-    commission: '$190',
-    status: 'paid',
-  },
-];
-
-const statusConfig = {
-  pending: { label: 'Pendiente', color: 'bg-yellow-100 text-yellow-800' },
-  approved: { label: 'Aprobado', color: 'bg-blue-100 text-blue-800' },
-  paid: { label: 'Pagado', color: 'bg-green-100 text-green-800' },
+const statusConfig: Record<string, { label: string; color: string }> = {
+  PENDING: { label: 'Pendiente', color: 'bg-yellow-100 text-yellow-800' },
+  APPROVED: { label: 'Aprobado', color: 'bg-blue-100 text-blue-800' },
+  PAID: { label: 'Pagado', color: 'bg-green-100 text-green-800' },
+  REJECTED: { label: 'Rechazado', color: 'bg-red-100 text-red-800' },
 };
+
+// ─── Formatting helpers ─────────────────────────────────────────────────────────
+
+function formatCurrency(value: number | null | undefined): string {
+  if (value == null) return '--';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function formatCount(value: number | null | undefined): string {
+  if (value == null) return '--';
+  return new Intl.NumberFormat('en-US').format(value);
+}
+
+function formatPercent(value: number | null | undefined): string {
+  if (value == null) return '--';
+  return value.toFixed(1) + '%';
+}
+
+function formatDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString('es-MX', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  } catch {
+    return iso;
+  }
+}
+
+// ─── Skeleton for stat cards while loading ──────────────────────────────────────
+
+function StatCardSkeleton() {
+  return (
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-10 w-10 rounded-lg" />
+      </div>
+      <div className="mt-4 space-y-2">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-8 w-24" />
+      </div>
+    </div>
+  );
+}
+
+// ─── Skeleton for recent commissions table while loading ────────────────────────
+
+function CommissionsTableSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+        >
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-1/3" />
+          </div>
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-6 w-20 rounded-full" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Main dashboard content ─────────────────────────────────────────────────────
 
 function DashboardContent() {
   const user = useUser();
@@ -103,28 +112,90 @@ function DashboardContent() {
   });
 
   const { data: subscription } = useSubscription();
+  const { data, loading, error } = useAffiliateDashboard();
 
-  // State for upgrade modal
+  // Upgrade modal state
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [selectedUpgradePlan, setSelectedUpgradePlan] = useState<PlanCode | null>(null);
 
-  // Get name from profile, fallback to user, then to 'Usuario'
+  // Resolve display name: profile > user > fallback
   const displayName = profile
-    ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || user?.name || 'Usuario'
+    ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() ||
+      user?.name ||
+      'Usuario'
     : user?.name || 'Usuario';
 
   // Auto-open upgrade modal when ?upgrade=XXX query param is present
   useEffect(() => {
     const upgradePlan = searchParams.get('upgrade')?.toUpperCase() as PlanCode | null;
-
     if (upgradePlan && ['PRO', 'ELITE'].includes(upgradePlan)) {
       setSelectedUpgradePlan(upgradePlan);
       setShowUpgradeModal(true);
-
-      // Clean URL after opening modal
       window.history.replaceState({}, '', '/dashboard');
     }
   }, [searchParams]);
+
+  // Derive conversion rate — use backend value when available, calculate client-side otherwise
+  const conversionRate = (() => {
+    const stats = data.referralStats;
+    if (!stats) return null;
+    if (stats.overallConversionRate > 0) return stats.overallConversionRate;
+    if (stats.totalClicks > 0 && stats.totalConversions > 0) {
+      return (stats.totalConversions / stats.totalClicks) * 100;
+    }
+    return 0;
+  })();
+
+  // Stat card definitions — each references its own loading/error state
+  const statCards = [
+    {
+      name: 'Comisiones Ganadas',
+      isLoading: loading.isLoadingCommissionStats,
+      hasError: !!error.commissionStatsError,
+      value: error.commissionStatsError
+        ? '--'
+        : formatCurrency(data.commissionStats?.totalEarned),
+      icon: DollarSign,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+    },
+    {
+      name: 'Links Activos',
+      isLoading: loading.isLoadingReferralStats,
+      hasError: !!error.referralStatsError,
+      value: error.referralStatsError
+        ? '--'
+        : formatCount(data.referralStats?.activeLinks),
+      icon: Users,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+    },
+    {
+      name: 'Clicks (30 dias)',
+      isLoading: loading.isLoadingReferralStats,
+      hasError: !!error.referralStatsError,
+      value: error.referralStatsError
+        ? '--'
+        : formatCount(data.referralStats?.clicksLast30Days),
+      icon: MousePointerClick,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+    },
+    {
+      name: 'Tasa de Conversion',
+      isLoading: loading.isLoadingReferralStats,
+      hasError: !!error.referralStatsError,
+      value: error.referralStatsError
+        ? '--'
+        : formatPercent(conversionRate),
+      icon: TrendingUp,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
+    },
+  ];
+
+  // Use real commission history (max 4 items)
+  const recentCommissions = data.earnings?.recentCommissions?.slice(0, 4) ?? [];
 
   return (
     <div className="space-y-8">
@@ -134,15 +205,29 @@ function DashboardContent() {
           Bienvenido, {displayName}
         </h1>
         <p className="text-muted-foreground">
-          Aquí está un resumen de tu actividad reciente
+          Aqui esta un resumen de tu actividad reciente
         </p>
       </div>
 
-      {/* Stats Grid */}
+      {/* Error banner — shown only when at least one query failed AND nothing is loading */}
+      {error.hasAnyError && !loading.isAnyLoading && (
+        <div className="flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-800">
+          <AlertCircle className="h-4 w-4 flex-shrink-0" />
+          <span>
+            Algunos datos no pudieron cargarse. Verifica tu conexion o intenta recargar la pagina.
+          </span>
+        </div>
+      )}
+
+      {/* Stats Grid — 4 cards with per-card skeleton */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
+        {statCards.map((stat) => {
+          if (stat.isLoading) {
+            return <StatCardSkeleton key={stat.name} />;
+          }
+
           const Icon = stat.icon;
-          const TrendIcon = stat.trend === 'up' ? ArrowUpRight : ArrowDownRight;
+          const isErrorValue = stat.value === '--';
 
           return (
             <div
@@ -153,17 +238,16 @@ function DashboardContent() {
                 <div className={`rounded-lg p-2 ${stat.bgColor}`}>
                   <Icon className={`h-6 w-6 ${stat.color}`} />
                 </div>
-                <div
-                  className={`flex items-center text-sm font-medium ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
-                    }`}
-                >
-                  <TrendIcon className="mr-1 h-4 w-4" />
-                  {stat.change}
-                </div>
               </div>
               <div className="mt-4">
                 <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
-                <p className="mt-1 text-3xl font-bold">{stat.value}</p>
+                <p
+                  className={`mt-1 text-3xl font-bold ${
+                    isErrorValue ? 'text-muted-foreground' : ''
+                  }`}
+                >
+                  {stat.value}
+                </p>
               </div>
             </div>
           );
@@ -172,45 +256,71 @@ function DashboardContent() {
 
       {/* Two Column Layout */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Referrals */}
+        {/* Recent Commissions */}
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Referidos Recientes</h2>
-            <button className="text-sm font-medium text-primary hover:underline">
-              Ver todos
-            </button>
+            <h2 className="text-xl font-semibold">Comisiones Recientes</h2>
+            <a
+              href="/dashboard/ganancias"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Ver todas
+            </a>
           </div>
 
-          <div className="space-y-4">
-            {recentReferrals.map((referral) => (
-              <div
-                key={referral.id}
-                className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
-              >
-                <div className="flex-1">
-                  <p className="font-medium">{referral.property}</p>
-                  <p className="text-sm text-muted-foreground">{referral.date}</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="font-semibold">{referral.commission}</span>
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs font-medium ${statusConfig[referral.status as keyof typeof statusConfig].color
-                      }`}
+          {loading.isLoadingEarnings ? (
+            <CommissionsTableSkeleton />
+          ) : recentCommissions.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Aun no tienes comisiones registradas. Comparte tus links de referido para
+              comenzar a ganar.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {recentCommissions.map((commission) => {
+                const badge = statusConfig[commission.status] ?? {
+                  label: commission.status,
+                  color: 'bg-gray-100 text-gray-800',
+                };
+                return (
+                  <div
+                    key={commission.id}
+                    className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
                   >
-                    {statusConfig[referral.status as keyof typeof statusConfig].label}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+                    <div className="flex-1">
+                      <p className="font-medium">
+                        {`Propiedad #${commission.propertyId}`}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatDate(commission.createdAt)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="font-semibold">
+                        {formatCurrency(commission.commissionAmount)}
+                      </span>
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs font-medium ${badge.color}`}
+                      >
+                        {badge.label}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Quick Actions */}
         <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-semibold">Acciones Rápidas</h2>
+          <h2 className="mb-4 text-xl font-semibold">Acciones Rapidas</h2>
 
           <div className="space-y-3">
-            <button className="flex w-full items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-gray-50">
+            <a
+              href="/dashboard/referidos"
+              className="flex w-full items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-gray-50"
+            >
               <div className="rounded-lg bg-primary/10 p-2">
                 <Users className="h-5 w-5 text-primary" />
               </div>
@@ -220,46 +330,42 @@ function DashboardContent() {
                   Crea un nuevo enlace para compartir
                 </p>
               </div>
-            </button>
+            </a>
 
-            <button className="flex w-full items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-gray-50">
+            <a
+              href="/dashboard/referidos"
+              className="flex w-full items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-gray-50"
+            >
               <div className="rounded-lg bg-blue-50 p-2">
                 <TrendingUp className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="font-medium">Ver Estadísticas</p>
+                <p className="font-medium">Ver Estadisticas</p>
                 <p className="text-sm text-muted-foreground">
-                  Analiza tu rendimiento
+                  Analiza tu rendimiento de referidos
                 </p>
               </div>
-            </button>
+            </a>
 
-            <button className="flex w-full items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-gray-50">
+            <a
+              href="/dashboard/ganancias"
+              className="flex w-full items-center gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-gray-50"
+            >
               <div className="rounded-lg bg-green-50 p-2">
                 <DollarSign className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="font-medium">Solicitar Pago</p>
+                <p className="font-medium">Ver Ganancias</p>
                 <p className="text-sm text-muted-foreground">
-                  Retira tus comisiones
+                  Revisa el historial de comisiones
                 </p>
               </div>
-            </button>
+            </a>
           </div>
         </div>
       </div>
 
-      {/* Performance Chart Section */}
-      <div className="rounded-lg border bg-card p-6 shadow-sm">
-        <h2 className="mb-4 text-xl font-semibold">Rendimiento de los Últimos 30 Días</h2>
-        <div className="flex h-64 items-center justify-center border-2 border-dashed rounded-lg">
-          <p className="text-muted-foreground">
-            Gráfico de rendimiento (próximamente con Chart.js o Recharts)
-          </p>
-        </div>
-      </div>
-
-      {/* Upgrade Modal - Auto-opens when ?upgrade=XXX is detected */}
+      {/* Upgrade Modal — auto-opens when ?upgrade=XXX is detected in URL */}
       {subscription && selectedUpgradePlan && (
         <UpgradeModal
           open={showUpgradeModal}
@@ -272,7 +378,8 @@ function DashboardContent() {
   );
 }
 
-// Wrapper with Suspense boundary
+// ─── Page wrapper with Suspense boundary (required for useSearchParams) ─────────
+
 export default function DashboardPage() {
   return (
     <Suspense
