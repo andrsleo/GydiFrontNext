@@ -7,8 +7,12 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@/features/auth/hooks/use-auth';
 import { useAuthStore } from '@/store/auth-store';
 import { UserMenu } from './user-menu';
+import { CurrencySelector } from '@/components/shared/currency-selector';
+import { LanguageSelector } from '@/components/shared/language-selector';
+import { useTranslation } from '@/hooks/use-translation';
 
 export function Header() {
+  const { t } = useTranslation('common');
   const user = useUser();
   const isLoading = useAuthStore((state) => state.isLoading);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -55,7 +59,7 @@ export function Header() {
               <Sparkles className="h-4 w-4 text-primary opacity-0 transition-all duration-300 group-hover:animate-pulse-glow group-hover:opacity-100" />
             </div>
             <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/80 transition-colors group-hover:text-primary/80">
-              Refiere y gana
+              Properties
             </span>
           </div>
         </Link>
@@ -67,7 +71,7 @@ export function Header() {
             className="group relative overflow-hidden rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105"
           >
             <span className="relative z-10 transition-colors group-hover:text-primary">
-              Propiedades
+              {t('nav.properties')}
             </span>
             <div className="absolute inset-0 -z-0 bg-primary/5 opacity-0 transition-all duration-300 group-hover:opacity-100" />
             <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-primary to-blue-500 transition-transform duration-300 group-hover:scale-x-100" />
@@ -77,7 +81,7 @@ export function Header() {
             className="group relative overflow-hidden rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105"
           >
             <span className="relative z-10 transition-colors group-hover:text-blue-600">
-              Cómo Funciona
+              {t('nav.howItWorks')}
             </span>
             <div className="absolute inset-0 -z-0 bg-blue-500/5 opacity-0 transition-all duration-300 group-hover:opacity-100" />
             <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-transform duration-300 group-hover:scale-x-100" />
@@ -86,6 +90,8 @@ export function Header() {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden items-center space-x-3 md:flex">
+          {/* <CurrencySelector /> */}
+          <LanguageSelector />
           {showLoading ? (
             /* Loading skeleton while verifying session */
             <>
@@ -97,7 +103,7 @@ export function Header() {
               {/* Dashboard Button */}
               <Button asChild variant="ghost" className="group relative overflow-hidden transition-all duration-300 hover:scale-105">
                 <Link href="/dashboard" className="relative">
-                  <span className="relative z-10 font-semibold">Dashboard</span>
+                  <span className="relative z-10 font-semibold">{t('nav.dashboard')}</span>
                   <div className="absolute inset-0 -z-0 bg-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </Link>
               </Button>
@@ -108,13 +114,13 @@ export function Header() {
             <>
               <Button asChild variant="ghost" className="group relative overflow-hidden transition-all duration-300 hover:scale-105">
                 <Link href="/login" className="relative">
-                  <span className="relative z-10 font-semibold">Iniciar Sesión</span>
+                  <span className="relative z-10 font-semibold">{t('nav.login')}</span>
                   <div className="absolute inset-0 -z-0 bg-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </Link>
               </Button>
               <Button asChild className="group relative overflow-hidden bg-gradient-to-r from-primary via-blue-600 to-purple-600 shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">
                 <Link href="/register" className="relative">
-                  <span className="relative z-10 font-semibold">Registrarse</span>
+                  <span className="relative z-10 font-semibold">{t('nav.register')}</span>
                   <div className="absolute inset-0 -z-0 animate-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-primary bg-[length:200%_100%] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </Link>
               </Button>
@@ -146,7 +152,7 @@ export function Header() {
               className="group relative block overflow-hidden rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105 hover:bg-primary/5"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span className="relative z-10 transition-colors group-hover:text-primary">Propiedades</span>
+              <span className="relative z-10 transition-colors group-hover:text-primary">{t('nav.properties')}</span>
               <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-primary to-blue-500 transition-transform duration-300 group-hover:scale-x-100" />
             </Link>
             <Link
@@ -154,10 +160,14 @@ export function Header() {
               className="group relative block overflow-hidden rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105 hover:bg-blue-500/5"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span className="relative z-10 transition-colors group-hover:text-blue-600">Cómo Funciona</span>
+              <span className="relative z-10 transition-colors group-hover:text-blue-600">{t('nav.howItWorks')}</span>
               <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-transform duration-300 group-hover:scale-x-100" />
             </Link>
 
+            <div className="flex items-center gap-2 py-2">
+              {/* <CurrencySelector /> */}
+              <LanguageSelector />
+            </div>
             <div className="space-y-3 border-t border-border/40 pt-4">
               {showLoading ? (
                 /* Loading skeleton for mobile */
@@ -175,16 +185,16 @@ export function Header() {
                     <UserMenu />
                   </div>
                   <Button asChild className="w-full shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">
-                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
+                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>{t('nav.dashboard')}</Link>
                   </Button>
                 </>
               ) : (
                 <>
                   <Button asChild variant="outline" className="w-full transition-all duration-300 hover:scale-105 hover:border-primary hover:bg-primary/5">
-                    <Link href="/login">Iniciar Sesión</Link>
+                    <Link href="/login">{t('nav.login')}</Link>
                   </Button>
                   <Button asChild className="w-full bg-gradient-to-r from-primary via-blue-600 to-purple-600 shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30">
-                    <Link href="/register">Registrarse</Link>
+                    <Link href="/register">{t('nav.register')}</Link>
                   </Button>
                 </>
               )}

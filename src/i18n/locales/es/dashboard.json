@@ -1,0 +1,33 @@
+{
+  "welcome": "Bienvenido",
+  "subtitle": "Aquí está un resumen de tu actividad reciente",
+  "loadingError": "Algunos datos no pudieron cargarse. Verifica tu conexión o intenta recargar la página.",
+  "stats": {
+    "commissionsEarned": "Comisiones Ganadas",
+    "activeLinks": "Links Activos",
+    "clicks30Days": "Clicks (30 dias)",
+    "conversionRate": "Tasa de Conversion"
+  },
+  "recentCommissions": {
+    "title": "Comisiones Recientes",
+    "viewAll": "Ver todas",
+    "empty": "Aún no tienes comisiones registradas. Comparte tus links de referido para comenzar a ganar.",
+    "property": "Propiedad #{{id}}"
+  },
+  "quickActions": {
+    "title": "Acciones Rapidas",
+    "generateLink": "Generar Link de Referido",
+    "generateLinkDesc": "Crea un nuevo enlace para compartir",
+    "viewStats": "Ver Estadisticas",
+    "viewStatsDesc": "Analiza tu rendimiento de referidos",
+    "viewEarnings": "Ver Ganancias",
+    "viewEarningsDesc": "Revisa el historial de comisiones"
+  },
+  "status": {
+    "PENDING": "Pendiente",
+    "APPROVED": "Aprobado",
+    "PAID": "Pagado",
+    "REJECTED": "Rechazado"
+  },
+  "loading": "Cargando..."
+}

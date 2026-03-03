@@ -1,0 +1,59 @@
+{
+  "title": "Referrals",
+  "subtitle": "Monitor your referral links and their performance",
+  "exportReport": "Export Report",
+  "export": "Export",
+  "filterByDate": "Filter by Date",
+  "date": "Date",
+  "searchPlaceholder": "Search by code or property...",
+  "stats": {
+    "totalClicks": "Total Clicks",
+    "conversions": "Conversions",
+    "conversionRate": "Conversion Rate",
+    "activeLinks": "Active Links",
+    "last30Days": "{{count}} in last 30 days",
+    "thisMonth": "+{{count}} this month",
+    "excellent": "Excellent",
+    "average": "Average",
+    "total": "{{count}} total"
+  },
+  "table": {
+    "code": "Code",
+    "property": "Property",
+    "clicks": "Clicks",
+    "conversions": "Conversions",
+    "rate": "Rate",
+    "commission": "Commission",
+    "status": "Status",
+    "actions": "Actions",
+    "copyLink": "Copy link",
+    "openLink": "Open link",
+    "created": "Created"
+  },
+  "status": {
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "EXPIRED": "Expired",
+    "DELETED": "Deleted"
+  },
+  "mobile": {
+    "convRate": "Conv. Rate"
+  },
+  "empty": {
+    "title": "No referrals found",
+    "withSearch": "Try a different search term",
+    "noLinks": "You don't have any referral links yet"
+  },
+  "tips": {
+    "title": "💡 Tips to improve your conversion rate",
+    "tip1": "Share your links in relevant Facebook and WhatsApp groups",
+    "tip2": "Create valuable content on Instagram and TikTok showcasing the properties",
+    "tip3": "Use attractive descriptions and high-quality photos in your posts",
+    "tip4": "Include a clear call to action in every post"
+  },
+  "error": {
+    "title": "Error loading data",
+    "message": "An unexpected error occurred",
+    "retry": "Retry"
+  }
+}

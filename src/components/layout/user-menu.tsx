@@ -34,6 +34,7 @@ import {
 } from '@/lib/constants/menu-items';
 import { useUser } from '@/features/auth/hooks/use-auth';
 import { useLogout } from '@/features/auth/hooks/use-auth';
+import { useTranslation } from '@/hooks/use-translation';
 import { normalizeRole } from '@/lib/utils/role';
 import type { SubscriptionPlan } from '@/types/navigation';
 
@@ -50,6 +51,14 @@ export function UserMenu({ className }: UserMenuProps) {
   const router = useRouter();
   const user = useUser();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const { t } = useTranslation('common');
+
+  // Translation map for user menu items by ID
+  const menuItemLabels: Record<string, string> = {
+    profile: t('user.viewProfile'),
+    'settings-profile': t('user.settings'),
+    logout: t('user.logout'),
+  };
 
   // If no user, show nothing (middleware should redirect)
   if (!user) {
@@ -156,7 +165,7 @@ export function UserMenu({ className }: UserMenuProps) {
                 ) : (
                   <Icon className="mr-2 h-4 w-4" />
                 )}
-                <span>{item.label}</span>
+                <span>{menuItemLabels[item.id] ?? item.label}</span>
               </DropdownMenuItem>
             );
           }
@@ -166,7 +175,7 @@ export function UserMenu({ className }: UserMenuProps) {
             <DropdownMenuItem key={item.id} asChild>
               <Link href={item.href as any} className="cursor-pointer">
                 <Icon className="mr-2 h-4 w-4" />
-                <span>{item.label}</span>
+                <span>{menuItemLabels[item.id] ?? item.label}</span>
               </Link>
             </DropdownMenuItem>
           );

@@ -1,7 +1,12 @@
+'use client';
+
 import Link from 'next/link';
 import { Facebook, Twitter, Instagram, Linkedin, Sparkles } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export function Footer() {
+  const { t } = useTranslation('common');
+
   return (
     <footer className="relative overflow-hidden border-t border-border/40 bg-gradient-to-br from-gray-50 via-background to-primary/5">
       {/* Animated gradient line */}
@@ -22,7 +27,7 @@ export function Footer() {
               <Sparkles className="h-4 w-4 text-primary opacity-0 transition-all duration-300 group-hover:animate-pulse-glow group-hover:opacity-100" />
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              El complemento de Airbnb que convierte tu red en comisiones reales por reservas vacacionales.
+              {t('footer.tagline')}
             </p>
             <div className="mt-4 flex space-x-3">
               <Link
@@ -55,7 +60,7 @@ export function Footer() {
           {/* Product */}
           <div className="group/section">
             <h3 className="mb-4 text-sm font-bold text-foreground transition-colors group-hover/section:text-primary">
-              Producto
+              {t('footer.product')}
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
@@ -64,7 +69,7 @@ export function Footer() {
                   className="group/link relative inline-block text-muted-foreground transition-all duration-300 hover:translate-x-1 hover:text-primary"
                 >
                   <span className="relative">
-                    Propiedades
+                    {t('footer.properties')}
                     <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gradient-to-r from-primary to-blue-500 transition-transform duration-300 group-hover/link:scale-x-100" />
                   </span>
                 </Link>
@@ -75,7 +80,7 @@ export function Footer() {
                   className="group/link relative inline-block text-muted-foreground transition-all duration-300 hover:translate-x-1 hover:text-primary"
                 >
                   <span className="relative">
-                    Precios
+                    {t('footer.pricing')}
                     <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gradient-to-r from-primary to-blue-500 transition-transform duration-300 group-hover/link:scale-x-100" />
                   </span>
                 </Link>
@@ -86,7 +91,7 @@ export function Footer() {
                   className="group/link relative inline-block text-muted-foreground transition-all duration-300 hover:translate-x-1 hover:text-primary"
                 >
                   <span className="relative">
-                    Cómo Funciona
+                    {t('footer.howItWorks')}
                     <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gradient-to-r from-primary to-blue-500 transition-transform duration-300 group-hover/link:scale-x-100" />
                   </span>
                 </Link>
@@ -97,7 +102,7 @@ export function Footer() {
           {/* Company */}
           <div className="group/section">
             <h3 className="mb-4 text-sm font-bold text-foreground transition-colors group-hover/section:text-blue-600">
-              Empresa
+              {t('footer.company')}
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
@@ -106,7 +111,7 @@ export function Footer() {
                   className="group/link relative inline-block text-muted-foreground transition-all duration-300 hover:translate-x-1 hover:text-blue-600"
                 >
                   <span className="relative">
-                    Sobre Nosotros
+                    {t('footer.aboutUs')}
                     <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-transform duration-300 group-hover/link:scale-x-100" />
                   </span>
                 </Link>
@@ -117,7 +122,7 @@ export function Footer() {
                   className="group/link relative inline-block text-muted-foreground transition-all duration-300 hover:translate-x-1 hover:text-blue-600"
                 >
                   <span className="relative">
-                    Contacto
+                    {t('footer.contact')}
                     <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-transform duration-300 group-hover/link:scale-x-100" />
                   </span>
                 </Link>
@@ -128,7 +133,7 @@ export function Footer() {
           {/* Legal */}
           <div className="group/section">
             <h3 className="mb-4 text-sm font-bold text-foreground transition-colors group-hover/section:text-purple-600">
-              Legal
+              {t('footer.legal')}
             </h3>
             <ul className="space-y-2.5 text-sm">
               <li>
@@ -137,7 +142,7 @@ export function Footer() {
                   className="group/link relative inline-block text-muted-foreground transition-all duration-300 hover:translate-x-1 hover:text-purple-600"
                 >
                   <span className="relative">
-                    Privacidad
+                    {t('footer.privacy')}
                     <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gradient-to-r from-purple-500 to-primary transition-transform duration-300 group-hover/link:scale-x-100" />
                   </span>
                 </Link>
@@ -148,7 +153,7 @@ export function Footer() {
                   className="group/link relative inline-block text-muted-foreground transition-all duration-300 hover:translate-x-1 hover:text-purple-600"
                 >
                   <span className="relative">
-                    Términos y Condiciones
+                    {t('footer.terms')}
                     <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gradient-to-r from-purple-500 to-primary transition-transform duration-300 group-hover/link:scale-x-100" />
                   </span>
                 </Link>
@@ -159,7 +164,7 @@ export function Footer() {
                   className="group/link relative inline-block text-muted-foreground transition-all duration-300 hover:translate-x-1 hover:text-purple-600"
                 >
                   <span className="relative">
-                    Política de Cookies
+                    {t('footer.cookies')}
                     <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gradient-to-r from-purple-500 to-primary transition-transform duration-300 group-hover/link:scale-x-100" />
                   </span>
                 </Link>
@@ -174,7 +179,7 @@ export function Footer() {
             <span className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text font-semibold text-transparent">
               GYDI
             </span>
-            . Todos los derechos reservados.
+            . {t('footer.rights')}
           </p>
         </div>
       </div>

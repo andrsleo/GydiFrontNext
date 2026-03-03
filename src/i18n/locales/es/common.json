@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "properties": "Propiedades",
+    "howItWorks": "Cómo Funciona",
+    "dashboard": "Dashboard",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse"
+  },
+  "actions": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "retry": "Reintentar",
+    "back": "Regresar",
+    "confirm": "Confirmar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "view": "Ver",
+    "copy": "Copiar",
+    "share": "Compartir"
+  },
+  "status": {
+    "pending": "Pendiente",
+    "approved": "Aprobado",
+    "paid": "Pagado",
+    "rejected": "Rechazado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "expired": "Expirado"
+  },
+  "user": {
+    "settings": "Configuración",
+    "logout": "Cerrar Sesión",
+    "fallback": "Usuario",
+    "viewProfile": "Ver Perfil",
+    "logoutTitle": "¿Cerrar sesión?",
+    "logoutDescription": "¿Estás seguro de que deseas cerrar sesión? Deberás iniciar sesión nuevamente para acceder a tu cuenta."
+  },
+  "errors": {
+    "generic": "Algo salió mal. Por favor intenta de nuevo.",
+    "unauthorized": "Debes iniciar sesión.",
+    "notFound": "El recurso solicitado no fue encontrado.",
+    "network": "Error de red. Por favor verifica tu conexión."
+  },
+  "menu": {
+    "dashboard": "Panel Principal",
+    "properties": "Propiedades",
+    "propertiesMy": "Mis Propiedades",
+    "propertiesRefer": "Referir Propiedades",
+    "referrals": "Referidos",
+    "referralsLinks": "Mis Enlaces",
+    "referralsStats": "Estadísticas",
+    "bookings": "Reservas",
+    "earnings": "Comisiones",
+    "subscription": "Medios de Pago",
+    "settings": "Configuración",
+    "admin": "Administración",
+    "adminSection": "Administración",
+    "adminAnalytics": "Analiticas Globales",
+    "adminUsers": "Gestión de Usuarios",
+    "adminProperties": "Gestión de Propiedades",
+    "adminBookings": "Gestión de Reservas",
+    "adminCommissions": "Gestión de Comisiones",
+    "adminPlans": "Planes y Precios",
+    "adminConfig": "Configuración del Sistema"
+  },
+  "plan": {
+    "free": "Gratis",
+    "pro": "Pro",
+    "elite": "Elite"
+  },
+  "footer": {
+    "tagline": "El complemento de Airbnb que convierte tu red en comisiones reales por reservas vacacionales.",
+    "product": "Producto",
+    "properties": "Propiedades",
+    "pricing": "Precios",
+    "howItWorks": "Cómo Funciona",
+    "company": "Empresa",
+    "aboutUs": "Sobre Nosotros",
+    "contact": "Contacto",
+    "legal": "Legal",
+    "privacy": "Privacidad",
+    "terms": "Términos y Condiciones",
+    "cookies": "Política de Cookies",
+    "rights": "Todos los derechos reservados."
+  }
+}

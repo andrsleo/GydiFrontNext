@@ -1,14 +1,12 @@
+'use client';
+
 import Link from 'next/link';
 import { FileText, AlertTriangle, DollarSign, Shield, Users, Building2 } from 'lucide-react';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Términos y Condiciones',
-  description: 'Términos y condiciones de uso de la plataforma GYDI. Lee las reglas y responsabilidades para anfitriones y afiliados de propiedades en renta.',
-};
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function TermsPage() {
-  const lastUpdated = 'Octubre 2025';
+  const { t } = useTranslation('terms');
+  const lastUpdated = t('lastUpdated');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50/50 to-white">
@@ -20,18 +18,18 @@ export default function TermsPage() {
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
               <FileText className="h-4 w-4" />
-              <span>Última actualización: {lastUpdated}</span>
+              <span>{t('hero.badge')} {lastUpdated}</span>
             </div>
 
             <h1 className="mb-6">
-              Términos y{' '}
+              {t('hero.title1')}{' '}
               <span className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Condiciones
+                {t('hero.titleHighlight')}
               </span>
             </h1>
 
             <p className="text-lg text-muted-foreground">
-              Al usar GYDI, aceptas los siguientes términos. Por favor, léelos cuidadosamente antes de crear una cuenta.
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -41,18 +39,18 @@ export default function TermsPage() {
       <section className="border-b bg-white py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
-            <span className="font-semibold text-foreground">Ir a:</span>
-            <a href="#aceptacion" className="text-primary hover:underline">Aceptación</a>
+            <span className="font-semibold text-foreground">{t('quickLinks.goTo')}</span>
+            <a href="#aceptacion" className="text-primary hover:underline">{t('quickLinks.acceptance')}</a>
             <span className="text-muted-foreground">•</span>
-            <a href="#servicios" className="text-primary hover:underline">Servicios</a>
+            <a href="#servicios" className="text-primary hover:underline">{t('quickLinks.services')}</a>
             <span className="text-muted-foreground">•</span>
-            <a href="#cuentas" className="text-primary hover:underline">Cuentas</a>
+            <a href="#cuentas" className="text-primary hover:underline">{t('quickLinks.accounts')}</a>
             <span className="text-muted-foreground">•</span>
-            <a href="#comisiones" className="text-primary hover:underline">Comisiones</a>
+            <a href="#comisiones" className="text-primary hover:underline">{t('quickLinks.commissions')}</a>
             <span className="text-muted-foreground">•</span>
-            <a href="#prohibiciones" className="text-primary hover:underline">Prohibiciones</a>
+            <a href="#prohibiciones" className="text-primary hover:underline">{t('quickLinks.prohibitions')}</a>
             <span className="text-muted-foreground">•</span>
-            <a href="#responsabilidad" className="text-primary hover:underline">Responsabilidad</a>
+            <a href="#responsabilidad" className="text-primary hover:underline">{t('quickLinks.liability')}</a>
           </div>
         </div>
       </section>
@@ -66,205 +64,184 @@ export default function TermsPage() {
               <div className="flex items-start gap-4">
                 <AlertTriangle className="mt-1 h-6 w-6 flex-shrink-0 text-yellow-600" />
                 <div>
-                  <h3 className="mb-2 text-xl font-bold text-yellow-900">Aviso Importante</h3>
+                  <h3 className="mb-2 text-xl font-bold text-yellow-900">{t('notice.title')}</h3>
                   <p className="leading-relaxed text-yellow-800">
-                    Estos términos constituyen un acuerdo legal vinculante entre tú y GYDI. Al crear una cuenta
-                    o usar nuestros servicios, confirmas que has leído, entendido y aceptado estos términos en su totalidad.
-                    Si no estás de acuerdo, no uses nuestra plataforma.
+                    {t('notice.text')}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* 1. Aceptación de Términos */}
+            {/* 1. Acceptance */}
             <div id="aceptacion" className="mb-12">
-              <h2 className="mb-6 text-3xl">1. Aceptación de Términos</h2>
+              <h2 className="mb-6 text-3xl">{t('s1.title')}</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Al acceder o usar GYDI ("la Plataforma", "el Servicio"), aceptas estar legalmente vinculado por
-                  estos Términos y Condiciones ("Términos"), nuestra{' '}
-                  <Link href="/privacy" className="text-primary hover:underline">Política de Privacidad</Link> y nuestra{' '}
-                  <Link href="/cookies" className="text-primary hover:underline">Política de Cookies</Link>.
+                  {t('s1.p1')}{' '}
+                  <Link href="/privacy" className="text-primary hover:underline">{t('s1.p1Privacy')}</Link>{' '}
+                  {t('s1.p1And')}{' '}
+                  <Link href="/cookies" className="text-primary hover:underline">{t('s1.p1Cookies')}</Link>{t('s1.p1End')}
                 </p>
 
-                <p>
-                  GYDI es operado por GYDI Inc. ("nosotros", "nuestro"), una empresa registrada bajo las leyes
-                  de los Estados Unidos. Estos términos se rigen por las leyes del Estado de Florida, EE.UU.
-                </p>
+                <p>{t('s1.p2')}</p>
 
                 <p className="font-semibold text-foreground">
-                  Debes tener al menos 18 años de edad para usar esta plataforma.
+                  {t('s1.p3')}
                 </p>
               </div>
             </div>
 
-            {/* 2. Descripción de Servicios */}
+            {/* 2. Services */}
             <div id="servicios" className="mb-12">
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-primary/10 p-3">
                   <Building2 className="h-6 w-6 text-primary" />
                 </div>
-                <h2 className="text-3xl">2. Descripción de Servicios</h2>
+                <h2 className="text-3xl">{t('s2.title')}</h2>
               </div>
 
               <div className="space-y-6">
-                <p className="text-muted-foreground">
-                  GYDI es una plataforma de referidos para propiedades en renta con dos roles principales:
-                </p>
+                <p className="text-muted-foreground">{t('s2.intro')}</p>
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
-                    <h4 className="mb-3 font-semibold text-primary">Rol Anfitrión: Publica tu propiedad en renta</h4>
+                    <h4 className="mb-3 font-semibold text-primary">{t('s2.hostTitle')}</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-primary">•</span>
-                        <span>Publicas tu propiedad en renta en la plataforma</span>
+                        <span>{t('s2.hostItem1')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-primary">•</span>
-                        <span>Los afiliados la refieren y consiguen reservas para ti</span>
+                        <span>{t('s2.hostItem2')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-primary">•</span>
-                        <span>Por cada reserva generada por un afiliado, la plataforma retiene entre 15% y 25% según tu plan</span>
+                        <span>{t('s2.hostItem3')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-primary">•</span>
-                        <span>Solo pagas si hay reserva confirmada — sin reserva, sin costo</span>
+                        <span>{t('s2.hostItem4')}</span>
                       </li>
                     </ul>
                   </div>
 
                   <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 p-6">
-                    <h4 className="mb-3 font-semibold text-purple-600">Rol Afiliado: Refiere propiedades y gana</h4>
+                    <h4 className="mb-3 font-semibold text-purple-600">{t('s2.affiliateTitle')}</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-purple-600">•</span>
-                        <span>Generates un link único para cada propiedad en renta</span>
+                        <span>{t('s2.affiliateItem1')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-purple-600">•</span>
-                        <span>Compartes el link con tu red de contactos y viajeros</span>
+                        <span>{t('s2.affiliateItem2')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-purple-600">•</span>
-                        <span>Recibes entre 2% y 10% de comisión por cada reserva confirmada, según tu plan</span>
+                        <span>{t('s2.affiliateItem3')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-1 text-purple-600">•</span>
-                        <span>Dashboard de estadísticas: clicks, conversiones y ganancias en tiempo real</span>
+                        <span>{t('s2.affiliateItem4')}</span>
                       </li>
                     </ul>
                   </div>
                 </div>
 
                 <div className="rounded-xl bg-blue-50 p-4 text-sm text-blue-900">
-                  <strong>Disponibilidad del Servicio:</strong> Nos esforzamos por mantener la plataforma disponible 24/7,
-                  pero no garantizamos acceso ininterrumpido. Podemos realizar mantenimiento, actualizaciones o
-                  suspender servicios temporalmente sin previo aviso.
+                  <strong>{t('s2.availability')}</strong> {t('s2.availabilityText')}
                 </div>
               </div>
             </div>
 
-            {/* 3. Cuentas de Usuario */}
+            {/* 3. User Accounts */}
             <div id="cuentas" className="mb-12">
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-blue-500/10 p-3">
                   <Users className="h-6 w-6 text-blue-600" />
                 </div>
-                <h2 className="text-3xl">3. Cuentas de Usuario</h2>
+                <h2 className="text-3xl">{t('s3.title')}</h2>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <h4 className="mb-3 font-semibold">3.1 Registro</h4>
+                  <h4 className="mb-3 font-semibold">{t('s3.s31Title')}</h4>
                   <ul className="ml-6 space-y-2 text-muted-foreground">
-                    <li className="list-disc">
-                      Debes proporcionar información veraz, precisa y completa durante el registro
-                    </li>
-                    <li className="list-disc">
-                      Eres responsable de mantener la confidencialidad de tu contraseña
-                    </li>
-                    <li className="list-disc">
-                      Solo puedes crear una cuenta por persona (no se permiten cuentas múltiples)
-                    </li>
-                    <li className="list-disc">
-                      Debes notificarnos inmediatamente sobre cualquier uso no autorizado de tu cuenta
-                    </li>
+                    <li className="list-disc">{t('s3.reg1')}</li>
+                    <li className="list-disc">{t('s3.reg2')}</li>
+                    <li className="list-disc">{t('s3.reg3')}</li>
+                    <li className="list-disc">{t('s3.reg4')}</li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">3.2 Verificación de Identidad</h4>
-                  <p className="mb-3 text-muted-foreground">
-                    Para ciertos servicios (especialmente afiliados y anfitriones), podemos requerir:
-                  </p>
+                  <h4 className="mb-3 font-semibold">{t('s3.s32Title')}</h4>
+                  <p className="mb-3 text-muted-foreground">{t('s3.verifyIntro')}</p>
                   <ul className="ml-6 space-y-2 text-muted-foreground">
-                    <li className="list-disc">Identificación oficial con foto (pasaporte, licencia de conducir)</li>
-                    <li className="list-disc">Comprobante de domicilio</li>
-                    <li className="list-disc">Información fiscal (W-9, W-8BEN, etc.)</li>
-                    <li className="list-disc">Verificación de cuenta bancaria</li>
+                    <li className="list-disc">{t('s3.verify1')}</li>
+                    <li className="list-disc">{t('s3.verify2')}</li>
+                    <li className="list-disc">{t('s3.verify3')}</li>
+                    <li className="list-disc">{t('s3.verify4')}</li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">3.3 Suspensión y Terminación</h4>
-                  <p className="mb-3 text-muted-foreground">
-                    Nos reservamos el derecho de suspender o terminar tu cuenta si:
-                  </p>
+                  <h4 className="mb-3 font-semibold">{t('s3.s33Title')}</h4>
+                  <p className="mb-3 text-muted-foreground">{t('s3.suspendIntro')}</p>
                   <ul className="ml-6 space-y-2 text-muted-foreground">
-                    <li className="list-disc">Violas estos términos o políticas</li>
-                    <li className="list-disc">Participas en actividades fraudulentas o ilegales</li>
-                    <li className="list-disc">Proporcionas información falsa o engañosa</li>
-                    <li className="list-disc">Tu cuenta permanece inactiva por más de 12 meses</li>
-                    <li className="list-disc">Lo consideramos necesario para proteger la plataforma o usuarios</li>
+                    <li className="list-disc">{t('s3.suspend1')}</li>
+                    <li className="list-disc">{t('s3.suspend2')}</li>
+                    <li className="list-disc">{t('s3.suspend3')}</li>
+                    <li className="list-disc">{t('s3.suspend4')}</li>
+                    <li className="list-disc">{t('s3.suspend5')}</li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            {/* 4. Comisiones y Pagos */}
+            {/* 4. Commissions */}
             <div id="comisiones" className="mb-12">
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-purple-500/10 p-3">
                   <DollarSign className="h-6 w-6 text-purple-600" />
                 </div>
-                <h2 className="text-3xl">4. Comisiones y Pagos</h2>
+                <h2 className="text-3xl">{t('s4.title')}</h2>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <h4 className="mb-3 font-semibold">4.1 Estructura de Comisiones</h4>
+                  <h4 className="mb-3 font-semibold">{t('s4.s41Title')}</h4>
 
                   {/* Desktop Table */}
                   <div className="mb-4 hidden overflow-hidden rounded-xl border sm:block">
                     <table className="w-full">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="border-b px-4 py-3 text-left text-sm font-semibold">Plan</th>
-                          <th className="border-b px-4 py-3 text-left text-sm font-semibold">Precio Mensual</th>
-                          <th className="border-b px-4 py-3 text-left text-sm font-semibold">Comisión</th>
-                          <th className="border-b px-4 py-3 text-left text-sm font-semibold">Límite</th>
+                          <th className="border-b px-4 py-3 text-left text-sm font-semibold">{t('s4.thPlan')}</th>
+                          <th className="border-b px-4 py-3 text-left text-sm font-semibold">{t('s4.thPrice')}</th>
+                          <th className="border-b px-4 py-3 text-left text-sm font-semibold">{t('s4.thCommission')}</th>
+                          <th className="border-b px-4 py-3 text-left text-sm font-semibold">{t('s4.thLimit')}</th>
                         </tr>
                       </thead>
                       <tbody className="text-sm">
                         <tr>
-                          <td className="border-b px-4 py-3 font-medium">Free</td>
-                          <td className="border-b px-4 py-3">$0</td>
-                          <td className="border-b px-4 py-3 text-primary">2%</td>
-                          <td className="border-b px-4 py-3">10 referidos/mes</td>
+                          <td className="border-b px-4 py-3 font-medium">{t('s4.freePlan')}</td>
+                          <td className="border-b px-4 py-3">{t('s4.freePrice')}</td>
+                          <td className="border-b px-4 py-3 text-primary">{t('s4.freeCommission')}</td>
+                          <td className="border-b px-4 py-3">{t('s4.freeLimit')}</td>
                         </tr>
                         <tr>
-                          <td className="border-b px-4 py-3 font-medium">Pro</td>
-                          <td className="border-b px-4 py-3">$15</td>
-                          <td className="border-b px-4 py-3 text-primary">5%</td>
-                          <td className="border-b px-4 py-3">100 referidos/mes</td>
+                          <td className="border-b px-4 py-3 font-medium">{t('s4.proPlan')}</td>
+                          <td className="border-b px-4 py-3">{t('s4.proPrice')}</td>
+                          <td className="border-b px-4 py-3 text-primary">{t('s4.proCommission')}</td>
+                          <td className="border-b px-4 py-3">{t('s4.proLimit')}</td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3 font-medium">Elite</td>
-                          <td className="px-4 py-3">$30</td>
-                          <td className="px-4 py-3 text-primary">10%</td>
-                          <td className="px-4 py-3">Ilimitado</td>
+                          <td className="px-4 py-3 font-medium">{t('s4.elitePlan')}</td>
+                          <td className="px-4 py-3">{t('s4.elitePrice')}</td>
+                          <td className="px-4 py-3 text-primary">{t('s4.eliteCommission')}</td>
+                          <td className="px-4 py-3">{t('s4.eliteLimit')}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -272,56 +249,53 @@ export default function TermsPage() {
 
                   {/* Mobile Cards */}
                   <div className="mb-4 space-y-4 sm:hidden">
-                    {/* Free Plan */}
                     <div className="rounded-xl border bg-card p-4">
                       <div className="mb-3 flex items-center justify-between">
-                        <span className="text-lg font-bold">Free</span>
-                        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold">$0/mes</span>
+                        <span className="text-lg font-bold">{t('s4.freePlan')}</span>
+                        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold">{t('s4.freePrice')}{t('s4.perMonth')}</span>
                       </div>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Comisión:</span>
-                          <span className="font-semibold text-primary">2%</span>
+                          <span className="text-muted-foreground">{t('s4.thCommission')}:</span>
+                          <span className="font-semibold text-primary">{t('s4.freeCommission')}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Límite:</span>
-                          <span className="font-medium">10 referidos/mes</span>
+                          <span className="text-muted-foreground">{t('s4.thLimit')}:</span>
+                          <span className="font-medium">{t('s4.freeLimit')}</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Pro Plan */}
                     <div className="rounded-xl border-2 border-primary bg-card p-4">
                       <div className="mb-3 flex items-center justify-between">
-                        <span className="text-lg font-bold">Pro</span>
-                        <span className="rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground">$15/mes</span>
+                        <span className="text-lg font-bold">{t('s4.proPlan')}</span>
+                        <span className="rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground">{t('s4.proPrice')}{t('s4.perMonth')}</span>
                       </div>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Comisión:</span>
-                          <span className="font-semibold text-primary">5%</span>
+                          <span className="text-muted-foreground">{t('s4.thCommission')}:</span>
+                          <span className="font-semibold text-primary">{t('s4.proCommission')}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Límite:</span>
-                          <span className="font-medium">100 referidos/mes</span>
+                          <span className="text-muted-foreground">{t('s4.thLimit')}:</span>
+                          <span className="font-medium">{t('s4.proLimit')}</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Elite Plan */}
                     <div className="rounded-xl border bg-card p-4">
                       <div className="mb-3 flex items-center justify-between">
-                        <span className="text-lg font-bold">Elite</span>
-                        <span className="rounded-full bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-700">$30/mes</span>
+                        <span className="text-lg font-bold">{t('s4.elitePlan')}</span>
+                        <span className="rounded-full bg-purple-100 px-3 py-1 text-sm font-semibold text-purple-700">{t('s4.elitePrice')}{t('s4.perMonth')}</span>
                       </div>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Comisión:</span>
-                          <span className="font-semibold text-primary">10%</span>
+                          <span className="text-muted-foreground">{t('s4.thCommission')}:</span>
+                          <span className="font-semibold text-primary">{t('s4.eliteCommission')}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Límite:</span>
-                          <span className="font-medium">Ilimitado</span>
+                          <span className="text-muted-foreground">{t('s4.thLimit')}:</span>
+                          <span className="font-medium">{t('s4.eliteLimit')}</span>
                         </div>
                       </div>
                     </div>
@@ -329,280 +303,207 @@ export default function TermsPage() {
 
                   <ul className="ml-6 space-y-2 text-muted-foreground">
                     <li className="list-disc">
-                      Las comisiones se calculan sobre el <strong className="text-foreground">valor total de la reserva/venta</strong>
+                      {t('s4.calc1')} <strong className="text-foreground">{t('s4.calc1Bold')}</strong>
                     </li>
-                    <li className="list-disc">
-                      Los cambios de plan se aplican en el siguiente ciclo de facturación
-                    </li>
-                    <li className="list-disc">
-                      Nos reservamos el derecho de modificar tasas con 30 días de aviso previo
-                    </li>
+                    <li className="list-disc">{t('s4.calc2')}</li>
+                    <li className="list-disc">{t('s4.calc3')}</li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">4.2 Procesamiento de Pagos</h4>
+                  <h4 className="mb-3 font-semibold">{t('s4.s42Title')}</h4>
                   <ul className="ml-6 space-y-2 text-muted-foreground">
                     <li className="list-disc">
-                      <strong className="text-foreground">Umbral mínimo de pago:</strong> $50 USD
+                      <strong className="text-foreground">{t('s4.minPayout')}</strong> {t('s4.minPayoutValue')}
                     </li>
                     <li className="list-disc">
-                      <strong className="text-foreground">Frecuencia de pago:</strong>
+                      <strong className="text-foreground">{t('s4.payFreq')}</strong>
                       <ul className="ml-6 mt-2 space-y-1">
-                        <li className="list-circle">Free: Mensual (último día del mes)</li>
-                        <li className="list-circle">Pro: Quincenal (días 15 y 30)</li>
-                        <li className="list-circle">Elite: Semanal (todos los lunes)</li>
+                        <li className="list-circle">{t('s4.payFreeFreq')}</li>
+                        <li className="list-circle">{t('s4.payProFreq')}</li>
+                        <li className="list-circle">{t('s4.payEliteFreq')}</li>
                       </ul>
                     </li>
                     <li className="list-disc">
-                      <strong className="text-foreground">Métodos de pago:</strong> Transferencia bancaria, PayPal, Stripe
+                      <strong className="text-foreground">{t('s4.payMethods')}</strong> {t('s4.payMethodsValue')}
                     </li>
                     <li className="list-disc">
-                      <strong className="text-foreground">Tiempo de procesamiento:</strong> 3-5 días hábiles
+                      <strong className="text-foreground">{t('s4.payTime')}</strong> {t('s4.payTimeValue')}
                     </li>
                     <li className="list-disc">
-                      <strong className="text-foreground">Comisiones de procesamiento:</strong> A cargo de GYDI (sin costo adicional para ti)
+                      <strong className="text-foreground">{t('s4.payFees')}</strong> {t('s4.payFeesValue')}
                     </li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">4.3 Retenciones y Disputas</h4>
-                  <p className="mb-3 text-muted-foreground">
-                    Podemos retener pagos temporalmente si:
-                  </p>
+                  <h4 className="mb-3 font-semibold">{t('s4.s43Title')}</h4>
+                  <p className="mb-3 text-muted-foreground">{t('s4.holdIntro')}</p>
                   <ul className="ml-6 space-y-2 text-muted-foreground">
-                    <li className="list-disc">Hay disputas de clientes relacionadas con tu referido</li>
-                    <li className="list-disc">Sospechamos actividad fraudulenta</li>
-                    <li className="list-disc">Falta completar verificación de identidad</li>
-                    <li className="list-disc">Hay una investigación en curso</li>
+                    <li className="list-disc">{t('s4.hold1')}</li>
+                    <li className="list-disc">{t('s4.hold2')}</li>
+                    <li className="list-disc">{t('s4.hold3')}</li>
+                    <li className="list-disc">{t('s4.hold4')}</li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">4.4 Reembolsos y Cancelaciones</h4>
+                  <h4 className="mb-3 font-semibold">{t('s4.s44Title')}</h4>
                   <ul className="ml-6 space-y-2 text-muted-foreground">
                     <li className="list-disc">
-                      Las suscripciones pagadas (Pro, Elite) <strong className="text-foreground">no son reembolsables</strong>
+                      {t('s4.refund1')} <strong className="text-foreground">{t('s4.refund1Bold')}</strong>
                     </li>
-                    <li className="list-disc">
-                      Puedes cancelar en cualquier momento; el servicio continuará hasta el final del período pagado
-                    </li>
-                    <li className="list-disc">
-                      Si una reserva referida es cancelada, la comisión correspondiente será revertida
-                    </li>
+                    <li className="list-disc">{t('s4.refund2')}</li>
+                    <li className="list-disc">{t('s4.refund3')}</li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            {/* 5. Prohibiciones y Conducta */}
+            {/* 5. Prohibited Conduct */}
             <div id="prohibiciones" className="mb-12">
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-red-500/10 p-3">
                   <AlertTriangle className="h-6 w-6 text-red-600" />
                 </div>
-                <h2 className="text-3xl">5. Conductas Prohibidas</h2>
+                <h2 className="text-3xl">{t('s5.title')}</h2>
               </div>
 
               <div className="space-y-6">
                 <div className="rounded-xl border-2 border-red-200 bg-red-50 p-6">
-                  <h4 className="mb-3 font-semibold text-red-900">Está estrictamente prohibido:</h4>
+                  <h4 className="mb-3 font-semibold text-red-900">{t('s5.prohibited')}</h4>
                   <ul className="ml-6 space-y-2 text-sm text-red-800">
-                    <li className="list-disc">
-                      <strong>Fraude:</strong> Click fraud, referidos falsos, manipulación de estadísticas
-                    </li>
-                    <li className="list-disc">
-                      <strong>Spam:</strong> Envío masivo de emails no solicitados, marketing agresivo
-                    </li>
-                    <li className="list-disc">
-                      <strong>Suplantación:</strong> Hacerse pasar por otra persona u organización
-                    </li>
-                    <li className="list-disc">
-                      <strong>Contenido ilegal:</strong> Publicar propiedades inexistentes, estafas, contenido ofensivo
-                    </li>
-                    <li className="list-disc">
-                      <strong>Manipulación del sistema:</strong> Uso de bots, scripts automatizados, explotación de vulnerabilidades
-                    </li>
-                    <li className="list-disc">
-                      <strong>Cookie stuffing:</strong> Forzar cookies de referidos sin consentimiento del usuario
-                    </li>
-                    <li className="list-disc">
-                      <strong>Bidding en marca:</strong> Pujar por palabras clave de marca "GYDI" en ads sin autorización
-                    </li>
-                    <li className="list-disc">
-                      <strong>Auto-referidos:</strong> Registrarse o realizar transacciones usando tu propio enlace de afiliado
-                    </li>
-                    <li className="list-disc">
-                      <strong>Competencia desleal:</strong> Desprestigiar competidores, comparaciones falsas
-                    </li>
-                    <li className="list-disc">
-                      <strong>Violación de privacidad:</strong> Recopilar datos de usuarios sin consentimiento
-                    </li>
+                    <li className="list-disc">{t('s5.p1')}</li>
+                    <li className="list-disc">{t('s5.p2')}</li>
+                    <li className="list-disc">{t('s5.p3')}</li>
+                    <li className="list-disc">{t('s5.p4')}</li>
+                    <li className="list-disc">{t('s5.p5')}</li>
+                    <li className="list-disc">{t('s5.p6')}</li>
+                    <li className="list-disc">{t('s5.p7')}</li>
+                    <li className="list-disc">{t('s5.p8')}</li>
+                    <li className="list-disc">{t('s5.p9')}</li>
+                    <li className="list-disc">{t('s5.p10')}</li>
                   </ul>
                 </div>
 
                 <p className="text-sm text-muted-foreground">
-                  La violación de cualquiera de estas prohibiciones resultará en <strong className="text-foreground">
-                  suspensión inmediata de cuenta, pérdida de comisiones pendientes y posible acción legal</strong>.
+                  {t('s5.consequence')} <strong className="text-foreground">
+                  {t('s5.consequenceBold')}</strong>{t('s5.consequenceEnd')}
                 </p>
               </div>
             </div>
 
-            {/* 6. Propiedad Intelectual */}
+            {/* 6. Intellectual Property */}
             <div className="mb-12">
-              <h2 className="mb-6 text-3xl">6. Propiedad Intelectual</h2>
+              <h2 className="mb-6 text-3xl">{t('s6.title')}</h2>
               <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Todo el contenido de GYDI (logos, diseños, textos, código, imágenes) es propiedad de GYDI Inc.
-                  o sus licenciantes, protegido por derechos de autor, marcas registradas y otras leyes de
-                  propiedad intelectual.
-                </p>
-
-                <p>
-                  Como afiliado, te otorgamos una licencia limitada, no exclusiva, revocable para:
-                </p>
-
+                <p>{t('s6.p1')}</p>
+                <p>{t('s6.p2')}</p>
                 <ul className="ml-6 space-y-2">
-                  <li className="list-disc">Usar nuestros materiales de marketing aprobados</li>
-                  <li className="list-disc">Mostrar nuestro logo según nuestras guías de marca</li>
-                  <li className="list-disc">Enlazar a nuestra plataforma usando tu enlace de afiliado</li>
+                  <li className="list-disc">{t('s6.ip1')}</li>
+                  <li className="list-disc">{t('s6.ip2')}</li>
+                  <li className="list-disc">{t('s6.ip3')}</li>
                 </ul>
-
-                <p className="font-semibold text-foreground">
-                  No puedes modificar, reproducir, distribuir o crear obras derivadas sin autorización escrita.
-                </p>
+                <p className="font-semibold text-foreground">{t('s6.p3')}</p>
               </div>
             </div>
 
-            {/* 7. Limitación de Responsabilidad */}
+            {/* 7. Limitation of Liability */}
             <div id="responsabilidad" className="mb-12">
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-orange-500/10 p-3">
                   <Shield className="h-6 w-6 text-orange-600" />
                 </div>
-                <h2 className="text-3xl">7. Limitación de Responsabilidad</h2>
+                <h2 className="text-3xl">{t('s7.title')}</h2>
               </div>
 
               <div className="space-y-6">
                 <div className="rounded-xl border-2 border-orange-200 bg-orange-50 p-6">
-                  <h4 className="mb-3 font-semibold text-orange-900">Exención de Garantías</h4>
-                  <p className="text-sm text-orange-800">
-                    LA PLATAFORMA SE PROPORCIONA "TAL CUAL" Y "SEGÚN DISPONIBILIDAD" SIN GARANTÍAS DE NINGÚN TIPO,
-                    YA SEAN EXPRESAS O IMPLÍCITAS. NO GARANTIZAMOS QUE EL SERVICIO SEA ININTERRUMPIDO, LIBRE DE ERRORES
-                    O SEGURO. NO GARANTIZAMOS LA EXACTITUD DE LAS LISTADOS DE PROPIEDADES NI LA CALIDAD DE LOS REFERIDOS.
-                  </p>
+                  <h4 className="mb-3 font-semibold text-orange-900">{t('s7.disclaimerTitle')}</h4>
+                  <p className="text-sm text-orange-800">{t('s7.disclaimer')}</p>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">Limitación de Daños</h4>
-                  <p className="mb-3 text-muted-foreground">
-                    EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY, GYDI NO SERÁ RESPONSABLE POR:
-                  </p>
+                  <h4 className="mb-3 font-semibold">{t('s7.damagesTitle')}</h4>
+                  <p className="mb-3 text-muted-foreground">{t('s7.damagesIntro')}</p>
                   <ul className="ml-6 space-y-2 text-muted-foreground">
-                    <li className="list-disc">Daños indirectos, incidentales, especiales, consecuenciales o punitivos</li>
-                    <li className="list-disc">Pérdida de ganancias, ingresos, datos o uso</li>
-                    <li className="list-disc">Interrupciones del servicio o errores técnicos</li>
-                    <li className="list-disc">Acciones u omisiones de terceros (propietarios, huéspedes, otros afiliados)</li>
-                    <li className="list-disc">Contenido o conducta de usuarios</li>
+                    <li className="list-disc">{t('s7.d1')}</li>
+                    <li className="list-disc">{t('s7.d2')}</li>
+                    <li className="list-disc">{t('s7.d3')}</li>
+                    <li className="list-disc">{t('s7.d4')}</li>
+                    <li className="list-disc">{t('s7.d5')}</li>
                   </ul>
                 </div>
 
                 <div className="rounded-xl bg-gray-100 p-4 text-sm text-gray-800">
-                  <strong>Responsabilidad máxima:</strong> En cualquier caso, nuestra responsabilidad total no excederá
-                  el mayor de (a) $100 USD o (b) las comisiones que hayas ganado en los últimos 3 meses.
+                  <strong>{t('s7.maxLiability')}</strong> {t('s7.maxLiabilityText')}
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">Indemnización</h4>
-                  <p className="text-muted-foreground">
-                    Aceptas indemnizar y mantener indemne a GYDI de cualquier reclamo, daño, pérdida, responsabilidad
-                    y gasto (incluyendo honorarios legales) que surjan de: (a) tu uso de la plataforma, (b) tu violación
-                    de estos términos, (c) tu violación de derechos de terceros, o (d) tus actividades de afiliado/venta.
-                  </p>
+                  <h4 className="mb-3 font-semibold">{t('s7.indemnityTitle')}</h4>
+                  <p className="text-muted-foreground">{t('s7.indemnityText')}</p>
                 </div>
               </div>
             </div>
 
-            {/* 8. Resolución de Disputas */}
+            {/* 8. Dispute Resolution */}
             <div className="mb-12">
-              <h2 className="mb-6 text-3xl">8. Resolución de Disputas</h2>
+              <h2 className="mb-6 text-3xl">{t('s8.title')}</h2>
               <div className="space-y-4 text-muted-foreground">
                 <div>
-                  <h4 className="mb-3 font-semibold">8.1 Ley Aplicable</h4>
-                  <p>
-                    Estos términos se rigen e interpretan de acuerdo con las leyes del Estado de Florida, EE.UU.,
-                    sin consideración a conflictos de principios legales.
-                  </p>
+                  <h4 className="mb-3 font-semibold">{t('s8.s81Title')}</h4>
+                  <p>{t('s8.s81Text')}</p>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">8.2 Arbitraje</h4>
-                  <p className="mb-3">
-                    Cualquier disputa relacionada con estos términos se resolverá mediante arbitraje vinculante
-                    bajo las reglas de la American Arbitration Association (AAA), excepto que:
-                  </p>
+                  <h4 className="mb-3 font-semibold">{t('s8.s82Title')}</h4>
+                  <p className="mb-3">{t('s8.s82Intro')}</p>
                   <ul className="ml-6 space-y-2">
-                    <li className="list-disc">Puedes presentar reclamos en tribunal de reclamos menores si calificas</li>
-                    <li className="list-disc">Podemos buscar medidas cautelares en tribunales para proteger propiedad intelectual</li>
+                    <li className="list-disc">{t('s8.arb1')}</li>
+                    <li className="list-disc">{t('s8.arb2')}</li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-semibold">8.3 Renuncia a Acciones Colectivas</h4>
-                  <p className="font-semibold text-foreground">
-                    Aceptas resolver disputas solo de manera individual. Renuncias al derecho de participar en
-                    demandas colectivas, acciones de clase o arbitrajes colectivos.
-                  </p>
+                  <h4 className="mb-3 font-semibold">{t('s8.s83Title')}</h4>
+                  <p className="font-semibold text-foreground">{t('s8.s83Text')}</p>
                 </div>
               </div>
             </div>
 
-            {/* 9. Modificaciones */}
+            {/* 9. Modifications */}
             <div className="mb-12">
-              <h2 className="mb-6 text-3xl">9. Modificaciones de Términos</h2>
+              <h2 className="mb-6 text-3xl">{t('s9.title')}</h2>
               <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios significativos
-                  se notificarán mediante:
-                </p>
+                <p>{t('s9.intro')}</p>
                 <ul className="ml-6 space-y-2">
-                  <li className="list-disc">Email a tu cuenta registrada (30 días antes de la entrada en vigor)</li>
-                  <li className="list-disc">Aviso en la plataforma</li>
-                  <li className="list-disc">Actualización de la fecha "Última actualización"</li>
+                  <li className="list-disc">{t('s9.n1')}</li>
+                  <li className="list-disc">{t('s9.n2')}</li>
+                  <li className="list-disc">{t('s9.n3')}</li>
                 </ul>
-                <p>
-                  El uso continuado después de modificaciones constituye aceptación. Si no estás de acuerdo,
-                  debes cerrar tu cuenta antes de que entren en vigor.
-                </p>
+                <p>{t('s9.continued')}</p>
               </div>
             </div>
 
-            {/* 10. Disposiciones Generales */}
+            {/* 10. General Provisions */}
             <div className="mb-12">
-              <h2 className="mb-6 text-3xl">10. Disposiciones Generales</h2>
+              <h2 className="mb-6 text-3xl">{t('s10.title')}</h2>
               <div className="space-y-4 text-muted-foreground">
                 <ul className="ml-6 space-y-3">
                   <li className="list-disc">
-                    <strong className="text-foreground">Totalidad del acuerdo:</strong> Estos términos constituyen
-                    el acuerdo completo entre tú y GYDI
+                    <strong className="text-foreground">{t('s10.g1')}</strong> {t('s10.g1Text')}
                   </li>
                   <li className="list-disc">
-                    <strong className="text-foreground">Divisibilidad:</strong> Si alguna disposición es inválida,
-                    las demás permanecen vigentes
+                    <strong className="text-foreground">{t('s10.g2')}</strong> {t('s10.g2Text')}
                   </li>
                   <li className="list-disc">
-                    <strong className="text-foreground">No renuncia:</strong> Nuestra falta de ejercicio de un derecho
-                    no constituye renuncia
+                    <strong className="text-foreground">{t('s10.g3')}</strong> {t('s10.g3Text')}
                   </li>
                   <li className="list-disc">
-                    <strong className="text-foreground">Cesión:</strong> No puedes transferir estos términos;
-                    podemos ceder sin restricción
+                    <strong className="text-foreground">{t('s10.g4')}</strong> {t('s10.g4Text')}
                   </li>
                   <li className="list-disc">
-                    <strong className="text-foreground">Supervivencia:</strong> Las disposiciones que por naturaleza
-                    deben sobrevivir la terminación (propiedad intelectual, limitación de responsabilidad, etc.)
-                    permanecerán vigentes
+                    <strong className="text-foreground">{t('s10.g5')}</strong> {t('s10.g5Text')}
                   </li>
                 </ul>
               </div>
@@ -610,17 +511,20 @@ export default function TermsPage() {
 
             {/* Contact */}
             <div className="rounded-3xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-blue-500/5 p-8">
-              <h2 className="mb-4 text-3xl">Contacto Legal</h2>
+              <h2 className="mb-4 text-3xl">{t('contact.title')}</h2>
               <div className="space-y-3 text-muted-foreground">
-                <p>
-                  Para preguntas sobre estos términos:
-                </p>
+                <p>{t('contact.intro')}</p>
                 <div className="space-y-1">
-                  <p><strong className="text-foreground">Email:</strong>{' '}
+                  <p>
+                    <strong className="text-foreground">{t('contact.email')}</strong>{' '}
                     <a href="mailto:legal@gydi.com" className="text-primary hover:underline">legal@gydi.com</a>
                   </p>
-                  <p><strong className="text-foreground">Dirección Legal:</strong> GYDI Inc., 123 Business Avenue, Miami, FL 33101, USA</p>
-                  <p><strong className="text-foreground">Teléfono:</strong> +1 (234) 567-890</p>
+                  <p>
+                    <strong className="text-foreground">{t('contact.address')}</strong> {t('contact.addressValue')}
+                  </p>
+                  <p>
+                    <strong className="text-foreground">{t('contact.phone')}</strong> +1 (234) 567-890
+                  </p>
                 </div>
               </div>
             </div>

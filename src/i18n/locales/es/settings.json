@@ -1,0 +1,61 @@
+{
+  "title": "Configuración",
+  "subtitle": "Administra tu cuenta y preferencias",
+  "tabs": {
+    "profile": "Perfil",
+    "membership": "Membresía",
+    "payment": "Pagos",
+    "notifications": "Notificaciones",
+    "security": "Seguridad"
+  },
+  "profile": {
+    "sectionTitle": "Información General",
+    "photo": "Foto de Perfil",
+    "photoDesc": "JPG, PNG, GIF o WebP. Máximo 10MB",
+    "changePhoto": "Cambiar Foto",
+    "uploading": "Subiendo..."
+  },
+  "membership": {
+    "sectionTitle": "Membresía y Suscripción",
+    "sectionSubtitle": "Administra tu plan de suscripción, métodos de pago y facturación",
+    "viewDetails": "Ver detalles completos",
+    "currentPlan": "Tu Plan Actual",
+    "currentPlanDesc": "Accede a la página de suscripción para ver tu plan actual, cambiar de plan, administrar métodos de pago y ver tu historial de facturación.",
+    "manageSubscription": "Administrar Suscripción",
+    "changePlan": "Cambiar Plan",
+    "changePlanDesc": "Actualiza o cambia tu plan de membresía",
+    "viewPlans": "Ver Planes Disponibles",
+    "paymentMethods": "Métodos de Pago",
+    "paymentMethodsDesc": "Administra tus tarjetas y métodos de pago",
+    "managePayments": "Administrar Pagos",
+    "helpTitle": "💡 ¿Necesitas ayuda?",
+    "helpDesc": "Si tienes preguntas sobre tu membresía, planes o facturación, visita nuestra página de ayuda o contacta a soporte."
+  },
+  "payment": {
+    "bankTitle": "Información Bancaria",
+    "bankName": "Nombre del Banco",
+    "accountNumber": "Número de Cuenta",
+    "clabe": "CLABE Interbancaria",
+    "paypalTitle": "PayPal",
+    "paypalEmail": "Correo de PayPal",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando..."
+  },
+  "notifications": {
+    "emailTitle": "Notificaciones por Email",
+    "approvedCommissions": "Comisiones Aprobadas",
+    "approvedCommissionsDesc": "Notificación cuando tus comisiones sean aprobadas",
+    "newsPromotions": "Noticias y Promociones",
+    "newsPromotionsDesc": "Recibe actualizaciones sobre nuevas propiedades y ofertas",
+    "pushTitle": "Notificaciones Push",
+    "commissions": "Comisiones",
+    "commissionsDesc": "Alertas sobre el estado de tus comisiones",
+    "savePreferences": "Guardar Preferencias"
+  },
+  "security": {
+    "changePassword": "Cambiar Contraseña",
+    "dangerZone": "Zona de Peligro",
+    "dangerDesc": "Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, asegúrate de que realmente quieres hacer esto.",
+    "deleteAccount": "Eliminar Cuenta"
+  }
+}

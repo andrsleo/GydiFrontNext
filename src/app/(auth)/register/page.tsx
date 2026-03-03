@@ -17,11 +17,13 @@ import { Label } from '@/components/ui/label';
 import { ProgressBar } from '@/components/shared/progress-bar';
 import type { PlanCode } from '@/lib/utils/plan-selection';
 import { PLAN_FEATURES } from '@/lib/constants/plans';
+import { useTranslation } from '@/hooks/use-translation';
 
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { register: registerUser, isLoading } = useAuth();
+  const { t } = useTranslation('auth');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<PlanCode | null>(null);
 
@@ -51,7 +53,7 @@ function RegisterForm() {
     const result = await registerUser(data, selectedPlan || undefined);
 
     if (!result.success) {
-      setErrorMessage(result.error || 'Error al registrar usuario');
+      setErrorMessage(result.error || t('register.errorDefault'));
       return;
     }
 
@@ -78,12 +80,12 @@ function RegisterForm() {
 
         <div>
           <h2 className="mt-6 text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
-            Crea tu cuenta en GYDI
+            {t('register.title')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            ¿Ya tienes cuenta?{' '}
+            {t('register.hasAccount')}{' '}
             <Link href="/login" className="font-medium text-primary hover:text-primary/90">
-              Inicia sesión
+              {t('register.loginLink')}
             </Link>
           </p>
         </div>
@@ -104,7 +106,7 @@ function RegisterForm() {
                   )}
                 </div>
                 <p className="mt-1 text-sm text-gray-600">
-                  {planDetails.priceDisplay} • Comisión Afiliado: {planDetails.affiliate.commissionDisplay}
+                  {planDetails.priceDisplay} • {t('register.affiliateCommission')}: {planDetails.affiliate.commissionDisplay}
                 </p>
               </div>
               <CheckCircle2 className="h-8 w-8 text-primary" />
@@ -132,7 +134,7 @@ function RegisterForm() {
           <div className="space-y-4 rounded-md shadow-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <Label htmlFor="firstName">Nombre</Label>
+                <Label htmlFor="firstName">{t('register.firstNameLabel')}</Label>
                 <Input
                   id="firstName"
                   type="text"
@@ -147,7 +149,7 @@ function RegisterForm() {
               </div>
 
               <div>
-                <Label htmlFor="lastName">Apellido</Label>
+                <Label htmlFor="lastName">{t('register.lastNameLabel')}</Label>
                 <Input
                   id="lastName"
                   type="text"
@@ -163,7 +165,7 @@ function RegisterForm() {
             </div>
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('register.emailLabel')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -178,7 +180,7 @@ function RegisterForm() {
             </div>
 
             <div>
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">{t('register.passwordLabel')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -197,7 +199,7 @@ function RegisterForm() {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
+              <Label htmlFor="confirmPassword">{t('register.confirmPasswordLabel')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -213,7 +215,7 @@ function RegisterForm() {
 
             <div>
               <Label htmlFor="phoneNumber">
-                Teléfono <span className="text-gray-400">(opcional)</span>
+                {t('register.phoneLabel')} <span className="text-gray-400">{t('register.phoneOptional')}</span>
               </Label>
               <div className="mt-1">
                 <Controller
@@ -221,7 +223,7 @@ function RegisterForm() {
                   control={control}
                   render={({ field: { onChange, value } }) => (
                     <PhoneInput
-                      placeholder="Ingresa tu número de teléfono"
+                      placeholder={t('register.phonePlaceholder')}
                       value={value}
                       onChange={onChange}
                       defaultCountry="CO"
@@ -244,9 +246,9 @@ function RegisterForm() {
               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
             />
             <label htmlFor="acceptTerms" className="ml-2 block text-sm text-gray-900">
-              Acepto los{' '}
+              {t('register.acceptTerms')}{' '}
               <Link href="/terms" className="font-medium text-primary hover:text-primary/90">
-                Términos y Condiciones
+                {t('register.termsLink')}
               </Link>
             </label>
             {errors.acceptTerms && (
@@ -258,15 +260,15 @@ function RegisterForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creando cuenta...
+                {t('register.creating')}
               </>
             ) : isPaidPlan ? (
               <>
-                Continuar al Pago
+                {t('register.submitPaid')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </>
             ) : (
-              'Crear Cuenta'
+              t('register.submitFree')
             )}
           </Button>
         </form>

@@ -23,6 +23,7 @@ import { PaymentMethodsSection } from '@/features/subscriptions/components/payme
 import { AddPaymentMethodDialog } from '@/features/subscriptions/components/add-payment-method-dialog';
 import { DeletePaymentMethodDialog } from '@/features/subscriptions/components/delete-payment-method-dialog';
 import { useSubscriptionPage } from '@/features/subscriptions/hooks/use-subscription-page';
+import { useTranslation } from '@/hooks/use-translation';
 import { CreditCard } from 'lucide-react';
 
 /* MEMBERSHIPS_DISABLED — descomentar cuando se reactiven membresías
@@ -37,6 +38,7 @@ import { getRecommendedUpgradePlan } from '@/lib/utils/subscription';
 */
 
 export default function SubscriptionPage() {
+  const { t } = useTranslation('subscription');
   const {
     dialogs,
     methodToDelete,
@@ -87,7 +89,7 @@ export default function SubscriptionPage() {
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8 space-y-8">
       {/* Header */}
-      <PageHeader />
+      <PageHeader t={t} />
 
       {/* MEMBERSHIPS_DISABLED — cuando se reactiven, volver a grid de 2 columnas:
       <div className="grid gap-6 lg:grid-cols-2">
@@ -152,7 +154,7 @@ export default function SubscriptionPage() {
   );
 }
 
-function PageHeader() {
+function PageHeader({ t }: { t: (key: string) => string }) {
   return (
     <div className="flex items-start gap-4">
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
@@ -160,10 +162,10 @@ function PageHeader() {
       </div>
       <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Medios de Pago
+          {t('paymentMethods.title')}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-          Agrega o elimina tus tarjetas de crédito o débito. Tu tarjeta activa se usará para cualquier cargo de la plataforma.
+          {t('paymentMethods.subtitle')}
         </p>
       </div>
     </div>

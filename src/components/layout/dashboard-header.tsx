@@ -6,6 +6,8 @@ import { Bell, Settings, LogOut } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { CurrencySelector } from '@/components/shared/currency-selector';
+import { LanguageSelector } from '@/components/shared/language-selector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,11 +26,13 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useProfileByUserId } from '@/features/auth/hooks/use-profile';
+import { useTranslation } from '@/hooks/use-translation';
 
 export function DashboardHeader() {
   const user = useUser();
   const { mutate: logout } = useLogout();
   const router = useRouter();
+  const { t } = useTranslation('common');
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const userId = user?.id ? Number(user.id) : null;
   const { data: profile } = useProfileByUserId(userId!, {
@@ -56,6 +60,8 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
+          {/* <CurrencySelector className="hidden sm:flex" /> */}
+          <LanguageSelector className="hidden sm:flex" />
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
@@ -95,7 +101,7 @@ export function DashboardHeader() {
                 className="cursor-pointer rounded-lg px-3 py-2.5 transition-colors hover:bg-primary/10 focus:bg-primary/10"
               >
                 <Settings className="mr-3 h-4 w-4 text-primary" />
-                <span className="font-medium">Configuración</span>
+                <span className="font-medium">{t('user.settings')}</span>
               </DropdownMenuItem>
 
               <DropdownMenuSeparator className="my-2" />
@@ -105,7 +111,7 @@ export function DashboardHeader() {
                 className="cursor-pointer rounded-lg px-3 py-2.5 transition-colors hover:bg-red-50 focus:bg-red-50 text-red-600 dark:hover:bg-red-950/50 dark:focus:bg-red-950/50"
               >
                 <LogOut className="mr-3 h-4 w-4" />
-                <span className="font-medium">Cerrar Sesión</span>
+                <span className="font-medium">{t('user.logout')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -116,18 +122,18 @@ export function DashboardHeader() {
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Cerrar sesión?</AlertDialogTitle>
+            <AlertDialogTitle>{t('user.logoutTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              ¿Estás seguro de que deseas cerrar sesión? Deberás iniciar sesión nuevamente para acceder a tu cuenta.
+              {t('user.logoutDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmLogout}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
-              Cerrar Sesión
+              {t('user.logout')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

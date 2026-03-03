@@ -66,3 +66,11 @@ export const dashboardKeys = {
   bookingStats: () => [...dashboardKeys.all, 'booking-stats'] as const,
   commissionStats: () => [...dashboardKeys.all, 'commission-stats'] as const,
 };
+
+/**
+ * Exchange Rate Query Keys
+ */
+export const exchangeRateKeys = {
+  all: ['exchange-rate'] as const,
+  current: () => [...exchangeRateKeys.all, 'current'] as const,
+};

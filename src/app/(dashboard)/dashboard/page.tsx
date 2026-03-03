@@ -15,28 +15,11 @@ import { useProfileByUserId } from '@/features/auth/hooks/use-profile';
 import { useSubscription } from '@/features/subscriptions/hooks/use-subscription';
 import { UpgradeModal } from '@/features/subscriptions/components/upgrade-modal';
 import { useAffiliateDashboard } from '@/features/dashboard/hooks/use-dashboard-stats';
+import { formatCurrency } from '@/lib/utils/format';
 import type { PlanCode } from '@/lib/utils/plan-selection';
-
-// ─── Status badge configuration ────────────────────────────────────────────────
-
-const statusConfig: Record<string, { label: string; color: string }> = {
-  PENDING: { label: 'Pendiente', color: 'bg-yellow-100 text-yellow-800' },
-  APPROVED: { label: 'Aprobado', color: 'bg-blue-100 text-blue-800' },
-  PAID: { label: 'Pagado', color: 'bg-green-100 text-green-800' },
-  REJECTED: { label: 'Rechazado', color: 'bg-red-100 text-red-800' },
-};
+import { useTranslation } from '@/hooks/use-translation';
 
 // ─── Formatting helpers ─────────────────────────────────────────────────────────
-
-function formatCurrency(value: number | null | undefined): string {
-  if (value == null) return '--';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-}
 
 function formatCount(value: number | null | undefined): string {
   if (value == null) return '--';
@@ -107,6 +90,16 @@ function DashboardContent() {
   const searchParams = useSearchParams();
   const userId = user?.id ? Number(user.id) : null;
 
+  const { t } = useTranslation('dashboard');
+
+  // ─── Status badge configuration ────────────────────────────────────────────
+  const statusConfig: Record<string, { label: string; color: string }> = {
+    PENDING: { label: t('status.PENDING'), color: 'bg-yellow-100 text-yellow-800' },
+    APPROVED: { label: t('status.APPROVED'), color: 'bg-blue-100 text-blue-800' },
+    PAID: { label: t('status.PAID'), color: 'bg-green-100 text-green-800' },
+    REJECTED: { label: t('status.REJECTED'), color: 'bg-red-100 text-red-800' },
+  };
+
   const { data: profile } = useProfileByUserId(userId!, {
     enabled: !!userId,
   });
@@ -149,18 +142,18 @@ function DashboardContent() {
   // Stat card definitions — each references its own loading/error state
   const statCards = [
     {
-      name: 'Comisiones Ganadas',
+      name: t('stats.commissionsEarned'),
       isLoading: loading.isLoadingCommissionStats,
       hasError: !!error.commissionStatsError,
       value: error.commissionStatsError
         ? '--'
-        : formatCurrency(data.commissionStats?.totalEarned),
+        : formatCurrency(data.commissionStats?.totalEarned ?? 0),
       icon: DollarSign,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
     {
-      name: 'Links Activos',
+      name: t('stats.activeLinks'),
       isLoading: loading.isLoadingReferralStats,
       hasError: !!error.referralStatsError,
       value: error.referralStatsError
@@ -171,7 +164,7 @@ function DashboardContent() {
       bgColor: 'bg-blue-50',
     },
     {
-      name: 'Clicks (30 dias)',
+      name: t('stats.clicks30Days'),
       isLoading: loading.isLoadingReferralStats,
       hasError: !!error.referralStatsError,
       value: error.referralStatsError
@@ -182,7 +175,7 @@ function DashboardContent() {
       bgColor: 'bg-purple-50',
     },
     {
-      name: 'Tasa de Conversion',
+      name: t('stats.conversionRate'),
       isLoading: loading.isLoadingReferralStats,
       hasError: !!error.referralStatsError,
       value: error.referralStatsError
@@ -202,10 +195,10 @@ function DashboardContent() {
       {/* Welcome Section */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          Bienvenido, {displayName}
+          {t('welcome')}, {displayName}
         </h1>
         <p className="text-muted-foreground">
-          Aqui esta un resumen de tu actividad reciente
+          {t('subtitle')}
         </p>
       </div>
 
@@ -214,7 +207,7 @@ function DashboardContent() {
         <div className="flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-800">
           <AlertCircle className="h-4 w-4 flex-shrink-0" />
           <span>
-            Algunos datos no pudieron cargarse. Verifica tu conexion o intenta recargar la pagina.
+            {t('loadingError')}
           </span>
         </div>
       )}
@@ -259,12 +252,12 @@ function DashboardContent() {
         {/* Recent Commissions */}
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Comisiones Recientes</h2>
+            <h2 className="text-xl font-semibold">{t('recentCommissions.title')}</h2>
             <a
               href="/dashboard/ganancias"
               className="text-sm font-medium text-primary hover:underline"
             >
-              Ver todas
+              {t('recentCommissions.viewAll')}
             </a>
           </div>
 
@@ -272,8 +265,7 @@ function DashboardContent() {
             <CommissionsTableSkeleton />
           ) : recentCommissions.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
-              Aun no tienes comisiones registradas. Comparte tus links de referido para
-              comenzar a ganar.
+              {t('recentCommissions.empty')}
             </p>
           ) : (
             <div className="space-y-4">
@@ -289,7 +281,7 @@ function DashboardContent() {
                   >
                     <div className="flex-1">
                       <p className="font-medium">
-                        {`Propiedad #${commission.propertyId}`}
+                        {t('recentCommissions.property', { id: String(commission.propertyId) })}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {formatDate(commission.createdAt)}
@@ -314,7 +306,7 @@ function DashboardContent() {
 
         {/* Quick Actions */}
         <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-semibold">Acciones Rapidas</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t('quickActions.title')}</h2>
 
           <div className="space-y-3">
             <a
@@ -325,9 +317,9 @@ function DashboardContent() {
                 <Users className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium">Generar Link de Referido</p>
+                <p className="font-medium">{t('quickActions.generateLink')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Crea un nuevo enlace para compartir
+                  {t('quickActions.generateLinkDesc')}
                 </p>
               </div>
             </a>
@@ -340,9 +332,9 @@ function DashboardContent() {
                 <TrendingUp className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="font-medium">Ver Estadisticas</p>
+                <p className="font-medium">{t('quickActions.viewStats')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Analiza tu rendimiento de referidos
+                  {t('quickActions.viewStatsDesc')}
                 </p>
               </div>
             </a>
@@ -355,9 +347,9 @@ function DashboardContent() {
                 <DollarSign className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="font-medium">Ver Ganancias</p>
+                <p className="font-medium">{t('quickActions.viewEarnings')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Revisa el historial de comisiones
+                  {t('quickActions.viewEarningsDesc')}
                 </p>
               </div>
             </a>
@@ -385,7 +377,7 @@ export default function DashboardPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center">
-          <div className="text-muted-foreground">Cargando...</div>
+          <div className="text-muted-foreground">Loading...</div>
         </div>
       }
     >

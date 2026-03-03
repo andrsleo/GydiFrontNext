@@ -67,8 +67,8 @@ export default function UserCommissionsPage() {
           {canRefer && canPublish
             ? 'afiliado y anfitrión'
             : canRefer
-            ? 'afiliado'
-            : 'anfitrión'}
+              ? 'afiliado'
+              : 'anfitrión'}
         </p>
       </div>
 
@@ -90,8 +90,7 @@ export default function UserCommissionsPage() {
               <h3 className="font-semibold mb-2">💰 Comisiones que Recibes</h3>
               <p className="text-sm text-muted-foreground">
                 Estas comisiones te las <strong>paga la plataforma</strong> cuando alguien
-                reserva a través de tus enlaces de referido. El porcentaje depende de tu
-                plan (FREE: 2%, PRO: 5%, ELITE: 10%).
+                reserva a través de tus enlaces de referido.
               </p>
             </div>
             <AffiliateCommissionsTable />
@@ -105,8 +104,7 @@ export default function UserCommissionsPage() {
               <h3 className="font-semibold mb-2">💸 Comisiones que Pagas</h3>
               <p className="text-sm text-muted-foreground">
                 Estas comisiones las <strong>pagas tú a la plataforma</strong> cuando se
-                reserva una de tus propiedades a través de un afiliado. El porcentaje
-                depende de tu plan (FREE: 25%, PRO: 20%, ELITE: 15%).
+                reserva una de tus propiedades a través de un afiliado.
               </p>
             </div>
             <HostCommissionsTable />

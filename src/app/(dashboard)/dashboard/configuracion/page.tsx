@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useUser } from '@/features/auth/hooks/use-auth';
+import { useTranslation } from '@/hooks/use-translation';
 import { User, CreditCard, Bell, Shield, Camera, Save, Crown } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,6 +18,7 @@ import { toast } from 'sonner';
 
 export default function ConfiguracionPage() {
   const user = useUser();
+  const { t } = useTranslation('settings');
   const [activeTab, setActiveTab] = useState<'profile' | 'membership' | 'payment' | 'notifications' | 'security'>('profile');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
@@ -156,11 +158,11 @@ export default function ConfiguracionPage() {
   const currentImage = profileImage || profile?.coverImageUrl || null;
 
   const tabs = [
-    { id: 'profile', label: 'Perfil', icon: User },
-    { id: 'membership', label: 'Membresía', icon: Crown },
-    { id: 'payment', label: 'Pagos', icon: CreditCard },
-    { id: 'notifications', label: 'Notificaciones', icon: Bell },
-    { id: 'security', label: 'Seguridad', icon: Shield },
+    { id: 'profile', label: t('tabs.profile'), icon: User },
+    { id: 'membership', label: t('tabs.membership'), icon: Crown },
+    { id: 'payment', label: t('tabs.payment'), icon: CreditCard },
+    { id: 'notifications', label: t('tabs.notifications'), icon: Bell },
+    { id: 'security', label: t('tabs.security'), icon: Shield },
   ];
 
   // No need for loading/auth checks - middleware handles authentication
@@ -170,9 +172,9 @@ export default function ConfiguracionPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Configuración</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Administra tu cuenta y preferencias
+          {t('subtitle')}
         </p>
       </div>
 
@@ -202,7 +204,7 @@ export default function ConfiguracionPage() {
       {activeTab === 'profile' && (
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <h2 className="mb-6 text-xl font-semibold">Información General</h2>
+            <h2 className="mb-6 text-xl font-semibold">{t('profile.sectionTitle')}</h2>
 
             {/* Profile Photo */}
             <div className="mb-6 flex items-center gap-6">
@@ -232,9 +234,9 @@ export default function ConfiguracionPage() {
                 </button>
               </div>
               <div>
-                <p className="font-medium">Foto de Perfil</p>
+                <p className="font-medium">{t('profile.photo')}</p>
                 <p className="text-sm text-muted-foreground">
-                  JPG, PNG, GIF o WebP. Máximo 10MB
+                  {t('profile.photoDesc')}
                 </p>
                 <input
                   ref={fileInputRef}
@@ -252,7 +254,7 @@ export default function ConfiguracionPage() {
                   onClick={handleChangePhotoClick}
                   disabled={isUploadingImage}
                 >
-                  {isUploadingImage ? 'Subiendo...' : 'Cambiar Foto'}
+                  {isUploadingImage ? t('profile.uploading') : t('profile.changePhoto')}
                 </Button>
               </div>
             </div>
@@ -281,14 +283,14 @@ export default function ConfiguracionPage() {
           <div className="rounded-lg border bg-card p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-semibold">Membresía y Suscripción</h2>
+                <h2 className="text-xl font-semibold">{t('membership.sectionTitle')}</h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Administra tu plan de suscripción, métodos de pago y facturación
+                  {t('membership.sectionSubtitle')}
                 </p>
               </div>
               <Link href="/dashboard/subscription">
                 <Button variant="outline" size="sm">
-                  Ver detalles completos
+                  {t('membership.viewDetails')}
                 </Button>
               </Link>
             </div>
@@ -299,16 +301,15 @@ export default function ConfiguracionPage() {
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <Crown className="h-5 w-5 text-primary" />
-                      <h3 className="text-lg font-semibold">Tu Plan Actual</h3>
+                      <h3 className="text-lg font-semibold">{t('membership.currentPlan')}</h3>
                     </div>
                     <p className="text-muted-foreground text-sm mb-4">
-                      Accede a la página de suscripción para ver tu plan actual, cambiar de plan,
-                      administrar métodos de pago y ver tu historial de facturación.
+                      {t('membership.currentPlanDesc')}
                     </p>
                     <Link href="/dashboard/subscription">
                       <Button className="w-full sm:w-auto">
                         <Crown className="mr-2 h-4 w-4" />
-                        Administrar Suscripción
+                        {t('membership.manageSubscription')}
                       </Button>
                     </Link>
                   </div>
@@ -317,35 +318,34 @@ export default function ConfiguracionPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border p-4">
-                  <h4 className="font-medium mb-2">Cambiar Plan</h4>
+                  <h4 className="font-medium mb-2">{t('membership.changePlan')}</h4>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Actualiza o cambia tu plan de membresía
+                    {t('membership.changePlanDesc')}
                   </p>
                   <Link href="/dashboard/subscription/plans">
                     <Button variant="outline" size="sm" className="w-full">
-                      Ver Planes Disponibles
+                      {t('membership.viewPlans')}
                     </Button>
                   </Link>
                 </div>
 
                 <div className="rounded-lg border p-4">
-                  <h4 className="font-medium mb-2">Métodos de Pago</h4>
+                  <h4 className="font-medium mb-2">{t('membership.paymentMethods')}</h4>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Administra tus tarjetas y métodos de pago
+                    {t('membership.paymentMethodsDesc')}
                   </p>
                   <Link href="/dashboard/subscription">
                     <Button variant="outline" size="sm" className="w-full">
-                      Administrar Pagos
+                      {t('membership.managePayments')}
                     </Button>
                   </Link>
                 </div>
               </div>
 
               <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
-                <h4 className="font-medium text-blue-900 mb-2">💡 ¿Necesitas ayuda?</h4>
+                <h4 className="font-medium text-blue-900 mb-2">{t('membership.helpTitle')}</h4>
                 <p className="text-sm text-blue-800">
-                  Si tienes preguntas sobre tu membresía, planes o facturación,
-                  visita nuestra página de ayuda o contacta a soporte.
+                  {t('membership.helpDesc')}
                 </p>
               </div>
             </div>
@@ -357,11 +357,11 @@ export default function ConfiguracionPage() {
       {activeTab === 'payment' && (
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <h2 className="mb-6 text-xl font-semibold">Información Bancaria</h2>
+            <h2 className="mb-6 text-xl font-semibold">{t('payment.bankTitle')}</h2>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="bankName">Nombre del Banco</Label>
+                <Label htmlFor="bankName">{t('payment.bankName')}</Label>
                 <Input
                   id="bankName"
                   value={paymentData.bankName}
@@ -372,7 +372,7 @@ export default function ConfiguracionPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="accountNumber">Número de Cuenta</Label>
+                <Label htmlFor="accountNumber">{t('payment.accountNumber')}</Label>
                 <Input
                   id="accountNumber"
                   value={paymentData.accountNumber}
@@ -383,7 +383,7 @@ export default function ConfiguracionPage() {
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="clabe">CLABE Interbancaria</Label>
+                <Label htmlFor="clabe">{t('payment.clabe')}</Label>
                 <Input
                   id="clabe"
                   value={paymentData.clabe}
@@ -398,16 +398,16 @@ export default function ConfiguracionPage() {
             <div className="mt-6 flex justify-end">
               <Button onClick={handleSavePayment} disabled={isSaving} className="gap-2">
                 <Save className="h-4 w-4" />
-                {isSaving ? 'Guardando...' : 'Guardar Cambios'}
+                {isSaving ? t('payment.saving') : t('payment.saveChanges')}
               </Button>
             </div>
           </div>
 
           <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <h2 className="mb-6 text-xl font-semibold">PayPal</h2>
+            <h2 className="mb-6 text-xl font-semibold">{t('payment.paypalTitle')}</h2>
 
             <div className="space-y-2">
-              <Label htmlFor="paypalEmail">Correo de PayPal</Label>
+              <Label htmlFor="paypalEmail">{t('payment.paypalEmail')}</Label>
               <Input
                 id="paypalEmail"
                 type="email"
@@ -421,7 +421,7 @@ export default function ConfiguracionPage() {
             <div className="mt-6 flex justify-end">
               <Button onClick={handleSavePayment} disabled={isSaving} className="gap-2">
                 <Save className="h-4 w-4" />
-                {isSaving ? 'Guardando...' : 'Guardar Cambios'}
+                {isSaving ? t('payment.saving') : t('payment.saveChanges')}
               </Button>
             </div>
           </div>
@@ -432,15 +432,15 @@ export default function ConfiguracionPage() {
       {activeTab === 'notifications' && (
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <h2 className="mb-6 text-xl font-semibold">Notificaciones por Email</h2>
+            <h2 className="mb-6 text-xl font-semibold">{t('notifications.emailTitle')}</h2>
 
             <div className="space-y-4">
 
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Comisiones Aprobadas</p>
+                  <p className="font-medium">{t('notifications.approvedCommissions')}</p>
                   <p className="text-sm text-muted-foreground">
-                    Notificación cuando tus comisiones sean aprobadas
+                    {t('notifications.approvedCommissionsDesc')}
                   </p>
                 </div>
                 <input
@@ -458,9 +458,9 @@ export default function ConfiguracionPage() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Noticias y Promociones</p>
+                  <p className="font-medium">{t('notifications.newsPromotions')}</p>
                   <p className="text-sm text-muted-foreground">
-                    Recibe actualizaciones sobre nuevas propiedades y ofertas
+                    {t('notifications.newsPromotionsDesc')}
                   </p>
                 </div>
                 <input
@@ -479,15 +479,15 @@ export default function ConfiguracionPage() {
           </div>
 
           <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <h2 className="mb-6 text-xl font-semibold">Notificaciones Push</h2>
+            <h2 className="mb-6 text-xl font-semibold">{t('notifications.pushTitle')}</h2>
 
             <div className="space-y-4">
 
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Comisiones</p>
+                  <p className="font-medium">{t('notifications.commissions')}</p>
                   <p className="text-sm text-muted-foreground">
-                    Alertas sobre el estado de tus comisiones
+                    {t('notifications.commissionsDesc')}
                   </p>
                 </div>
                 <input
@@ -507,7 +507,7 @@ export default function ConfiguracionPage() {
             <div className="mt-6 flex justify-end">
               <Button onClick={handleSaveNotifications} disabled={isSaving} className="gap-2">
                 <Save className="h-4 w-4" />
-                {isSaving ? 'Guardando...' : 'Guardar Preferencias'}
+                {isSaving ? t('payment.saving') : t('notifications.savePreferences')}
               </Button>
             </div>
           </div>
@@ -518,17 +518,16 @@ export default function ConfiguracionPage() {
       {activeTab === 'security' && (
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-6 shadow-sm">
-            <h2 className="mb-6 text-xl font-semibold">Cambiar Contraseña</h2>
+            <h2 className="mb-6 text-xl font-semibold">{t('security.changePassword')}</h2>
             <ChangePasswordForm />
           </div>
 
           <div className="rounded-lg border border-red-200 bg-red-50 p-6">
-            <h2 className="mb-4 text-xl font-semibold text-red-900">Zona de Peligro</h2>
+            <h2 className="mb-4 text-xl font-semibold text-red-900">{t('security.dangerZone')}</h2>
             <p className="mb-4 text-sm text-red-800">
-              Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, asegúrate
-              de que realmente quieres hacer esto.
+              {t('security.dangerDesc')}
             </p>
-            <Button variant="destructive">Eliminar Cuenta</Button>
+            <Button variant="destructive">{t('security.deleteAccount')}</Button>
           </div>
         </div>
       )}

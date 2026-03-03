@@ -1,0 +1,72 @@
+{
+  "hero": {
+    "badge": "We're here to help you",
+    "title1": "Contact",
+    "titleHighlight": "Our Team",
+    "subtitle": "Have questions? We're available 24/7 to answer your questions about rental properties, referrals and commissions."
+  },
+  "info": {
+    "title": "Contact Information",
+    "email": {
+      "label": "Email",
+      "value": "support@gydi.com"
+    },
+    "phone": {
+      "label": "Phone",
+      "value": "+1 (234) 567-890"
+    },
+    "address": {
+      "label": "Main Office",
+      "line1": "123 Business Avenue",
+      "line2": "Miami, FL 33101",
+      "line3": "United States"
+    },
+    "hours": {
+      "label": "Business Hours",
+      "weekdays": "Monday - Friday: 9:00 - 18:00",
+      "saturday": "Saturday: 10:00 - 14:00",
+      "sunday": "Sunday: Closed",
+      "support": "Online support 24/7"
+    }
+  },
+  "form": {
+    "title": "Send Us a Message",
+    "success": "Message sent successfully! We'll get back to you soon.",
+    "name": {
+      "label": "Full Name",
+      "placeholder": "Your name"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "your@email.com"
+    },
+    "subject": {
+      "label": "Subject",
+      "placeholder": "Select a topic",
+      "hosting": "Publish a rental property",
+      "affiliate": "Affiliate Program",
+      "support": "Technical Support",
+      "billing": "Billing and Payments",
+      "partnership": "Business Partnerships",
+      "other": "Other"
+    },
+    "message": {
+      "label": "Message",
+      "placeholder": "Tell us how we can help you..."
+    },
+    "submit": "Send Message",
+    "sending": "Sending...",
+    "privacy": "By submitting this form, you agree to our",
+    "privacyLink": "Privacy Policy"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find quick answers to the most common questions",
+    "q1": "How long does it take for the team to respond?",
+    "a1": "Our team responds in less than 24 hours on business days. For urgent support, contact us by phone or live chat.",
+    "q2": "Can I schedule a call with an advisor?",
+    "a2": "Yes, Pro and Elite plan users have access to scheduled video calls. Free users can request calls based on availability.",
+    "q3": "Do you offer support in other languages?",
+    "a3": "We currently offer support in Spanish and English. We will be adding more languages soon."
+  }
+}

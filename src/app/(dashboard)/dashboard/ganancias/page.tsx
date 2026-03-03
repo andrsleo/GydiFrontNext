@@ -20,38 +20,7 @@ import {
 } from '@/features/commissions/hooks/use-affiliate-commissions';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
 import type { CommissionStatus } from '@/features/commissions/types';
-
-// Status configuration
-const statusConfig: Record<
-  CommissionStatus,
-  { label: string; variant: 'default' | 'secondary' | 'success' | 'warning'; icon: any }
-> = {
-  PENDING: {
-    label: 'Pendiente (7 días)',
-    variant: 'warning',
-    icon: Clock,
-  },
-  APPROVED: {
-    label: 'Aprobado',
-    variant: 'secondary',
-    icon: CheckCircle,
-  },
-  PAID: {
-    label: 'Pagado',
-    variant: 'success',
-    icon: CheckCircle,
-  },
-  WITHHELD: {
-    label: 'Retenido',
-    variant: 'default',
-    icon: AlertCircle,
-  },
-  FAILED: {
-    label: 'Fallido',
-    variant: 'default',
-    icon: AlertCircle,
-  },
-};
+import { useTranslation } from '@/hooks/use-translation';
 
 // Calculate next payout date (1st or 15th of month)
 function getNextPayoutDate(): string {
@@ -94,6 +63,39 @@ function getDaysUntilNextPayout(): number {
 
 export default function GananciasPage() {
   const [statusFilter, setStatusFilter] = useState<CommissionStatus | 'ALL'>('ALL');
+  const { t } = useTranslation('earnings');
+
+  // Status configuration
+  const statusConfig: Record<
+    CommissionStatus,
+    { label: string; variant: 'default' | 'secondary' | 'success' | 'warning'; icon: any }
+  > = {
+    PENDING: {
+      label: t('status.PENDING'),
+      variant: 'warning',
+      icon: Clock,
+    },
+    APPROVED: {
+      label: t('status.APPROVED'),
+      variant: 'secondary',
+      icon: CheckCircle,
+    },
+    PAID: {
+      label: t('status.PAID'),
+      variant: 'success',
+      icon: CheckCircle,
+    },
+    WITHHELD: {
+      label: t('status.WITHHELD'),
+      variant: 'default',
+      icon: AlertCircle,
+    },
+    FAILED: {
+      label: t('status.FAILED'),
+      variant: 'default',
+      icon: AlertCircle,
+    },
+  };
 
   // Fetch data from API
   const {
@@ -114,7 +116,7 @@ export default function GananciasPage() {
       <div className="flex h-[50vh] items-center justify-center">
         <div className="text-center">
           <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-          <p className="mt-4 text-sm text-muted-foreground">Cargando ganancias...</p>
+          <p className="mt-4 text-sm text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     );
@@ -127,7 +129,7 @@ export default function GananciasPage() {
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>
-          No se pudieron cargar tus ganancias. Por favor, intenta de nuevo.
+          {t('error')}
         </AlertDescription>
       </Alert>
     );
@@ -146,9 +148,9 @@ export default function GananciasPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Ganancias de Afiliado</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Monitorea tus comisiones y próximos pagos
+            {t('subtitle')}
           </p>
         </div>
       </div>
@@ -158,7 +160,7 @@ export default function GananciasPage() {
         {/* Pending Amount */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pendiente (7 días)</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('stats.pending')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -166,7 +168,7 @@ export default function GananciasPage() {
               {formatCurrency(pendingAmount)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Período de disputa activo
+              {t('stats.pendingDesc')}
             </p>
           </CardContent>
         </Card>
@@ -174,7 +176,7 @@ export default function GananciasPage() {
         {/* Approved Amount */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Aprobado</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('stats.approved')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -183,11 +185,11 @@ export default function GananciasPage() {
             </div>
             {isEligibleForPayout ? (
               <p className="text-xs text-green-600">
-                ✓ Elegible para pago {nextPayoutDate}
+                {t('stats.eligiblePayout', { date: nextPayoutDate })}
               </p>
             ) : (
               <p className="text-xs text-muted-foreground">
-                Mínimo $50 requerido (falta {formatCurrency(50 - approvedAmount)})
+                {t('stats.minimumRequired', { amount: formatCurrency(50 - approvedAmount) })}
               </p>
             )}
           </CardContent>
@@ -196,13 +198,13 @@ export default function GananciasPage() {
         {/* Paid Amount */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Pagado</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('stats.totalPaid')}</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(paidAmount)}</div>
             <p className="text-xs text-muted-foreground">
-              Histórico total
+              {t('stats.historicalTotal')}
             </p>
           </CardContent>
         </Card>
@@ -210,12 +212,12 @@ export default function GananciasPage() {
         {/* Next Payout */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Próximo Pago</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('stats.nextPayout')}</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">
-              {daysUntilPayout} días
+              {t('stats.days', { count: String(daysUntilPayout) })}
             </div>
             <p className="text-xs text-muted-foreground">
               {nextPayoutDate}
@@ -227,16 +229,15 @@ export default function GananciasPage() {
       {/* Alert Banner */}
       <Alert>
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Información sobre pagos</AlertTitle>
+        <AlertTitle>{t('alert.title')}</AlertTitle>
         <AlertDescription>
-          Los pagos se procesan el <strong>1 y 15 de cada mes</strong>. Mínimo: <strong>$50 USD</strong>.
-          Las comisiones se aprueban 7 días después del check-out del huésped (período de disputa).
+          {t('alert.desc')}
         </AlertDescription>
       </Alert>
 
       {/* Filters */}
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">Filtrar:</span>
+        <span className="text-sm font-medium">{t('filter.label')}</span>
         {(['ALL', 'PENDING', 'APPROVED', 'PAID'] as const).map((status) => (
           <Button
             key={status}
@@ -244,7 +245,7 @@ export default function GananciasPage() {
             size="sm"
             onClick={() => setStatusFilter(status)}
           >
-            {status === 'ALL' ? 'Todas' : statusConfig[status].label}
+            {status === 'ALL' ? t('filter.all') : statusConfig[status].label}
           </Button>
         ))}
       </div>
@@ -252,9 +253,9 @@ export default function GananciasPage() {
       {/* Commissions Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Historial de Comisiones</CardTitle>
+          <CardTitle>{t('table.title')}</CardTitle>
           <CardDescription>
-            {commissions.length} comisión(es) encontrada(s)
+            {t('table.found', { count: String(commissions.length) })}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -262,7 +263,7 @@ export default function GananciasPage() {
             <div className="py-12 text-center">
               <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground" />
               <p className="mt-4 text-sm text-muted-foreground">
-                No tienes comisiones aún. ¡Comienza a referir usuarios para ganar!
+                {t('table.empty')}
               </p>
             </div>
           ) : (
@@ -271,25 +272,25 @@ export default function GananciasPage() {
                 <thead className="border-b">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Booking
+                      {t('table.booking')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Referido
+                      {t('table.referral')}
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Monto Reserva
+                      {t('table.bookingAmount')}
                     </th>
                     <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Tasa
+                      {t('table.rate')}
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Comisión
+                      {t('table.commission')}
                     </th>
                     <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Estado
+                      {t('table.status')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Fecha
+                      {t('table.date')}
                     </th>
                   </tr>
                 </thead>
@@ -341,7 +342,7 @@ export default function GananciasPage() {
                             </p>
                             {commission.paidAt && (
                               <p className="text-xs text-muted-foreground">
-                                Pagado: {formatDate(commission.paidAt)}
+                                {t('table.paidOn', { date: formatDate(commission.paidAt) })}
                               </p>
                             )}
                           </div>

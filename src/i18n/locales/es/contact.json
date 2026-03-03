@@ -1,0 +1,72 @@
+{
+  "hero": {
+    "badge": "Estamos aquí para ayudarte",
+    "title1": "Contacta con",
+    "titleHighlight": "Nuestro Equipo",
+    "subtitle": "¿Tienes preguntas? Estamos disponibles 24/7 para resolver tus dudas sobre propiedades en renta, referidos y comisiones."
+  },
+  "info": {
+    "title": "Información de Contacto",
+    "email": {
+      "label": "Email",
+      "value": "support@gydi.com"
+    },
+    "phone": {
+      "label": "Teléfono",
+      "value": "+1 (234) 567-890"
+    },
+    "address": {
+      "label": "Oficina Principal",
+      "line1": "123 Business Avenue",
+      "line2": "Miami, FL 33101",
+      "line3": "Estados Unidos"
+    },
+    "hours": {
+      "label": "Horario de Atención",
+      "weekdays": "Lunes - Viernes: 9:00 - 18:00",
+      "saturday": "Sábado: 10:00 - 14:00",
+      "sunday": "Domingo: Cerrado",
+      "support": "Soporte online 24/7"
+    }
+  },
+  "form": {
+    "title": "Envíanos un Mensaje",
+    "success": "¡Mensaje enviado con éxito! Te responderemos pronto.",
+    "name": {
+      "label": "Nombre Completo",
+      "placeholder": "Tu nombre"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "tu@email.com"
+    },
+    "subject": {
+      "label": "Asunto",
+      "placeholder": "Selecciona un tema",
+      "hosting": "Publicar propiedad en renta",
+      "affiliate": "Programa de Afiliados",
+      "support": "Soporte Técnico",
+      "billing": "Facturación y Pagos",
+      "partnership": "Alianzas Comerciales",
+      "other": "Otro"
+    },
+    "message": {
+      "label": "Mensaje",
+      "placeholder": "Cuéntanos en qué podemos ayudarte..."
+    },
+    "submit": "Enviar Mensaje",
+    "sending": "Enviando...",
+    "privacy": "Al enviar este formulario, aceptas nuestra",
+    "privacyLink": "Política de Privacidad"
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Encuentra respuestas rápidas a las dudas más comunes",
+    "q1": "¿Cuánto tiempo tarda en responder el equipo?",
+    "a1": "Nuestro equipo responde en menos de 24 horas en días hábiles. Para soporte urgente, contáctanos por teléfono o chat en vivo.",
+    "q2": "¿Puedo agendar una llamada con un asesor?",
+    "a2": "Sí, los usuarios de planes Pro y Elite tienen acceso a videollamadas programadas. Usuarios Free pueden solicitar llamadas según disponibilidad.",
+    "q3": "¿Ofrecen soporte en otros idiomas?",
+    "a3": "Actualmente ofrecemos soporte en español e inglés. Próximamente agregaremos más idiomas."
+  }
+}

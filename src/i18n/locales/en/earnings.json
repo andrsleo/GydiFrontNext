@@ -1,0 +1,45 @@
+{
+  "title": "Affiliate Earnings",
+  "subtitle": "Monitor your commissions and upcoming payments",
+  "loading": "Loading earnings...",
+  "error": "We couldn't load your earnings. Please try again.",
+  "stats": {
+    "pending": "Pending (7 days)",
+    "pendingDesc": "Active dispute period",
+    "approved": "Approved",
+    "eligiblePayout": "✓ Eligible for payment {{date}}",
+    "minimumRequired": "Minimum $50 required ({{amount}} remaining)",
+    "totalPaid": "Total Paid",
+    "historicalTotal": "Historical total",
+    "nextPayout": "Next Payment",
+    "days": "{{count}} days"
+  },
+  "alert": {
+    "title": "Payment information",
+    "desc": "Payments are processed on the 1st and 15th of each month. Minimum: $50 USD. Commissions are approved 7 days after the guest checks out (dispute period)."
+  },
+  "filter": {
+    "label": "Filter:",
+    "all": "All"
+  },
+  "table": {
+    "title": "Commission History",
+    "found": "{{count}} commission(s) found",
+    "booking": "Booking",
+    "referral": "Referral",
+    "bookingAmount": "Booking Amount",
+    "rate": "Rate",
+    "commission": "Commission",
+    "status": "Status",
+    "date": "Date",
+    "paidOn": "Paid: {{date}}",
+    "empty": "You don't have any commissions yet. Start referring users to earn!"
+  },
+  "status": {
+    "PENDING": "Pending (7 days)",
+    "APPROVED": "Approved",
+    "PAID": "Paid",
+    "WITHHELD": "Withheld",
+    "FAILED": "Failed"
+  }
+}

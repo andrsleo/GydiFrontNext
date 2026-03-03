@@ -3,8 +3,11 @@
 import { Button } from '@/components/ui/button';
 import { Mail, MapPin, Phone, Clock, Send, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ContactPage() {
+  const { t } = useTranslation('contact');
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -46,19 +49,18 @@ export default function ContactPage() {
           <div className="mx-auto max-w-3xl text-center">
             <div className="animate-fade-in-down mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
               <MessageSquare className="h-4 w-4" />
-              <span>Estamos aquí para ayudarte</span>
+              <span>{t('hero.badge')}</span>
             </div>
 
             <h1 className="animate-fade-in-up mb-6">
-              Contacta con{' '}
+              {t('hero.title1')}{' '}
               <span className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Nuestro Equipo
+                {t('hero.titleHighlight')}
               </span>
             </h1>
 
             <p className="animate-fade-in-up animation-delay-100 text-lg text-muted-foreground">
-              ¿Tienes preguntas? Estamos disponibles 24/7 para resolver tus dudas sobre propiedades en renta,
-              referidos y comisiones.
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -70,7 +72,7 @@ export default function ContactPage() {
           <div className="grid gap-8 lg:grid-cols-3 lg:gap-12">
             {/* Contact Information */}
             <div className="lg:col-span-1">
-              <h2 className="mb-8">Información de Contacto</h2>
+              <h2 className="mb-8">{t('info.title')}</h2>
 
               <div className="space-y-6">
                 {/* Email */}
@@ -79,9 +81,9 @@ export default function ContactPage() {
                     <Mail className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="mb-1 font-semibold">Email</h4>
+                    <h4 className="mb-1 font-semibold">{t('info.email.label')}</h4>
                     <a href="mailto:support@gydi.com" className="text-sm text-muted-foreground transition-colors hover:text-primary">
-                      support@gydi.com
+                      {t('info.email.value')}
                     </a>
                   </div>
                 </div>
@@ -92,9 +94,9 @@ export default function ContactPage() {
                     <Phone className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <h4 className="mb-1 font-semibold">Teléfono</h4>
+                    <h4 className="mb-1 font-semibold">{t('info.phone.label')}</h4>
                     <a href="tel:+1234567890" className="text-sm text-muted-foreground transition-colors hover:text-blue-600">
-                      +1 (234) 567-890
+                      {t('info.phone.value')}
                     </a>
                   </div>
                 </div>
@@ -105,11 +107,11 @@ export default function ContactPage() {
                     <MapPin className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
-                    <h4 className="mb-1 font-semibold">Oficina Principal</h4>
+                    <h4 className="mb-1 font-semibold">{t('info.address.label')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      123 Business Avenue<br />
-                      Miami, FL 33101<br />
-                      Estados Unidos
+                      {t('info.address.line1')}<br />
+                      {t('info.address.line2')}<br />
+                      {t('info.address.line3')}
                     </p>
                   </div>
                 </div>
@@ -120,14 +122,14 @@ export default function ContactPage() {
                     <Clock className="h-6 w-6 text-orange-600" />
                   </div>
                   <div>
-                    <h4 className="mb-1 font-semibold">Horario de Atención</h4>
+                    <h4 className="mb-1 font-semibold">{t('info.hours.label')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      Lunes - Viernes: 9:00 - 18:00<br />
-                      Sábado: 10:00 - 14:00<br />
-                      Domingo: Cerrado
+                      {t('info.hours.weekdays')}<br />
+                      {t('info.hours.saturday')}<br />
+                      {t('info.hours.sunday')}
                     </p>
                     <p className="mt-2 text-xs text-muted-foreground">
-                      Soporte online 24/7
+                      {t('info.hours.support')}
                     </p>
                   </div>
                 </div>
@@ -137,11 +139,11 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div className="lg:col-span-2">
               <div className="rounded-3xl border-2 border-border/50 bg-card p-6 shadow-xl sm:p-8">
-                <h2 className="mb-6">Envíanos un Mensaje</h2>
+                <h2 className="mb-6">{t('form.title')}</h2>
 
                 {submitStatus === 'success' && (
                   <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-                    ¡Mensaje enviado con éxito! Te responderemos pronto.
+                    {t('form.success')}
                   </div>
                 )}
 
@@ -149,7 +151,7 @@ export default function ContactPage() {
                   {/* Name */}
                   <div>
                     <label htmlFor="name" className="mb-2 block text-sm font-semibold text-foreground">
-                      Nombre Completo <span className="text-red-500">*</span>
+                      {t('form.name.label')} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -159,14 +161,14 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full rounded-xl border border-border/50 bg-background px-4 py-3 text-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                      placeholder="Tu nombre"
+                      placeholder={t('form.name.placeholder')}
                     />
                   </div>
 
                   {/* Email */}
                   <div>
                     <label htmlFor="email" className="mb-2 block text-sm font-semibold text-foreground">
-                      Email <span className="text-red-500">*</span>
+                      {t('form.email.label')} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -176,14 +178,14 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       className="w-full rounded-xl border border-border/50 bg-background px-4 py-3 text-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                      placeholder="tu@email.com"
+                      placeholder={t('form.email.placeholder')}
                     />
                   </div>
 
                   {/* Subject */}
                   <div>
                     <label htmlFor="subject" className="mb-2 block text-sm font-semibold text-foreground">
-                      Asunto <span className="text-red-500">*</span>
+                      {t('form.subject.label')} <span className="text-red-500">*</span>
                     </label>
                     <select
                       id="subject"
@@ -193,20 +195,20 @@ export default function ContactPage() {
                       onChange={handleChange}
                       className="w-full rounded-xl border border-border/50 bg-background px-4 py-3 text-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
-                      <option value="">Selecciona un tema</option>
-                      <option value="hosting">Publicar propiedad en renta</option>
-                      <option value="affiliate">Programa de Afiliados</option>
-                      <option value="support">Soporte Técnico</option>
-                      <option value="billing">Facturación y Pagos</option>
-                      <option value="partnership">Alianzas Comerciales</option>
-                      <option value="other">Otro</option>
+                      <option value="">{t('form.subject.placeholder')}</option>
+                      <option value="hosting">{t('form.subject.hosting')}</option>
+                      <option value="affiliate">{t('form.subject.affiliate')}</option>
+                      <option value="support">{t('form.subject.support')}</option>
+                      <option value="billing">{t('form.subject.billing')}</option>
+                      <option value="partnership">{t('form.subject.partnership')}</option>
+                      <option value="other">{t('form.subject.other')}</option>
                     </select>
                   </div>
 
                   {/* Message */}
                   <div>
                     <label htmlFor="message" className="mb-2 block text-sm font-semibold text-foreground">
-                      Mensaje <span className="text-red-500">*</span>
+                      {t('form.message.label')} <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       id="message"
@@ -216,7 +218,7 @@ export default function ContactPage() {
                       onChange={handleChange}
                       rows={6}
                       className="w-full rounded-xl border border-border/50 bg-background px-4 py-3 text-sm transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                      placeholder="Cuéntanos en qué podemos ayudarte..."
+                      placeholder={t('form.message.placeholder')}
                     />
                   </div>
 
@@ -230,19 +232,19 @@ export default function ContactPage() {
                     {isSubmitting ? (
                       <>
                         <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                        Enviando...
+                        {t('form.sending')}
                       </>
                     ) : (
                       <>
                         <Send className="mr-2 h-5 w-5" />
-                        Enviar Mensaje
+                        {t('form.submit')}
                       </>
                     )}
                   </Button>
 
                   <p className="text-xs text-muted-foreground">
-                    Al enviar este formulario, aceptas nuestra{' '}
-                    <a href="/privacy" className="text-primary hover:underline">Política de Privacidad</a>.
+                    {t('form.privacy')}{' '}
+                    <a href="/privacy" className="text-primary hover:underline">{t('form.privacyLink')}</a>.
                   </p>
                 </form>
               </div>
@@ -255,38 +257,36 @@ export default function ContactPage() {
       <section className="border-t bg-gradient-to-b from-gray-50/50 to-white py-16 sm:py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="mb-4">Preguntas Frecuentes</h2>
+            <h2 className="mb-4">{t('faq.title')}</h2>
             <p className="mb-12 text-lg text-muted-foreground">
-              Encuentra respuestas rápidas a las dudas más comunes
+              {t('faq.subtitle')}
             </p>
 
             <div className="space-y-4 text-left">
               <details className="group rounded-2xl border border-border/50 bg-card p-6">
                 <summary className="cursor-pointer font-semibold text-foreground">
-                  ¿Cuánto tiempo tarda en responder el equipo?
+                  {t('faq.q1')}
                 </summary>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Nuestro equipo responde en menos de 24 horas en días hábiles. Para soporte urgente,
-                  contáctanos por teléfono o chat en vivo.
+                  {t('faq.a1')}
                 </p>
               </details>
 
               <details className="group rounded-2xl border border-border/50 bg-card p-6">
                 <summary className="cursor-pointer font-semibold text-foreground">
-                  ¿Puedo agendar una llamada con un asesor?
+                  {t('faq.q2')}
                 </summary>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Sí, los usuarios de planes Pro y Elite tienen acceso a videollamadas programadas.
-                  Usuarios Free pueden solicitar llamadas según disponibilidad.
+                  {t('faq.a2')}
                 </p>
               </details>
 
               <details className="group rounded-2xl border border-border/50 bg-card p-6">
                 <summary className="cursor-pointer font-semibold text-foreground">
-                  ¿Ofrecen soporte en otros idiomas?
+                  {t('faq.q3')}
                 </summary>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Actualmente ofrecemos soporte en español e inglés. Próximamente agregaremos más idiomas.
+                  {t('faq.a3')}
                 </p>
               </details>
             </div>

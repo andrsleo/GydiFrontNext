@@ -1,0 +1,61 @@
+{
+  "title": "Settings",
+  "subtitle": "Manage your account and preferences",
+  "tabs": {
+    "profile": "Profile",
+    "membership": "Membership",
+    "payment": "Payments",
+    "notifications": "Notifications",
+    "security": "Security"
+  },
+  "profile": {
+    "sectionTitle": "General Information",
+    "photo": "Profile Photo",
+    "photoDesc": "JPG, PNG, GIF or WebP. Maximum 10MB",
+    "changePhoto": "Change Photo",
+    "uploading": "Uploading..."
+  },
+  "membership": {
+    "sectionTitle": "Membership & Subscription",
+    "sectionSubtitle": "Manage your subscription plan, payment methods and billing",
+    "viewDetails": "View full details",
+    "currentPlan": "Your Current Plan",
+    "currentPlanDesc": "Access the subscription page to view your current plan, change plans, manage payment methods and view your billing history.",
+    "manageSubscription": "Manage Subscription",
+    "changePlan": "Change Plan",
+    "changePlanDesc": "Update or change your membership plan",
+    "viewPlans": "View Available Plans",
+    "paymentMethods": "Payment Methods",
+    "paymentMethodsDesc": "Manage your cards and payment methods",
+    "managePayments": "Manage Payments",
+    "helpTitle": "💡 Need help?",
+    "helpDesc": "If you have questions about your membership, plans or billing, visit our help page or contact support."
+  },
+  "payment": {
+    "bankTitle": "Bank Information",
+    "bankName": "Bank Name",
+    "accountNumber": "Account Number",
+    "clabe": "CLABE Interbank",
+    "paypalTitle": "PayPal",
+    "paypalEmail": "PayPal Email",
+    "saveChanges": "Save Changes",
+    "saving": "Saving..."
+  },
+  "notifications": {
+    "emailTitle": "Email Notifications",
+    "approvedCommissions": "Approved Commissions",
+    "approvedCommissionsDesc": "Notification when your commissions are approved",
+    "newsPromotions": "News and Promotions",
+    "newsPromotionsDesc": "Receive updates about new properties and offers",
+    "pushTitle": "Push Notifications",
+    "commissions": "Commissions",
+    "commissionsDesc": "Alerts about the status of your commissions",
+    "savePreferences": "Save Preferences"
+  },
+  "security": {
+    "changePassword": "Change Password",
+    "dangerZone": "Danger Zone",
+    "dangerDesc": "Once you delete your account, there is no going back. Please make sure you really want to do this.",
+    "deleteAccount": "Delete Account"
+  }
+}

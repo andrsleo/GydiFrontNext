@@ -12,14 +12,13 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/hooks/use-translation';
 
 /**
- * Convierte errores técnicos en mensajes amigables para el usuario
+ * Returns a translation key for the given technical error string
  */
-function getFriendlyErrorMessage(error: string | null): string {
-  if (!error) {
-    return 'Email o contraseña incorrectos. Por favor, verifica tus credenciales e intenta nuevamente.';
-  }
+function getFriendlyErrorKey(error: string | null): string {
+  if (!error) return 'login.errors.default';
 
   const errorLower = error.toLowerCase();
 
@@ -30,7 +29,7 @@ function getFriendlyErrorMessage(error: string | null): string {
     errorLower.includes('many requests') ||
     errorLower.includes('429')
   ) {
-    return 'Has realizado demasiados intentos de inicio de sesión. Por favor, espera unos minutos antes de intentar nuevamente.';
+    return 'login.errors.rateLimit';
   }
 
   // Errores de credenciales
@@ -46,17 +45,17 @@ function getFriendlyErrorMessage(error: string | null): string {
     errorLower.includes('autenticación') ||
     errorLower.includes('custom_error')
   ) {
-    return 'El email o la contraseña están incorrectos. Por favor, verifica e intenta nuevamente.';
+    return 'login.errors.credentials';
   }
 
   // Usuario no encontrado
   if (errorLower.includes('not found') || errorLower.includes('404')) {
-    return 'No encontramos una cuenta con ese email. ¿Ya te registraste?';
+    return 'login.errors.notFound';
   }
 
   // Usuario bloqueado o suspendido
   if (errorLower.includes('blocked') || errorLower.includes('suspended') || errorLower.includes('disabled')) {
-    return 'Tu cuenta ha sido temporalmente deshabilitada. Contacta al soporte para más información.';
+    return 'login.errors.blocked';
   }
 
   // Problemas de red
@@ -66,22 +65,23 @@ function getFriendlyErrorMessage(error: string | null): string {
     errorLower.includes('connection') ||
     errorLower.includes('fetch')
   ) {
-    return 'No pudimos conectarnos al servidor. Verifica tu conexión a internet e intenta nuevamente.';
+    return 'login.errors.network';
   }
 
   // Error del servidor
   if (errorLower.includes('500') || errorLower.includes('server')) {
-    return 'Estamos experimentando problemas técnicos. Por favor, intenta nuevamente en unos minutos.';
+    return 'login.errors.server';
   }
 
   // Error genérico
-  return 'Ocurrió un error al iniciar sesión. Por favor, verifica tus datos e intenta nuevamente.';
+  return 'login.errors.generic';
 }
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, isLoading } = useAuth();
+  const { t } = useTranslation('auth');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -100,10 +100,11 @@ function LoginContent() {
   useEffect(() => {
     const urlError = searchParams?.get('error');
     if (urlError) {
-      const friendlyMessage = getFriendlyErrorMessage(urlError);
-      const isRateLimited = friendlyMessage.toLowerCase().includes('demasiados intentos');
+      const errorKey = getFriendlyErrorKey(urlError);
+      const friendlyMessage = t(errorKey);
+      const isRateLimited = errorKey === 'login.errors.rateLimit';
 
-      toast.error('No pudimos iniciar sesión', {
+      toast.error(t('login.errorTitle'), {
         description: friendlyMessage,
         duration: isRateLimited ? 10000 : 8000,
         closeButton: true,
@@ -113,7 +114,7 @@ function LoginContent() {
       // Clear the error from URL without page reload
       router.replace('/login', { scroll: false });
     }
-  }, [searchParams, router]);
+  }, [searchParams, router, t]);
 
   // Show toast for validation errors
   useEffect(() => {
@@ -162,15 +163,12 @@ function LoginContent() {
     const result = await login(data);
 
     if (!result.success) {
-      // Convertir error técnico a mensaje amigable
-      const friendlyMessage = getFriendlyErrorMessage(result.error || null);
-
-      // Check if error contains rate limit info
-      const isRateLimited = friendlyMessage.toLowerCase().includes('demasiados intentos') ||
-        friendlyMessage.toLowerCase().includes('too many');
+      const errorKey = getFriendlyErrorKey(result.error || null);
+      const friendlyMessage = t(errorKey);
+      const isRateLimited = errorKey === 'login.errors.rateLimit';
 
       // Show error toast
-      toast.error('No pudimos iniciar sesión', {
+      toast.error(t('login.errorTitle'), {
         description: friendlyMessage,
         duration: isRateLimited ? 10000 : 8000, // Longer duration for better UX
         closeButton: true, // Allow user to close it manually
@@ -182,8 +180,8 @@ function LoginContent() {
       // to query remaining attempts.
     } else {
       // Show success toast
-      toast.success('¡Bienvenido de nuevo!', {
-        description: 'Iniciaste sesión correctamente. Redirigiendo...',
+      toast.success(t('login.successTitle'), {
+        description: t('login.successDesc'),
         duration: 3000,
       });
 
@@ -199,12 +197,12 @@ function LoginContent() {
       <div className="w-full max-w-md space-y-8">
         <div>
           <h2 className="mt-6 text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
-            Inicia Sesión en GYDI Properties
+            {t('login.title')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            ¿No tienes cuenta?{' '}
+            {t('login.noAccount')}{' '}
             <Link href="/register" className="font-medium text-primary hover:text-primary/90">
-              Regístrate gratis
+              {t('login.registerLink')}
             </Link>
           </p>
         </div>
@@ -218,7 +216,7 @@ function LoginContent() {
 
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('login.emailLabel')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -233,7 +231,7 @@ function LoginContent() {
             </div>
 
             <div>
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">{t('login.passwordLabel')}</Label>
               <div className="relative mt-1">
                 <Input
                   id="password"
@@ -273,20 +271,20 @@ function LoginContent() {
                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 cursor-pointer">
-                Recordarme
+                {t('login.rememberMe')}
               </label>
             </div>
 
             <div className="text-sm">
               <Link href="/forgot-password" className="font-medium text-primary hover:text-primary/90">
-                ¿Olvidaste tu contraseña?
+                {t('login.forgotPassword')}
               </Link>
             </div>
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            {isLoading ? t('login.submitting') : t('login.submit')}
           </Button>
         </form>
       </div>
@@ -300,7 +298,7 @@ export default function LoginPage() {
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-          <p className="mt-4 text-sm text-muted-foreground">Cargando...</p>
+          <p className="mt-4 text-sm text-muted-foreground">Loading...</p>
         </div>
       </div>
     }>

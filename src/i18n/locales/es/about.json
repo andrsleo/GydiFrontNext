@@ -1,0 +1,65 @@
+{
+  "hero": {
+    "badge": "Nuestra Historia",
+    "title1": "El complemento que",
+    "titleHighlight": "Airbnb no tiene",
+    "subtitle": "Conectamos anfitriones, afiliados y viajeros en una plataforma de referidos que convierte el boca a boca en comisiones reales por reservas vacacionales."
+  },
+  "story": {
+    "title": "Nuestra Historia",
+    "p1": "GYDI nació en 2024 con una visión clara:",
+    "p1Bold": "democratizar el acceso al mercado inmobiliario",
+    "p1End": "y crear oportunidades de ingresos para personas de todo el mundo.",
+    "p2Start": "Observamos que Airbnb resolvió la visibilidad, pero dejó un vacío enorme: nadie ayudaba a los anfitriones a activar su propia red de referidos. Por otro lado, miles de personas querían ganar dinero recomendando alojamientos, pero no tenían herramientas para hacerlo.",
+    "p2Bold": "Vimos la oportunidad de unir ambos mundos.",
+    "p3Start": "Hoy, GYDI es",
+    "p3Main": "el complemento de Airbnb",
+    "p3Middle": "que activa una red de",
+    "p3Affiliates": "afiliados motivados",
+    "p3End1": "que refieren",
+    "p3Properties": "propiedades en renta a huéspedes reales",
+    "p3End2": ". Anfitriones consiguen más reservas. Afiliados generan comisiones. Todos ganan.",
+    "p4Start": "Con más de",
+    "p4Bold": "500 afiliados activos",
+    "p4End": "y cientos de propiedades listadas, estamos construyendo el futuro del mercado inmobiliario digital."
+  },
+  "mission": {
+    "title": "Nuestra Misión",
+    "text": "Crear oportunidades de ingresos reales para cualquier persona, conectando anfitriones con propiedades en renta y afiliados con viajeros a través de una plataforma de referidos transparente y justa."
+  },
+  "vision": {
+    "title": "Nuestra Visión",
+    "text": "Ser la red de referidos de propiedades en renta más grande de Latinoamérica, donde anfitriones de Airbnb y afiliados colaboran para generar ingresos reales de manera simple y transparente."
+  },
+  "values": {
+    "title": "Nuestros Valores",
+    "v1": "Transparencia total",
+    "v2": "Innovación constante",
+    "v3": "Comunidad primero",
+    "v4": "Pagos justos y puntuales"
+  },
+  "why": {
+    "title": "¿Por Qué Elegir GYDI?",
+    "subtitle": "Nos diferenciamos por nuestro compromiso con la excelencia y la transparencia",
+    "f1Title": "100% Seguro",
+    "f1Desc": "Transacciones protegidas y datos encriptados. Tu seguridad es nuestra prioridad.",
+    "f2Title": "Comisiones Justas",
+    "f2Desc": "Hasta 10% de comisión por referidos. Las tasas más competitivas del mercado.",
+    "f3Title": "Comunidad Global",
+    "f3Desc": "Más de 500 afiliados activos en todo el mundo generando ingresos con nosotros.",
+    "f4Title": "Soporte Premium",
+    "f4Desc": "Equipo dedicado disponible 24/7 para resolver tus dudas y ayudarte a crecer."
+  },
+  "stats": {
+    "affiliates": "Afiliados Activos",
+    "properties": "Propiedades Listadas",
+    "commissions": "Pagado en Comisiones",
+    "countries": "Países Activos"
+  },
+  "cta": {
+    "title": "¿Listo para Unirte a Nosotros?",
+    "subtitle": "Únete como afiliado y gana comisiones por referir propiedades en renta, o como anfitrión y amplía el alcance de tu propiedad con nuestra red de referidos",
+    "register": "Crear Cuenta Gratis",
+    "contact": "Contáctanos"
+  }
+}

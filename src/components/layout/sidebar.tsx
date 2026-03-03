@@ -44,6 +44,7 @@ import {
   getStaggerDelay,
   withReducedMotion,
 } from '@/lib/utils/animations';
+import { useTranslation } from '@/hooks/use-translation';
 import type { MenuItem, Role, SubscriptionPlan } from '@/types/navigation';
 
 interface SidebarProps {
@@ -67,6 +68,42 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
+  const { t } = useTranslation('common');
+
+  // Map menu item IDs → translated labels
+  const menuItemLabels: Record<string, string> = {
+    dashboard: t('menu.dashboard'),
+    properties: t('menu.properties'),
+    'properties-my': t('menu.propertiesMy'),
+    'properties-refer': t('menu.propertiesRefer'),
+    referrals: t('menu.referrals'),
+    'referrals-links': t('menu.referralsLinks'),
+    'referrals-stats': t('menu.referralsStats'),
+    bookings: t('menu.bookings'),
+    earnings: t('menu.earnings'),
+    subscription: t('menu.subscription'),
+    settings: t('menu.settings'),
+    admin: t('menu.admin'),
+    'admin-analytics': t('menu.adminAnalytics'),
+    'admin-users': t('menu.adminUsers'),
+    'admin-properties': t('menu.adminProperties'),
+    'admin-bookings': t('menu.adminBookings'),
+    'admin-commissions': t('menu.adminCommissions'),
+    'admin-plans': t('menu.adminPlans'),
+    'admin-config': t('menu.adminConfig'),
+  };
+
+  // Map section IDs → translated labels
+  const sectionLabels: Record<string, string> = {
+    admin: t('menu.adminSection'),
+  };
+
+  // Plan labels with i18n
+  const planLabels: Record<SubscriptionPlan, string> = {
+    FREE: t('plan.free'),
+    PRO: t('plan.pro'),
+    ELITE: t('plan.elite'),
+  };
 
   // Filter menu sections by user role
   const visibleSections = filterSectionsByRole(MENU_SECTIONS, userRole);
@@ -134,10 +171,10 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
             <button
               onClick={() => toggleExpand(item.id)}
               className="flex items-center gap-3 flex-1"
-              aria-label={`Toggle ${item.label}`}
+              aria-label={`Toggle ${menuItemLabels[item.id] ?? item.label}`}
             >
               <item.icon className="h-5 w-5 shrink-0" />
-              <span className="flex-1 text-left truncate">{item.label}</span>
+              <span className="flex-1 text-left truncate">{menuItemLabels[item.id] ?? item.label}</span>
               {isExpanded ? (
                 <ChevronDown className="h-4 w-4 shrink-0" />
               ) : (
@@ -157,7 +194,7 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
 
               {!isCollapsed && (
                 <>
-                  <span className="flex-1 truncate">{item.label}</span>
+                  <span className="flex-1 truncate">{menuItemLabels[item.id] ?? item.label}</span>
 
                   {/* Badge */}
                   {item.badge && (
@@ -194,7 +231,7 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
             {menuItem}
           </TooltipTrigger>
           <TooltipContent side="right" className="font-medium">
-            {item.label}
+            {menuItemLabels[item.id] ?? item.label}
             {item.badge && (
               <span className="ml-2 text-xs opacity-70">
                 {item.badge.label}
@@ -234,7 +271,7 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
             className={cn('ml-auto shrink-0', PLAN_COLORS[subscriptionPlan])}
             variant="outline"
           >
-            {PLAN_LABELS[subscriptionPlan]}
+            {planLabels[subscriptionPlan]}
           </Badge>
         )}
 
@@ -266,7 +303,7 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
               {section.label && !isCollapsed && (
                 <div className="px-3 pt-4 pb-2">
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate">
-                    {section.label}
+                    {sectionLabels[section.id] ?? section.label}
                   </h3>
                 </div>
               )}

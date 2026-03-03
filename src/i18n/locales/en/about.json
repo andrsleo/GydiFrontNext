@@ -1,0 +1,65 @@
+{
+  "hero": {
+    "badge": "Our Story",
+    "title1": "The complement that",
+    "titleHighlight": "Airbnb doesn't have",
+    "subtitle": "We connect hosts, affiliates and travelers in a referral platform that turns word-of-mouth into real commissions from vacation bookings."
+  },
+  "story": {
+    "title": "Our Story",
+    "p1": "GYDI was born in 2024 with a clear vision:",
+    "p1Bold": "democratize access to the real estate market",
+    "p1End": "and create income opportunities for people around the world.",
+    "p2Start": "We observed that Airbnb solved visibility, but left a huge gap: no one was helping hosts activate their own referral network. On the other hand, thousands of people wanted to earn money recommending accommodations, but had no tools to do so.",
+    "p2Bold": "We saw the opportunity to unite both worlds.",
+    "p3Start": "Today, GYDI is",
+    "p3Main": "the Airbnb complement",
+    "p3Middle": "that activates a network of",
+    "p3Affiliates": "motivated affiliates",
+    "p3End1": "who refer",
+    "p3Properties": "rental properties to real guests",
+    "p3End2": ". Hosts get more bookings. Affiliates earn commissions. Everyone wins.",
+    "p4Start": "With over",
+    "p4Bold": "500 active affiliates",
+    "p4End": "and hundreds of listed properties, we are building the future of the digital real estate market."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "text": "Create real income opportunities for anyone, connecting hosts with rental properties and affiliates with travelers through a transparent and fair referral platform."
+  },
+  "vision": {
+    "title": "Our Vision",
+    "text": "To be the largest rental property referral network in Latin America, where Airbnb hosts and affiliates collaborate to generate real income in a simple and transparent way."
+  },
+  "values": {
+    "title": "Our Values",
+    "v1": "Full transparency",
+    "v2": "Constant innovation",
+    "v3": "Community first",
+    "v4": "Fair and timely payments"
+  },
+  "why": {
+    "title": "Why Choose GYDI?",
+    "subtitle": "We stand out for our commitment to excellence and transparency",
+    "f1Title": "100% Secure",
+    "f1Desc": "Protected transactions and encrypted data. Your security is our priority.",
+    "f2Title": "Fair Commissions",
+    "f2Desc": "Up to 10% commission on referrals. The most competitive rates in the market.",
+    "f3Title": "Global Community",
+    "f3Desc": "More than 500 active affiliates worldwide generating income with us.",
+    "f4Title": "Premium Support",
+    "f4Desc": "Dedicated team available 24/7 to answer your questions and help you grow."
+  },
+  "stats": {
+    "affiliates": "Active Affiliates",
+    "properties": "Listed Properties",
+    "commissions": "Paid in Commissions",
+    "countries": "Active Countries"
+  },
+  "cta": {
+    "title": "Ready to Join Us?",
+    "subtitle": "Join as an affiliate and earn commissions for referring rental properties, or as a host and expand your property's reach with our referral network",
+    "register": "Create Free Account",
+    "contact": "Contact Us"
+  }
+}

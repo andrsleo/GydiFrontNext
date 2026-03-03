@@ -5,6 +5,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { AuthProvider } from '@/features/auth/providers/auth-provider';
 import { AuthVerifier } from '@/features/auth/components/auth-verifier';
+import { LocaleHtmlSync } from '@/components/shared/locale-html-sync';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -50,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
@@ -59,6 +60,7 @@ export default function RootLayout({
         className={`${plusJakarta.variable} ${outfit.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
+        <LocaleHtmlSync />
         <Providers>
           <AuthProvider>
             <AuthVerifier />

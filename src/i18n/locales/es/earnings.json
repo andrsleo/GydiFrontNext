@@ -1,0 +1,45 @@
+{
+  "title": "Ganancias de Afiliado",
+  "subtitle": "Monitorea tus comisiones y próximos pagos",
+  "loading": "Cargando ganancias...",
+  "error": "No se pudieron cargar tus ganancias. Por favor, intenta de nuevo.",
+  "stats": {
+    "pending": "Pendiente (7 días)",
+    "pendingDesc": "Período de disputa activo",
+    "approved": "Aprobado",
+    "eligiblePayout": "✓ Elegible para pago {{date}}",
+    "minimumRequired": "Mínimo $50 requerido (falta {{amount}})",
+    "totalPaid": "Total Pagado",
+    "historicalTotal": "Histórico total",
+    "nextPayout": "Próximo Pago",
+    "days": "{{count}} días"
+  },
+  "alert": {
+    "title": "Información sobre pagos",
+    "desc": "Los pagos se procesan el 1 y 15 de cada mes. Mínimo: $50 USD. Las comisiones se aprueban 7 días después del check-out del huésped (período de disputa)."
+  },
+  "filter": {
+    "label": "Filtrar:",
+    "all": "Todas"
+  },
+  "table": {
+    "title": "Historial de Comisiones",
+    "found": "{{count}} comisión(es) encontrada(s)",
+    "booking": "Booking",
+    "referral": "Referido",
+    "bookingAmount": "Monto Reserva",
+    "rate": "Tasa",
+    "commission": "Comisión",
+    "status": "Estado",
+    "date": "Fecha",
+    "paidOn": "Pagado: {{date}}",
+    "empty": "No tienes comisiones aún. ¡Comienza a referir usuarios para ganar!"
+  },
+  "status": {
+    "PENDING": "Pendiente (7 días)",
+    "APPROVED": "Aprobado",
+    "PAID": "Pagado",
+    "WITHHELD": "Retenido",
+    "FAILED": "Fallido"
+  }
+}

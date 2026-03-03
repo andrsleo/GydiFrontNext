@@ -1,0 +1,33 @@
+{
+  "welcome": "Welcome",
+  "subtitle": "Here is a summary of your recent activity",
+  "loadingError": "Some data could not be loaded. Check your connection or try reloading the page.",
+  "stats": {
+    "commissionsEarned": "Commissions Earned",
+    "activeLinks": "Active Links",
+    "clicks30Days": "Clicks (30 days)",
+    "conversionRate": "Conversion Rate"
+  },
+  "recentCommissions": {
+    "title": "Recent Commissions",
+    "viewAll": "View all",
+    "empty": "You don't have any commissions yet. Share your referral links to start earning.",
+    "property": "Property #{{id}}"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "generateLink": "Generate Referral Link",
+    "generateLinkDesc": "Create a new link to share",
+    "viewStats": "View Statistics",
+    "viewStatsDesc": "Analyze your referral performance",
+    "viewEarnings": "View Earnings",
+    "viewEarningsDesc": "Check commission history"
+  },
+  "status": {
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "PAID": "Paid",
+    "REJECTED": "Rejected"
+  },
+  "loading": "Loading..."
+}

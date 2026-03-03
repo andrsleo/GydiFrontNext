@@ -21,18 +21,20 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { useReferralLinks, useReferralStats } from '@/features/referrals/hooks';
 import { formatDate, formatCurrency, formatNumber } from '@/lib/utils/format';
-
-const statusConfig = {
-  ACTIVE: { label: 'Activo', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' },
-  INACTIVE: { label: 'Inactivo', color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' },
-  EXPIRED: { label: 'Expirado', color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' },
-  DELETED: { label: 'Eliminado', color: 'bg-red-200 text-red-900 dark:bg-red-900/50 dark:text-red-300' },
-};
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ReferidosPage() {
   const user = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { t } = useTranslation('referrals');
+
+  const statusConfig = {
+    ACTIVE: { label: t('status.ACTIVE'), color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' },
+    INACTIVE: { label: t('status.INACTIVE'), color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' },
+    EXPIRED: { label: t('status.EXPIRED'), color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' },
+    DELETED: { label: t('status.DELETED'), color: 'bg-red-200 text-red-900 dark:bg-red-900/50 dark:text-red-300' },
+  };
 
   // Fetch real data from API
   const { data: links, isLoading: linksLoading, error: linksError } = useReferralLinks();
@@ -43,33 +45,33 @@ export default function ReferidosPage() {
   // Prepare stats data
   const referralStatsDisplay = stats ? [
     {
-      name: 'Total de Clicks',
+      name: t('stats.totalClicks'),
       value: formatNumber(stats.totalClicks),
-      change: `${stats.clicksLast30Days} en últimos 30 días`,
+      change: t('stats.last30Days', { count: String(stats.clicksLast30Days) }),
       icon: MousePointerClick,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
     },
     {
-      name: 'Conversiones',
+      name: t('stats.conversions'),
       value: formatNumber(stats.totalConversions),
-      change: `+${stats.conversionsLast30Days} este mes`,
+      change: t('stats.thisMonth', { count: String(stats.conversionsLast30Days) }),
       icon: Users,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
     },
     {
-      name: 'Tasa de Conversión',
+      name: t('stats.conversionRate'),
       value: `${stats.overallConversionRate.toFixed(2)}%`,
-      change: stats.overallConversionRate > 3 ? 'Excelente' : 'Promedio',
+      change: stats.overallConversionRate > 3 ? t('stats.excellent') : t('stats.average'),
       icon: TrendingUp,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
     {
-      name: 'Enlaces Activos',
+      name: t('stats.activeLinks'),
       value: formatNumber(stats.activeLinks),
-      change: `${stats.totalLinks} totales`,
+      change: t('stats.total', { count: String(stats.totalLinks) }),
       icon: Calendar,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
@@ -104,12 +106,12 @@ export default function ReferidosPage() {
     return (
       <div className="space-y-6">
         <div className="rounded-lg border border-red-200 bg-red-50 p-6">
-          <h3 className="text-lg font-semibold text-red-900">Error al cargar datos</h3>
+          <h3 className="text-lg font-semibold text-red-900">{t('error.title')}</h3>
           <p className="mt-2 text-sm text-red-700">
-            {linksError?.message || statsError?.message || 'Ocurrió un error inesperado'}
+            {linksError?.message || statsError?.message || t('error.message')}
           </p>
           <Button onClick={() => window.location.reload()} variant="outline" className="mt-4">
-            Reintentar
+            {t('error.retry')}
           </Button>
         </div>
       </div>
@@ -121,15 +123,15 @@ export default function ReferidosPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Referidos</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-1">
-            Monitorea tus enlaces de referido y su rendimiento
+            {t('subtitle')}
           </p>
         </div>
         <Button className="gap-2 w-full sm:w-auto" variant="outline" disabled>
           <Download className="h-4 w-4" />
-          <span className="hidden sm:inline">Exportar Reporte</span>
-          <span className="sm:hidden">Exportar</span>
+          <span className="hidden sm:inline">{t('exportReport')}</span>
+          <span className="sm:hidden">{t('export')}</span>
         </Button>
       </div>
 
@@ -169,7 +171,7 @@ export default function ReferidosPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar por código o propiedad..."
+            placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 h-10"
@@ -177,8 +179,8 @@ export default function ReferidosPage() {
         </div>
         <Button variant="outline" className="gap-2 h-10 whitespace-nowrap" disabled>
           <Calendar className="h-4 w-4" />
-          <span className="hidden sm:inline">Filtrar por Fecha</span>
-          <span className="sm:hidden">Fecha</span>
+          <span className="hidden sm:inline">{t('filterByDate')}</span>
+          <span className="sm:hidden">{t('date')}</span>
         </Button>
       </div>
 
@@ -190,28 +192,28 @@ export default function ReferidosPage() {
             <thead className="border-b bg-muted/50">
               <tr>
                 <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Código
+                  {t('table.code')}
                 </th>
                 <th className="px-4 xl:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Propiedad
+                  {t('table.property')}
                 </th>
                 <th className="px-4 xl:px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Clicks
+                  {t('table.clicks')}
                 </th>
                 <th className="px-4 xl:px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Conversiones
+                  {t('table.conversions')}
                 </th>
                 <th className="px-4 xl:px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Tasa
+                  {t('table.rate')}
                 </th>
                 <th className="px-4 xl:px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Comisión
+                  {t('table.commission')}
                 </th>
                 <th className="px-4 xl:px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Estado
+                  {t('table.status')}
                 </th>
                 <th className="px-4 xl:px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Acciones
+                  {t('table.actions')}
                 </th>
               </tr>
             </thead>
@@ -265,7 +267,7 @@ export default function ReferidosPage() {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => handleCopyLink(link.fullUrl, link.id)}
-                        title="Copiar enlace"
+                        title={t('table.copyLink')}
                       >
                         {copiedId === link.id ? (
                           <Check className="h-4 w-4 text-green-600" />
@@ -278,7 +280,7 @@ export default function ReferidosPage() {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => window.open(link.fullUrl, '_blank')}
-                        title="Abrir enlace"
+                        title={t('table.openLink')}
                       >
                         <ExternalLink className="h-4 w-4" />
                       </Button>
@@ -316,21 +318,21 @@ export default function ReferidosPage() {
               {/* Stats Grid */}
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Clicks</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t('table.clicks')}</p>
                   <p className="text-lg font-semibold">{link.clicksCount}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Conversiones</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t('table.conversions')}</p>
                   <p className="text-lg font-semibold text-blue-600">{link.conversionsCount}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Tasa Conv.</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t('mobile.convRate')}</p>
                   <p className="text-lg font-semibold text-green-600">
                     {link.conversionRate?.toFixed(1)}%
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Comisión</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t('table.commission')}</p>
                   <p className="text-lg font-semibold">{formatCurrency(link.totalCommission)}</p>
                 </div>
               </div>
@@ -338,7 +340,7 @@ export default function ReferidosPage() {
               {/* Footer */}
               <div className="flex items-center justify-between pt-3 border-t">
                 <p className="text-[10px] text-muted-foreground">
-                  Creado: {formatDate(link.createdAt)}
+                  {t('table.created') + ':'} {formatDate(link.createdAt)}
                 </p>
                 <div className="flex items-center gap-1">
                   <Button
@@ -346,7 +348,7 @@ export default function ReferidosPage() {
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => handleCopyLink(link.fullUrl, link.id)}
-                    title="Copiar enlace"
+                    title={t('table.copyLink')}
                   >
                     {copiedId === link.id ? (
                       <Check className="h-4 w-4 text-green-600" />
@@ -359,7 +361,7 @@ export default function ReferidosPage() {
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => window.open(link.fullUrl, '_blank')}
-                    title="Abrir enlace"
+                    title={t('table.openLink')}
                   >
                     <ExternalLink className="h-4 w-4" />
                   </Button>
@@ -374,10 +376,10 @@ export default function ReferidosPage() {
           <div className="flex flex-col items-center justify-center p-8 sm:p-12 text-center">
             <Search className="mb-3 sm:mb-4 h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground" />
             <h3 className="mb-1 sm:mb-2 text-base sm:text-lg font-semibold">
-              No se encontraron referidos
+              {t('empty.title')}
             </h3>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              {searchQuery ? 'Intenta con otro término de búsqueda' : 'Aún no tienes enlaces de referido'}
+              {searchQuery ? t('empty.withSearch') : t('empty.noLinks')}
             </p>
           </div>
         )}
@@ -394,24 +396,24 @@ export default function ReferidosPage() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-sm sm:text-base font-semibold text-blue-900 dark:text-blue-100 mb-2 sm:mb-3">
-                💡 Consejos para mejorar tu tasa de conversión
+                {t('tips.title')}
               </h3>
               <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-blue-800 dark:text-blue-200">
                 <li className="flex items-start gap-2">
                   <span className="flex-shrink-0 mt-1.5 h-1 w-1 rounded-full bg-blue-600 dark:bg-blue-400" />
-                  <span>Comparte tus enlaces en grupos relevantes de Facebook y WhatsApp</span>
+                  <span>{t('tips.tip1')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex-shrink-0 mt-1.5 h-1 w-1 rounded-full bg-blue-600 dark:bg-blue-400" />
-                  <span>Crea contenido de valor en Instagram y TikTok mostrando las propiedades</span>
+                  <span>{t('tips.tip2')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex-shrink-0 mt-1.5 h-1 w-1 rounded-full bg-blue-600 dark:bg-blue-400" />
-                  <span>Usa descripciones atractivas y fotos de alta calidad en tus publicaciones</span>
+                  <span>{t('tips.tip3')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex-shrink-0 mt-1.5 h-1 w-1 rounded-full bg-blue-600 dark:bg-blue-400" />
-                  <span>Incluye un llamado a la acción claro en cada publicación</span>
+                  <span>{t('tips.tip4')}</span>
                 </li>
               </ul>
             </div>

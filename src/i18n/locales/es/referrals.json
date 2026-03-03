@@ -1,0 +1,59 @@
+{
+  "title": "Referidos",
+  "subtitle": "Monitorea tus enlaces de referido y su rendimiento",
+  "exportReport": "Exportar Reporte",
+  "export": "Exportar",
+  "filterByDate": "Filtrar por Fecha",
+  "date": "Fecha",
+  "searchPlaceholder": "Buscar por código o propiedad...",
+  "stats": {
+    "totalClicks": "Total de Clicks",
+    "conversions": "Conversiones",
+    "conversionRate": "Tasa de Conversión",
+    "activeLinks": "Enlaces Activos",
+    "last30Days": "{{count}} en últimos 30 días",
+    "thisMonth": "+{{count}} este mes",
+    "excellent": "Excelente",
+    "average": "Promedio",
+    "total": "{{count}} totales"
+  },
+  "table": {
+    "code": "Código",
+    "property": "Propiedad",
+    "clicks": "Clicks",
+    "conversions": "Conversiones",
+    "rate": "Tasa",
+    "commission": "Comisión",
+    "status": "Estado",
+    "actions": "Acciones",
+    "copyLink": "Copiar enlace",
+    "openLink": "Abrir enlace",
+    "created": "Creado"
+  },
+  "status": {
+    "ACTIVE": "Activo",
+    "INACTIVE": "Inactivo",
+    "EXPIRED": "Expirado",
+    "DELETED": "Eliminado"
+  },
+  "mobile": {
+    "convRate": "Tasa Conv."
+  },
+  "empty": {
+    "title": "No se encontraron referidos",
+    "withSearch": "Intenta con otro término de búsqueda",
+    "noLinks": "Aún no tienes enlaces de referido"
+  },
+  "tips": {
+    "title": "💡 Consejos para mejorar tu tasa de conversión",
+    "tip1": "Comparte tus enlaces en grupos relevantes de Facebook y WhatsApp",
+    "tip2": "Crea contenido de valor en Instagram y TikTok mostrando las propiedades",
+    "tip3": "Usa descripciones atractivas y fotos de alta calidad en tus publicaciones",
+    "tip4": "Incluye un llamado a la acción claro en cada publicación"
+  },
+  "error": {
+    "title": "Error al cargar datos",
+    "message": "Ocurrió un error inesperado",
+    "retry": "Reintentar"
+  }
+}

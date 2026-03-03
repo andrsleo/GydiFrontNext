@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "properties": "Properties",
+    "howItWorks": "How It Works",
+    "dashboard": "Dashboard",
+    "login": "Log In",
+    "register": "Sign Up"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "back": "Back",
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "copy": "Copy",
+    "share": "Share"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "paid": "Paid",
+    "rejected": "Rejected",
+    "active": "Active",
+    "inactive": "Inactive",
+    "expired": "Expired"
+  },
+  "user": {
+    "settings": "Settings",
+    "logout": "Log Out",
+    "fallback": "User",
+    "viewProfile": "View Profile",
+    "logoutTitle": "Log Out?",
+    "logoutDescription": "Are you sure you want to log out? You'll need to sign in again to access your account."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "unauthorized": "You must be logged in.",
+    "notFound": "The requested resource was not found.",
+    "network": "Network error. Please check your connection."
+  },
+  "menu": {
+    "dashboard": "Main Panel",
+    "properties": "Properties",
+    "propertiesMy": "My Properties",
+    "propertiesRefer": "Refer Properties",
+    "referrals": "Referrals",
+    "referralsLinks": "My Links",
+    "referralsStats": "Statistics",
+    "bookings": "Bookings",
+    "earnings": "Commissions",
+    "subscription": "Payment Methods",
+    "settings": "Settings",
+    "admin": "Administration",
+    "adminSection": "Administration",
+    "adminAnalytics": "Global Analytics",
+    "adminUsers": "User Management",
+    "adminProperties": "Property Management",
+    "adminBookings": "Booking Management",
+    "adminCommissions": "Commission Management",
+    "adminPlans": "Plans & Pricing",
+    "adminConfig": "System Settings"
+  },
+  "plan": {
+    "free": "Free",
+    "pro": "Pro",
+    "elite": "Elite"
+  },
+  "footer": {
+    "tagline": "The Airbnb complement that turns your network into real commissions from vacation bookings.",
+    "product": "Product",
+    "properties": "Properties",
+    "pricing": "Pricing",
+    "howItWorks": "How It Works",
+    "company": "Company",
+    "aboutUs": "About Us",
+    "contact": "Contact",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms and Conditions",
+    "cookies": "Cookie Policy",
+    "rights": "All rights reserved."
+  }
+}

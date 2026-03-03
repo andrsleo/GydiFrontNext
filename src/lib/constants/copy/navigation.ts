@@ -1,7 +1,7 @@
 export const NAV_COPY = {
   brand: {
     name: 'GYDI',
-    tagline: 'Refiere y gana',
+    tagline: 'Properties',
   },
 
   main_menu: {
