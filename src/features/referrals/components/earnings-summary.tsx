@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { DollarSign, Calendar, TrendingUp } from 'lucide-react';
 import { useEarnings, useNextPayout, useEarningsByStatus } from '../hooks';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getAffiliateBadgeInfo } from '@/lib/constants/plans';
 
 const MINIMUM_PAYOUT = 50;
 
@@ -44,13 +45,21 @@ export function EarningsSummary() {
           <div>
             <CardTitle>Total Earnings</CardTitle>
             <CardDescription>View your earnings breakdown and payout status</CardDescription>
-            <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Current plan:</span>
-              <Badge variant="outline">{earnings.currentPlan}</Badge>
-              <span className="text-xs">
-                {(earnings.currentCommissionRate * 100).toFixed(0)}% commission
-              </span>
-            </div>
+            {(() => {
+              const badgeInfo = getAffiliateBadgeInfo(earnings.currentCommissionRate);
+              return (
+                <div className="mt-2 space-y-1">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>Plan:</span>
+                    <Badge variant="outline">{earnings.currentPlan}</Badge>
+                    <Badge variant={badgeInfo.boosted ? 'default' : 'secondary'}>
+                      {badgeInfo.rate} comisión
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{badgeInfo.tip}</p>
+                </div>
+              );
+            })()}
           </div>
           <DollarSign className="h-8 w-8 text-muted-foreground" />
         </div>

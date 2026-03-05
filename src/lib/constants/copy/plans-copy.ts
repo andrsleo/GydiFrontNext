@@ -38,10 +38,10 @@ export const PLANS_COPY = {
       },
       roles: {
         affiliate: {
-          headline: 'Recibes 6% por cada reserva que refieres',
+          headline: 'Gana 4% en cada reserva que refieres',
           explanation:
-            'Cuando alguien reserva usando tu link, GYDI te paga el 6% del valor de la reserva. Tú no inviertes nada — solo compartes.',
-          example: 'En una reserva de $500, ganas $30.',
+            'Cuando alguien reserva usando tu link, GYDI te paga el 4% del valor de la reserva. Publica al menos una propiedad en la plataforma y tu tasa sube automáticamente al 6%. Tú no inviertes nada — solo compartes.',
+          example: 'En una reserva de $500, ganas $20 (o $30 si tienes una propiedad publicada).',
         },
         host: {
           headline: 'Se descuenta 15% de reservas generadas por afiliados',
@@ -72,16 +72,16 @@ export const PLANS_COPY = {
       },
       roles: {
         affiliate: {
-          headline: 'Recibes 5% por cada reserva que refieres',
+          headline: 'Gana 4-6% con herramientas avanzadas para escalar tus comisiones',
           explanation:
-            'Ganas 2.5 veces más que en el plan FREE. Cada link que compartes tiene mayor rendimiento y puedes ver el detalle de cada comisión en tu dashboard avanzado.',
-          example: 'En una reserva de $500, ganas $25.',
+            'La misma tasa de comisión (4% base, 6% con propiedad publicada) con herramientas profesionales para maximizar conversiones. Analytics avanzado, QR codes personalizados y soporte prioritario para que cada link trabaje más por ti.',
+          example: 'En una reserva de $500, ganas $20-$30. Con analytics, optimizas cuáles links convierten mejor.',
         },
         host: {
-          headline: 'Se descuenta solo 20% de reservas generadas por afiliados',
+          headline: 'Se descuenta 15% de reservas generadas por afiliados',
           explanation:
-            'Reduces la comisión de plataforma de 25% a 20%, ahorrando 5 puntos en cada reserva. Recibes el 80% del monto total. Mejor margen, misma red de afiliados.',
-          example: 'En una reserva de $500, recibes $400 (vs $375 en FREE).',
+            'La misma tarifa competitiva del 15% con acceso a herramientas avanzadas para analizar el rendimiento de tus anuncios, optimizar precios y conectar con los afiliados más activos de la red.',
+          example: 'En una reserva de $500, recibes $425. Con analytics avanzado, identifica qué afiliados generan más reservas.',
         },
       },
       benefits: [
@@ -106,16 +106,16 @@ export const PLANS_COPY = {
       },
       roles: {
         affiliate: {
-          headline: 'Recibes 10% por cada reserva que refieres',
+          headline: 'Gana 4-6% con manager dedicado y perfil de alta visibilidad',
           explanation:
-            'La comisión más alta disponible en la plataforma. Duplicas lo que ganarías con PRO. Ideal para influencers, creadores de contenido y personas con una red de viajeros frecuentes.',
-          example: 'En una reserva de $500, ganas $50.',
+            'La misma tasa de comisión (4% base, 6% con propiedad publicada) con el máximo nivel de soporte y exposición. Manager dedicado, perfil destacado en la plataforma y acceso anticipado a nuevas propiedades para multiplicar tus oportunidades de ingreso.',
+          example: 'En una reserva de $500, ganas $20-$30. Tu perfil destacado atrae más viajeros a tus links, multiplicando el volumen de reservas.',
         },
         host: {
-          headline: 'Se descuenta solo 15% de reservas generadas por afiliados',
+          headline: 'Se descuenta 15% de reservas generadas por afiliados',
           explanation:
-            'La tarifa más baja de la plataforma. Ahorras 10 puntos vs el plan FREE, lo que significa mayor ingreso neto por cada reserva. Con más propiedades, el ahorro escala considerablemente.',
-          example: 'En una reserva de $500, recibes $425 (vs $375 en FREE).',
+            'La tarifa estándar del 15% con el máximo nivel de servicio. Manager dedicado, perfil destacado en la red GYDI y acceso anticipado a las mejores propiedades para que tu anuncio reciba la mayor atención de los afiliados más activos.',
+          example: 'En una reserva de $500, recibes $425. Con manager dedicado y visibilidad premium, tu propiedad genera más reservas mes a mes.',
         },
       },
       benefits: [

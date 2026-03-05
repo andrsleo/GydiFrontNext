@@ -14,7 +14,7 @@ export const HERO_COPY = {
   trust_badge: 'El complemento para anfitriones de Airbnb',
 
   stats: {
-    commission: { value: '10%', label: 'Comisión por referido' },
+    commission: { value: 'hasta 6%', label: 'Comisión por referido' },
     properties: { value: '500+', label: 'Propiedades disponibles' },
     paid: { value: '$50K+', label: 'Pagado a afiliados' },
   },

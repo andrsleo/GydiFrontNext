@@ -2,7 +2,7 @@ export const VALUE_PROPS = [
   {
     id: 'affiliates',
     title: 'Tu red vale dinero',
-    headline: 'Gana hasta 10% por cada reserva que refieres',
+    headline: 'Gana hasta 6% por cada reserva que refieres',
     description:
       'Comparte un link, alguien reserva, tú cobras. Sin inventario, sin inversión, sin complicaciones. Solo tu recomendación y tu comisión llegando cada mes.',
     cta: 'Quiero ser afiliado',

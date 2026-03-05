@@ -5,15 +5,21 @@
  * Users can be AFFILIATE, HOST, or BOTH.
  *
  * ✅ **CORRECT Commission Structure:**
- * - **AFFILIATE**: RECEIVES commission FROM platform (2%, 5%, 10%)
- * - **HOST**: PAYS commission TO platform (25%, 20%, 15%)
+ * - **AFFILIATE**: RECEIVES commission FROM platform — rate is PROPERTY-BASED, not plan-based:
+ *     - 4% base rate (default for all affiliates)
+ *     - 6% boosted rate (affiliate has at least 1 PUBLISHED property)
+ * - **HOST**: PAYS commission TO platform (15% — plan-based)
  * - **PLATFORM**: Earns profit = (host fee - affiliate commission)
  *
  * @example
- * // User with PRO plan, $100 booking:
- * // As AFFILIATE: Platform PAYS $5 (5%) → Affiliate receives $5
- * // As HOST: Platform CHARGES $20 (20%) → Host receives $80 ($100 - $20)
- * // Platform profit: $20 - $5 = $15
+ * // Affiliate WITHOUT published property, $100 booking:
+ * // Platform PAYS $4 (4%) → Affiliate receives $4
+ *
+ * // Affiliate WITH published property, $100 booking:
+ * // Platform PAYS $6 (6%) → Affiliate receives $6
+ *
+ * // Host (FREE plan), $100 booking:
+ * // Platform CHARGES $15 (15%) → Host receives $85 ($100 - $15)
  */
 
 import type { SubscriptionPlan } from '@/types/user';
@@ -36,30 +42,40 @@ export const SUBSCRIPTION_PLANS = {
 } as const;
 
 /**
+ * Affiliate commission rates — PROPERTY-BASED (not plan-based).
+ *
+ * The backend evaluates this at booking time (snapshot in ReserveBookingUseCase):
+ * - 6% if the affiliate has at least one PUBLISHED property
+ * - 4% otherwise (default)
+ */
+export const AFFILIATE_COMMISSION_RATE_BASE = 0.04;     // 4% — no published property
+export const AFFILIATE_COMMISSION_RATE_BOOSTED = 0.06;  // 6% — has a published property
+
+/**
  * Commission rates by plan and role
  *
  * **SEMANTICS:**
- * - `affiliateEarns`: % that platform PAYS to affiliate
- * - `platformCharges`: % that platform CHARGES to host (platform fee)
+ * - `affiliateEarns`: base % that platform PAYS to affiliate (boosted to 6% with published property)
+ * - `platformChargesHost`: % that platform CHARGES to host (plan-based)
  */
 export const COMMISSION_RATES: Record<
   SubscriptionPlan,
   {
-    affiliateEarns: number;     // Platform PAYS this to affiliate
+    affiliateEarns: number;     // Platform PAYS this to affiliate (base rate; 6% if has published property)
     platformChargesHost: number // Platform CHARGES this to host
   }
 > = {
   FREE: {
-    affiliateEarns: 0.06,         // Platform PAYS 6% to affiliate
-    platformChargesHost: 0.15,    // Platform CHARGES 15% to host
+    affiliateEarns: AFFILIATE_COMMISSION_RATE_BASE,  // 4% base (6% with published property)
+    platformChargesHost: 0.15,                        // Platform CHARGES 15% to host
   },
   PRO: {
-    affiliateEarns: 0.05,         // Platform PAYS 5% to affiliate
-    platformChargesHost: 0.20,    // Platform CHARGES 20% to host
+    affiliateEarns: AFFILIATE_COMMISSION_RATE_BASE,  // 4% base (6% with published property)
+    platformChargesHost: 0.20,                        // Platform CHARGES 20% to host
   },
   ELITE: {
-    affiliateEarns: 0.10,         // Platform PAYS 10% to affiliate
-    platformChargesHost: 0.15,    // Platform CHARGES 15% to host
+    affiliateEarns: AFFILIATE_COMMISSION_RATE_BASE,  // 4% base (6% with published property)
+    platformChargesHost: 0.15,                        // Platform CHARGES 15% to host
   },
 };
 
@@ -68,9 +84,9 @@ export const COMMISSION_RATES: Record<
  * Legacy keys for backward compatibility
  */
 export const COMMISSION_RATES_LEGACY = {
-  FREE: { affiliate: 0.06, host: 0.15 },
-  PRO: { affiliate: 0.05, host: 0.20 },
-  ELITE: { affiliate: 0.10, host: 0.15 },
+  FREE: { affiliate: AFFILIATE_COMMISSION_RATE_BASE, host: 0.15 },
+  PRO: { affiliate: AFFILIATE_COMMISSION_RATE_BASE, host: 0.20 },
+  ELITE: { affiliate: AFFILIATE_COMMISSION_RATE_BASE, host: 0.15 },
 } as const;
 
 /**
@@ -121,11 +137,13 @@ export const PLAN_FEATURES = {
 
     // AFFILIATE benefits — lo que RECIBES de la plataforma por referir
     affiliate: {
-      commission: COMMISSION_RATES.FREE.affiliateEarns,
-      commissionDisplay: '6%',
+      commission: AFFILIATE_COMMISSION_RATE_BASE,
+      commissionDisplay: '4% — 6%',
+      commissionBaseDisplay: '4%',
+      commissionBoostedDisplay: '6%',
       benefits: [
-        'Recibes 6% de comisión por cada reserva generada con tu link',
-        'La plataforma te paga directo en cada reserva confirmada',
+        'Recibes 4% de comisión base por cada reserva generada con tu link',
+        'Con al menos 1 propiedad publicada, tu tasa sube a 6% automáticamente',
       ],
     },
 
@@ -154,12 +172,13 @@ export const PLAN_FEATURES = {
 
     // AFFILIATE benefits — lo que RECIBES de la plataforma por referir
     affiliate: {
-      commission: COMMISSION_RATES.PRO.affiliateEarns,
-      commissionDisplay: '5%',
-      previousRate: '2%',
+      commission: AFFILIATE_COMMISSION_RATE_BASE,
+      commissionDisplay: '4% — 6%',
+      commissionBaseDisplay: '4%',
+      commissionBoostedDisplay: '6%',
       benefits: [
-        'Recibes 5% de comisión por cada reserva generada con tu link',
-        'Ganas 2.5x más que en el plan FREE por la misma reserva',
+        'Recibes 4% de comisión base por cada reserva generada con tu link',
+        'Con al menos 1 propiedad publicada, tu tasa sube a 6% automáticamente',
       ],
     },
 
@@ -188,12 +207,13 @@ export const PLAN_FEATURES = {
 
     // AFFILIATE benefits — lo que RECIBES de la plataforma por referir
     affiliate: {
-      commission: COMMISSION_RATES.ELITE.affiliateEarns,
-      commissionDisplay: '10%',
-      previousRates: ['2%', '5%'],
+      commission: AFFILIATE_COMMISSION_RATE_BASE,
+      commissionDisplay: '4% — 6%',
+      commissionBaseDisplay: '4%',
+      commissionBoostedDisplay: '6%',
       benefits: [
-        'Recibes 10% de comisión — la tasa más alta de la plataforma',
-        'Duplicas las ganancias del plan PRO en cada referido exitoso',
+        'Recibes 4% de comisión base por cada reserva generada con tu link',
+        'Con al menos 1 propiedad publicada, tu tasa sube a 6% automáticamente',
       ],
     },
 
@@ -358,6 +378,43 @@ export function getBothCommissionRates(plan: SubscriptionPlan): {
   return {
     affiliateEarns: formatAffiliateRate(plan),
     platformCharges: formatHostFeeRate(plan),
+  };
+}
+
+/**
+ * Get the affiliate commission rate label based on actual rate received from backend.
+ * Returns a human-readable badge label with the reason.
+ *
+ * @param currentCommissionRate - The actual rate (0.04 or 0.06) from the backend Earnings endpoint
+ * @returns label and description for display
+ *
+ * @example
+ * getAffiliateBadgeInfo(0.06) // { rate: "6%", label: "6% — Tienes propiedades publicadas", boosted: true }
+ * getAffiliateBadgeInfo(0.04) // { rate: "4%", label: "4% — Publica una propiedad para ganar 6%", boosted: false }
+ */
+export function getAffiliateBadgeInfo(currentCommissionRate: number): {
+  rate: string;
+  label: string;
+  tip: string;
+  boosted: boolean;
+} {
+  const isBoosted = currentCommissionRate >= AFFILIATE_COMMISSION_RATE_BOOSTED;
+  const rateDisplay = `${(currentCommissionRate * 100).toFixed(0)}%`;
+
+  if (isBoosted) {
+    return {
+      rate: rateDisplay,
+      label: `${rateDisplay} — Tienes propiedades publicadas`,
+      tip: 'Estás ganando la tasa máxima de comisión gracias a tus propiedades publicadas.',
+      boosted: true,
+    };
+  }
+
+  return {
+    rate: rateDisplay,
+    label: `${rateDisplay} — Tasa base`,
+    tip: 'Publica al menos una propiedad para subir tu tasa de comisión a 6%.',
+    boosted: false,
   };
 }
 

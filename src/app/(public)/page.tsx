@@ -570,7 +570,7 @@ export default function HomePage() {
                   {t('affiliates.earningsLabel')}
                 </p>
 
-                {/* 6% earnings card */}
+                {/* 4-6% earnings card */}
                 <div className="rounded-2xl border-2 border-green-200 bg-gradient-to-br from-green-50/60 to-white p-5 shadow-sm">
                   <div className="mb-4 flex items-center justify-between">
                     <div>
@@ -578,7 +578,7 @@ export default function HomePage() {
                       <p className="text-sm text-muted-foreground">{t('affiliates.planFreePrice')}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-4xl font-extrabold text-green-600">6%</p>
+                      <p className="text-3xl font-extrabold text-green-600">4-6%</p>
                       <p className="text-xs font-medium text-green-700">{t('affiliates.perBooking')}</p>
                     </div>
                   </div>
