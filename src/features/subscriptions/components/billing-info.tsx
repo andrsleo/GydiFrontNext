@@ -20,13 +20,6 @@ export function BillingInfo({ subscription }: BillingInfoProps) {
       <CardContent className="space-y-3 text-sm">
         <InfoRow label="User ID" value={`#${subscription.userId}`} />
         <InfoRow label="Subscription ID" value={`#${subscription.id}`} />
-        {subscription.stripeCustomerId && (
-          <InfoRow
-            label="Stripe Customer"
-            value={subscription.stripeCustomerId}
-            valueClassName="font-mono text-xs"
-          />
-        )}
       </CardContent>
     </Card>
   );
