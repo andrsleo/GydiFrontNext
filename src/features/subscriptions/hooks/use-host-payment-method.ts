@@ -11,7 +11,7 @@ import { useAuthStore } from '@/store/auth-store';
  */
 export function useHostHasPaymentMethod() {
   const { isAuthenticated } = useAuthStore();
-  const { data: paymentMethods, isLoading } = usePaymentMethods();
+  const { data: paymentMethods, isLoading } = usePaymentMethods({ enabled: isAuthenticated });
 
   const hasHostPaymentMethod =
     isAuthenticated &&

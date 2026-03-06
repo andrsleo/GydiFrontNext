@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usePropertyDetail } from '@/features/properties';
 import { PropertyGallery } from '@/features/properties/components';
@@ -9,6 +9,7 @@ import { BookingModal } from '@/features/bookings';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { MapPin, Bed, Bath, Users, Calendar, DollarSign } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
 import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/types';
@@ -19,6 +20,7 @@ import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host
 function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const refParam = searchParams.get('ref');
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -101,6 +103,9 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
     );
   }
 
+  // MOCK DATA - Las propiedades mock no permiten reservas reales
+  const isMockProperty = slug.startsWith('mock-airbnb-');
+
   // Determine if the current user is the property owner and lacks a payment method
   const isOwner =
     user?.id != null &&
@@ -108,6 +113,16 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
     String(user.id) === String(property.hostId);
   const ownerMissingPaymentMethod = isOwner && !hasHostPaymentMethod && !isLoadingPayment;
   const isBookingDisabled = property.status !== 'PUBLISHED' || ownerMissingPaymentMethod;
+
+  const handleBookingClick = () => {
+    if (!user) {
+      router.push(`/login?callbackUrl=/propiedades/${slug}`);
+      return;
+    }
+    if (!isBookingDisabled) {
+      setIsBookingModalOpen(true);
+    }
+  };
 
   // Badge configuration for listing type
   const listingTypeBadgeConfig = {
@@ -225,14 +240,27 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
             )}
 
             {/* Botón de reserva */}
-            <Button
-              className="w-full"
-              size="lg"
-              onClick={() => !isBookingDisabled && setIsBookingModalOpen(true)}
-              disabled={isBookingDisabled}
-            >
-              Verificar Disponibilidad
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="w-full">
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      onClick={handleBookingClick}
+                      disabled={isMockProperty || (!!user && isBookingDisabled)}
+                    >
+                      Verificar Disponibilidad
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                {isMockProperty && (
+                  <TooltipContent>
+                    <p>Disponibilidad sujeta a Airbnb</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
 
             <div className="border-t pt-4 space-y-2 text-sm">
               <div className="flex items-start gap-2 text-muted-foreground">
