@@ -10,6 +10,8 @@ import { useSearchParams } from 'next/navigation';
 import { propertiesApi } from '../api/properties.api';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import type { PropertyDetailResponse } from '../types';
+// MOCK DATA - Remover cuando haya suficientes propiedades reales en DB
+import { MOCK_PROPERTY_DETAILS } from '../data/mock-properties';
 
 interface UsePropertyDetailOptions
   extends Omit<UseQueryOptions<PropertyDetailResponse, Error>, 'queryKey' | 'queryFn'> {
@@ -33,7 +35,13 @@ export function usePropertyDetail(options: UsePropertyDetailOptions) {
 
   return useQuery<PropertyDetailResponse, Error>({
     queryKey: propertyKeys.detail(slug, ref),
-    queryFn: () => propertiesApi.getBySlug(slug, ref || undefined),
+    // MOCK DATA - Si es una propiedad mock, retornar datos locales sin llamar al backend
+    queryFn: () => {
+      if (slug.startsWith('mock-airbnb-') && MOCK_PROPERTY_DETAILS[slug]) {
+        return Promise.resolve(MOCK_PROPERTY_DETAILS[slug]);
+      }
+      return propertiesApi.getBySlug(slug, ref || undefined);
+    },
     staleTime: 2 * 60 * 1000, // 2 minutes - details can change
     gcTime: 5 * 60 * 1000, // 5 minutes cache
     enabled: !!slug, // Only fetch if slug is provided

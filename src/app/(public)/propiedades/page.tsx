@@ -10,6 +10,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CountryCitySelector } from '@/components/shared/country-city-selector';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { PropertyType, PropertyStatus } from '@/features/properties/types';
+// MOCK DATA - Remover esta importacion cuando haya propiedades reales en DB
+import { MOCK_PAGINATED_RESPONSE } from '@/features/properties/data/mock-properties';
 
 export default function PropertiesPage() {
   const [page, setPage] = useState(0);
@@ -40,6 +42,36 @@ export default function PropertiesPage() {
       size: 12,
     },
   });
+
+  // MOCK DATA - Propiedades de demostración para visualización frontend
+  // Remover esta variable y su uso cuando haya suficientes propiedades reales en DB
+  const mockPageData = MOCK_PAGINATED_RESPONSE(page, 12, {
+    propertyType: propertyType || undefined,
+    country: country || undefined,
+    city: city || undefined,
+    minPrice,
+    maxPrice,
+    minBedrooms,
+    minBathrooms,
+    minGuests,
+    searchText: searchText || undefined,
+  });
+
+  // Combinar siempre propiedades reales + mocks para mostrar volumen
+  // Las propiedades reales aparecen primero en la página 0
+  // MOCK DATA - Remover combinación cuando haya suficientes propiedades reales en DB
+  const realContent = (!isLoading && data?.content) ? data.content : [];
+  const combinedContent = page === 0
+    ? [...realContent, ...mockPageData.content]
+    : mockPageData.content;
+  const displayData = {
+    content: combinedContent,
+    totalElements: (data?.totalElements ?? 0) + mockPageData.totalElements,
+    totalPages: mockPageData.totalPages,
+    page: mockPageData.page,
+    first: mockPageData.first,
+    last: mockPageData.last,
+  };
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
@@ -204,7 +236,7 @@ export default function PropertiesPage() {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {data?.content.map((property) => (
+            {displayData.content.map((property) => (
               <PropertyCard
                 key={property.id}
                 property={property}
@@ -213,7 +245,7 @@ export default function PropertiesPage() {
             ))}
           </div>
 
-          {data?.content.length === 0 && (
+          {displayData.content.length === 0 && (
             <div className="text-center py-16 sm:py-20">
               <div className="max-w-md mx-auto">
                 <p className="text-lg text-muted-foreground mb-2">
@@ -227,23 +259,23 @@ export default function PropertiesPage() {
           )}
 
           {/* Pagination */}
-          {data && data.totalPages > 1 && (
+          {displayData.totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 sm:mt-12">
               <Button
                 variant="outline"
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={data.first}
+                disabled={displayData.first}
                 className="w-full sm:w-auto min-w-[120px]"
               >
                 Anterior
               </Button>
               <div className="flex items-center px-4 py-2 bg-muted/50 rounded-md text-sm font-medium">
-                Página {data.page + 1} de {data.totalPages}
+                Página {displayData.page + 1} de {displayData.totalPages}
               </div>
               <Button
                 variant="outline"
                 onClick={() => setPage((p) => p + 1)}
-                disabled={data.last}
+                disabled={displayData.last}
                 className="w-full sm:w-auto min-w-[120px]"
               >
                 Siguiente

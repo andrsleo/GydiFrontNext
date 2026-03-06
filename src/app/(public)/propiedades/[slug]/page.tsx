@@ -34,6 +34,12 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
 
   // Resolve referralLinkId based on the ref parameter type
   useEffect(() => {
+    // MOCK DATA - Las propiedades mock no tienen referral links reales en el backend
+    if (String(property?.id ?? '').startsWith('mock-airbnb-')) {
+      setReferralLinkId('0');
+      return;
+    }
+
     if (isNumericRef) {
       // New flow: ref is already a numeric referralLinkId
       setReferralLinkId(refParam);
