@@ -45,6 +45,10 @@ const nextConfig: NextConfig = {
         hostname: 'res.cloudinary.com', // Cloudinary CDN
       },
       {
+        protocol: 'https',
+        hostname: 'a0.muscache.com', // Airbnb CDN (mock properties)
+      },
+      {
         protocol: 'http',
         hostname: 'localhost', // Desarrollo local
         port: '8080',

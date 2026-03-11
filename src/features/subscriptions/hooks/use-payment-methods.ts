@@ -39,12 +39,13 @@ export const paymentMethodKeys = {
  * }
  * ```
  */
-export function usePaymentMethods() {
+export function usePaymentMethods(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: paymentMethodKeys.all,
     queryFn: () => paymentMethodsApi.getAll(),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
+    enabled: options?.enabled ?? true,
   });
 }
 
