@@ -109,4 +109,16 @@ export const commissionsApi = {
     );
     return data;
   },
+
+  /**
+   * Generate a single-use Stripe Express Dashboard login link.
+   *
+   * The URL expires in ~5 minutes. Redirect the user immediately after receiving it.
+   */
+  async getDashboardLink(): Promise<{ url: string }> {
+    const { data } = await apiClient.post<{ url: string }>(
+      '/api/v1/affiliates/connect/dashboard-link'
+    );
+    return data;
+  },
 };

@@ -138,7 +138,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
 
             {/* Actions Menu - Next to Title */}
             {showActions && (
-              <div className="flex-shrink-0" onClick={(e) => e.preventDefault()}>
+              <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                 <PropertyActionsMenu
                   propertyId={id}
                   status={status}

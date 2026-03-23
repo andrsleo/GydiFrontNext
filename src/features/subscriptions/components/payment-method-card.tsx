@@ -6,10 +6,22 @@
 
 'use client';
 
+import { useState } from 'react';
 import { CreditCard, Check, Trash2, Star } from 'lucide-react';
+import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { getCardBrandColor } from '@/lib/constants/card-brands';
 import {
@@ -24,7 +36,9 @@ import type { PaymentMethodResponse } from '../types';
 interface PaymentMethodCardProps {
   paymentMethod: PaymentMethodResponse;
   className?: string;
-  /** Callback when delete button is clicked */
+  /** Whether this card can be deleted (false when it's the only active method) */
+  canDelete?: boolean;
+  /** Callback when delete is confirmed */
   onDelete?: (id: number) => void;
   /** Callback when set default button is clicked */
   onSetDefault?: (id: number) => void;
@@ -37,11 +51,13 @@ interface PaymentMethodCardProps {
 export function PaymentMethodCard({
   paymentMethod,
   className,
+  canDelete = true,
   onDelete,
   onSetDefault,
   isDeleting = false,
   isSettingDefault = false,
 }: PaymentMethodCardProps) {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const brandColor = getCardBrandColor(paymentMethod.cardBrand);
   const cardIsExpired = isCardExpired(
     paymentMethod.cardExpMonth,
@@ -56,6 +72,7 @@ export function PaymentMethodCard({
   const statusVariant = getStatusBadgeVariant(paymentMethod.status);
 
   return (
+    <>
     <Card className={cn('relative', !isUsable && 'opacity-60', className)}>
       {/* Default Badge */}
       {paymentMethod.isDefault && (
@@ -125,10 +142,18 @@ export function PaymentMethodCard({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => onDelete(paymentMethod.id)}
+                onClick={() => {
+                  if (!canDelete) {
+                    toast.warning('No puedes eliminar tu único método de pago', {
+                      description: 'Agrega otra tarjeta antes de eliminar esta.',
+                    });
+                    return;
+                  }
+                  setIsConfirmOpen(true);
+                }}
                 disabled={isDeleting || isSettingDefault}
                 className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                title="Remove payment method"
+                title="Eliminar método de pago"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -147,5 +172,32 @@ export function PaymentMethodCard({
         )}
       </CardContent>
     </Card>
+
+    <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>¿Eliminar tarjeta?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Estás a punto de eliminar la tarjeta{' '}
+            <span className="font-medium capitalize">{paymentMethod.cardBrand}</span> terminada en{' '}
+            <span className="font-medium">{paymentMethod.cardLastFour}</span>. Esta acción no se puede
+            deshacer y la tarjeta también será eliminada de Stripe.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={() => {
+              onDelete?.(paymentMethod.id);
+              setIsConfirmOpen(false);
+            }}
+          >
+            Sí, eliminar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

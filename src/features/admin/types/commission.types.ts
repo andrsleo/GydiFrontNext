@@ -17,9 +17,16 @@ export type SubscriptionPlan = 'FREE' | 'PRO' | 'ELITE';
 export type HostCommissionStatus = 'PENDING' | 'PROCESSING' | 'CHARGED' | 'FAILED' | 'REFUNDED';
 
 /**
- * Affiliate commission status
+ * Affiliate commission status — matches backend ReferralCommissionStatus enum
  */
-export type AffiliateCommissionStatus = 'PENDING' | 'APPROVED' | 'PAID' | 'CANCELLED';
+export type AffiliateCommissionStatus =
+  | 'WAITING_HOST_CHARGE' // Created, waiting for host charge to succeed
+  | 'PENDING'             // Host charged, affiliate has no Stripe Connect yet
+  | 'APPROVED'            // Ready for payout on next scheduled date
+  | 'PAID'                // Successfully transferred
+  | 'CANCELLED'           // Booking cancelled or disputed before payment
+  | 'WITHHELD'            // Payment withheld for investigation
+  | 'DISPUTED';           // Booking under dispute, commission frozen
 
 /**
  * Host Commission DTO (platform charges host)
@@ -120,10 +127,13 @@ export const HOST_COMMISSION_STATUS_CONFIG: Record<HostCommissionStatus, {
  */
 export const AFFILIATE_COMMISSION_STATUS_CONFIG: Record<AffiliateCommissionStatus, {
   label: string;
-  variant: 'default' | 'secondary' | 'destructive' | 'success';
+  variant: 'default' | 'secondary' | 'destructive' | 'success' | 'outline';
 }> = {
+  WAITING_HOST_CHARGE: { label: 'Esperando cobro al host', variant: 'outline' },
   PENDING: { label: 'Pendiente', variant: 'secondary' },
   APPROVED: { label: 'Aprobado', variant: 'default' },
   PAID: { label: 'Pagado', variant: 'success' },
   CANCELLED: { label: 'Cancelado', variant: 'destructive' },
+  WITHHELD: { label: 'Retenido', variant: 'destructive' },
+  DISPUTED: { label: 'En disputa', variant: 'outline' },
 };

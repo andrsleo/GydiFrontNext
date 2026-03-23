@@ -14,25 +14,24 @@ interface StripeProviderProps {
   children: React.ReactNode;
 }
 
+const ELEMENTS_OPTIONS = {
+  appearance: {
+    theme: 'stripe' as const,
+    variables: {
+      colorPrimary: '#0070f3',
+      colorBackground: '#ffffff',
+      colorText: '#000000',
+      colorDanger: '#df1b41',
+      fontFamily: 'system-ui, sans-serif',
+      spacingUnit: '4px',
+      borderRadius: '8px',
+    },
+  },
+};
+
 export function StripeProvider({ children }: StripeProviderProps) {
   return (
-    <Elements
-      stripe={getStripe()}
-      options={{
-        appearance: {
-          theme: 'stripe',
-          variables: {
-            colorPrimary: '#0070f3',
-            colorBackground: '#ffffff',
-            colorText: '#000000',
-            colorDanger: '#df1b41',
-            fontFamily: 'system-ui, sans-serif',
-            spacingUnit: '4px',
-            borderRadius: '8px',
-          },
-        },
-      }}
-    >
+    <Elements stripe={getStripe()} options={ELEMENTS_OPTIONS}>
       {children}
     </Elements>
   );

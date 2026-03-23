@@ -7,7 +7,19 @@
  */
 
 /**
- * Commission DTO - Matches backend CommissionDto
+ * Affiliate commission status — matches backend ReferralCommissionStatus enum
+ */
+export type AffiliateCommissionStatus =
+  | 'WAITING_HOST_CHARGE' // Created, waiting for host charge to succeed before advancing
+  | 'PENDING'             // Host charged, but affiliate has no Stripe Connect yet
+  | 'APPROVED'            // Ready for payout on next scheduled date (1st or 15th)
+  | 'PAID'                // Successfully transferred to affiliate's Stripe account
+  | 'CANCELLED'           // Booking cancelled or disputed before payment
+  | 'WITHHELD'            // Payment withheld (investigation or policy violation)
+  | 'DISPUTED';           // Booking under dispute, commission frozen
+
+/**
+ * Commission DTO - Matches backend ReferralCommissionDto
  */
 export interface CommissionDto {
   id: number;
@@ -17,7 +29,7 @@ export interface CommissionDto {
   bookingAmount: number;
   commissionAmount: number;
   currency: string;
-  status: string; // PENDING, APPROVED, PAID, REJECTED
+  status: AffiliateCommissionStatus;
   createdAt: string;
   paidAt?: string;
 
@@ -50,13 +62,16 @@ export interface CommissionStats {
 }
 
 /**
- * Status labels for display
+ * Status labels for display — maps all backend ReferralCommissionStatus values to Spanish
  */
 export const COMMISSION_STATUS_LABELS: Record<string, string> = {
+  WAITING_HOST_CHARGE: 'Esperando cobro al host',
   PENDING: 'Pendiente',
   APPROVED: 'Aprobada',
   PAID: 'Pagada',
-  REJECTED: 'Rechazada',
+  CANCELLED: 'Cancelada',
+  WITHHELD: 'Retenida',
+  DISPUTED: 'En disputa',
 };
 
 /**
@@ -66,10 +81,13 @@ export function getCommissionStatusVariant(
   status: string
 ): 'default' | 'secondary' | 'destructive' | 'outline' {
   const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+    WAITING_HOST_CHARGE: 'outline',
     PENDING: 'secondary',
     APPROVED: 'default',
     PAID: 'default',
-    REJECTED: 'destructive',
+    CANCELLED: 'destructive',
+    WITHHELD: 'destructive',
+    DISPUTED: 'outline',
   };
   return variants[status] || 'outline';
 }

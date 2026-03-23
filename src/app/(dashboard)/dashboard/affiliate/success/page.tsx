@@ -2,35 +2,27 @@
  * Affiliate Onboarding Success Page
  *
  * Confirmation page displayed after completing Stripe Connect onboarding.
- * Shows success message and next steps for affiliates.
- *
- * COMPONENT TYPE: Server Component (presentational only)
+ * Invalidates the connect status cache so banners disappear immediately.
  */
 
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, ArrowRight, Link as LinkIcon, Share2, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-/**
- * Metadata for SEO
- */
-export const metadata = {
-  title: 'Cuenta conectada exitosamente | GYDI',
-  description: 'Tu cuenta bancaria ha sido verificada y está lista para recibir pagos.',
-};
-
-/**
- * Success page after Stripe Connect onboarding
- *
- * Displays:
- * - Success confirmation
- * - Payout schedule information
- * - Next steps for affiliates
- * - Navigation to dashboard
- */
 export default function AffiliateOnboardingSuccessPage() {
+  const queryClient = useQueryClient();
+
+  // Invalidate connect status cache so banners disappear without needing a page refresh
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['affiliates', 'connect', 'status'] });
+  }, [queryClient]);
+
   return (
     <div className="container max-w-3xl mx-auto py-8 px-4">
       {/* Success Card */}

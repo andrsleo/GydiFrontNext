@@ -204,7 +204,10 @@ export function ReserveBookingDialog({
                       step="0.01"
                       placeholder="1500.00"
                       {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      onChange={(e) => {
+                        const parsed = parseFloat(e.target.value);
+                        field.onChange(isNaN(parsed) ? 0 : parsed);
+                      }}
                       disabled={isPending}
                     />
                   </FormControl>

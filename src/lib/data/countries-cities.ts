@@ -238,7 +238,7 @@ export const COUNTRIES_CITIES: Country[] = [
   {
     code: 'EC',
     name: 'Ecuador',
-    cities: ['Quito', 'Guayaquil', 'Cuenca', 'Manta', 'Baños', 'Otavalo', 'Galápagos'],
+    cities: ['Quito', 'Guayaquil', 'Cuenca', 'Manta', 'Baños', 'Otavalo', 'Galápagos', 'Esmeraldas', 'Loja', 'Ambato', 'Machala'],
   },
   {
     code: 'EG',
