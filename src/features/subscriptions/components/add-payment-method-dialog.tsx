@@ -6,6 +6,7 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { StripeProvider } from '@/lib/stripe/stripe-provider';
 import { AddPaymentMethodForm } from './add-payment-method-form';
+import { getStripe } from '@/lib/stripe/config';
 
 interface AddPaymentMethodDialogProps {
   open: boolean;
@@ -29,6 +31,14 @@ export function AddPaymentMethodDialog({
   onSuccess,
   description,
 }: AddPaymentMethodDialogProps) {
+  // Pre-load Stripe.js as soon as this component mounts (before the user
+  // opens the dialog) so the promise is already resolved when the dialog
+  // opens and useStripe() returns the instance immediately — avoiding the
+  // "disabled button" state that occurs when Stripe hasn't loaded yet.
+  useEffect(() => {
+    getStripe();
+  }, []);
+
   const handleSuccess = () => {
     onOpenChange(false);
     onSuccess?.();

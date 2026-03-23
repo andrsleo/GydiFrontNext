@@ -9,6 +9,7 @@ import {
   AlertCircle,
   Calendar,
   Loader2,
+  CreditCard,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +19,8 @@ import {
   useAffiliateCommissions,
   useAffiliateCommissionStats,
 } from '@/features/commissions/hooks/use-affiliate-commissions';
+import { useConnectAccountStatus } from '@/features/commissions/hooks/use-connect-account-status';
+import { AffiliateConnectOnboardingModal } from '@/features/commissions/components/affiliate-connect-onboarding-modal';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
 import type { CommissionStatus } from '@/features/commissions/types';
 import { useTranslation } from '@/hooks/use-translation';
@@ -63,7 +66,10 @@ function getDaysUntilNextPayout(): number {
 
 export default function GananciasPage() {
   const [statusFilter, setStatusFilter] = useState<CommissionStatus | 'ALL'>('ALL');
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
   const { t } = useTranslation('earnings');
+
+  const { data: connectStatus } = useConnectAccountStatus();
 
   // Status configuration
   const statusConfig: Record<
@@ -155,6 +161,26 @@ export default function GananciasPage() {
         </div>
       </div>
 
+      {/* Connect Account Banner */}
+      {connectStatus && !connectStatus.onboardingCompleted && (
+        <Alert className="border-orange-200 bg-orange-50">
+          <CreditCard className="h-4 w-4 text-orange-600" />
+          <AlertTitle className="text-orange-800">Conecta tu cuenta bancaria</AlertTitle>
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span className="text-orange-700">
+              Para recibir tus comisiones necesitas completar el proceso de Stripe Connect.
+            </span>
+            <Button
+              size="sm"
+              onClick={() => setIsOnboardingModalOpen(true)}
+              className="shrink-0"
+            >
+              Conectar cuenta
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Stats Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {/* Pending Amount */}
@@ -226,7 +252,7 @@ export default function GananciasPage() {
         </Card>
       </div>
 
-      {/* Alert Banner */}
+      {/* Payout schedule alert */}
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>{t('alert.title')}</AlertTitle>
@@ -357,6 +383,10 @@ export default function GananciasPage() {
         </CardContent>
       </Card>
 
+      <AffiliateConnectOnboardingModal
+        open={isOnboardingModalOpen}
+        onClose={() => setIsOnboardingModalOpen(false)}
+      />
     </div>
   );
 }

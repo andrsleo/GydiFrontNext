@@ -109,10 +109,18 @@ export function AddPaymentMethodForm({
     }
   };
 
+  if (!stripe) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-6 text-muted-foreground">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <p className="text-sm">Cargando sistema de pago seguro...</p>
+      </div>
+    );
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-
 
         {/* Stripe Card Element */}
         <StripeCardElementWrapper onChange={(e) => {

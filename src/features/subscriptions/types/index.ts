@@ -95,7 +95,6 @@ export interface UserSubscriptionResponse {
   autoRenew: boolean;
   nextBillingDate: string | null;
   stripeSubscriptionId: string | null;
-  stripeCustomerId: string | null;
   canceledAt: string | null;
   cancelationReason: string | null;
   createdAt: string;

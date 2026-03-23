@@ -64,6 +64,7 @@ export function PaymentMethodsSection({
             <PaymentMethodCard
               key={method.id}
               paymentMethod={method}
+              canDelete={activePaymentMethods.length > 1}
               onDelete={onDelete}
               onSetDefault={onSetDefault}
               isDeleting={isDeleting && deletingMethodId === method.id}
