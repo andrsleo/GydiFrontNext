@@ -3,8 +3,9 @@ import type {
   CommissionDto,
   CommissionFiltersInput,
   CommissionStats,
-  OnboardingLinkDto,
-  ConnectAccountStatusDto,
+  PayoutStatusDto,
+  SavePayPalEmailRequest,
+  SavePayPalEmailResponse,
 } from '../types';
 
 /**
@@ -83,41 +84,30 @@ export const commissionsApi = {
   // See: src/features/admin/commissions/api/admin-commissions.api.ts
 
   // ==========================================
-  // AFFILIATE CONNECT ENDPOINTS (Stripe Connect onboarding)
+  // AFFILIATE PAYOUT ENDPOINTS (PayPal)
   // ==========================================
 
   /**
-   * Initiate Stripe Connect onboarding for affiliate
+   * Get affiliate payout status
    *
-   * Returns URL to redirect user to Stripe onboarding form.
+   * Returns PayPal email configuration status.
    */
-  async initiateAffiliateOnboarding(): Promise<OnboardingLinkDto> {
-    const { data } = await apiClient.post<OnboardingLinkDto>(
-      '/api/v1/affiliates/connect/initiate'
+  async getPayoutStatus(): Promise<PayoutStatusDto> {
+    const { data } = await apiClient.get<PayoutStatusDto>(
+      '/api/v1/affiliates/payout/status'
     );
     return data;
   },
 
   /**
-   * Get Stripe Connect account status
+   * Save affiliate PayPal email for payouts
    *
-   * Returns onboarding status and payout enablement.
+   * Stores the PayPal email address where affiliate commissions will be sent.
    */
-  async getConnectAccountStatus(): Promise<ConnectAccountStatusDto> {
-    const { data } = await apiClient.get<ConnectAccountStatusDto>(
-      '/api/v1/affiliates/connect/status'
-    );
-    return data;
-  },
-
-  /**
-   * Generate a single-use Stripe Express Dashboard login link.
-   *
-   * The URL expires in ~5 minutes. Redirect the user immediately after receiving it.
-   */
-  async getDashboardLink(): Promise<{ url: string }> {
-    const { data } = await apiClient.post<{ url: string }>(
-      '/api/v1/affiliates/connect/dashboard-link'
+  async savePayPalEmail(request: SavePayPalEmailRequest): Promise<SavePayPalEmailResponse> {
+    const { data } = await apiClient.put<SavePayPalEmailResponse>(
+      '/api/v1/affiliates/payout/paypal-email',
+      request
     );
     return data;
   },

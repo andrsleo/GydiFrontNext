@@ -100,21 +100,29 @@ export function getCommissionStatusLabel(status: string): string {
 }
 
 /**
- * Onboarding Link DTO - Stripe Connect onboarding URL
+ * Payout status DTO - PayPal payout configuration status
+ *
+ * Maps backend GET /api/v1/affiliates/payout/status response.
  */
-export interface OnboardingLinkDto {
-  url: string;
-  stripeAccountId: string;
-  expiresAt: string;
+export interface PayoutStatusDto {
+  hasAccount: boolean;
+  paypalEmailConfigured: boolean;
+  paypalEmail: string | null;
+  onboardingCompleted: boolean;
 }
 
 /**
- * Connect Account Status DTO - Stripe Connect account status
+ * Save PayPal email request body
+ *
+ * Maps backend PUT /api/v1/affiliates/payout/paypal-email body.
  */
-export interface ConnectAccountStatusDto {
-  hasAccount: boolean;
-  onboardingCompleted: boolean;
-  payoutsEnabled: boolean;
-  verificationStatus: string;
-  stripeAccountId: string | null;
+export interface SavePayPalEmailRequest {
+  paypalEmail: string;
+}
+
+/**
+ * Save PayPal email response
+ */
+export interface SavePayPalEmailResponse {
+  message: string;
 }

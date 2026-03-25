@@ -19,8 +19,7 @@ import {
   useAffiliateCommissions,
   useAffiliateCommissionStats,
 } from '@/features/commissions/hooks/use-affiliate-commissions';
-import { useConnectAccountStatus } from '@/features/commissions/hooks/use-connect-account-status';
-import { AffiliateConnectOnboardingModal } from '@/features/commissions/components/affiliate-connect-onboarding-modal';
+import { usePayoutStatus } from '@/features/commissions/hooks/use-payout-status';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
 import type { CommissionStatus } from '@/features/commissions/types';
 import { useTranslation } from '@/hooks/use-translation';
@@ -66,10 +65,9 @@ function getDaysUntilNextPayout(): number {
 
 export default function GananciasPage() {
   const [statusFilter, setStatusFilter] = useState<CommissionStatus | 'ALL'>('ALL');
-  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
   const { t } = useTranslation('earnings');
 
-  const { data: connectStatus } = useConnectAccountStatus();
+  const { data: payoutStatus } = usePayoutStatus();
 
   // Status configuration
   const statusConfig: Record<
@@ -161,21 +159,21 @@ export default function GananciasPage() {
         </div>
       </div>
 
-      {/* Connect Account Banner */}
-      {connectStatus && !connectStatus.onboardingCompleted && (
+      {/* PayPal setup banner */}
+      {payoutStatus && !payoutStatus.onboardingCompleted && (
         <Alert className="border-orange-200 bg-orange-50">
           <CreditCard className="h-4 w-4 text-orange-600" />
-          <AlertTitle className="text-orange-800">Conecta tu cuenta bancaria</AlertTitle>
+          <AlertTitle className="text-orange-800">Configura tu metodo de pago</AlertTitle>
           <AlertDescription className="flex items-center justify-between gap-4">
             <span className="text-orange-700">
-              Para recibir tus comisiones necesitas completar el proceso de Stripe Connect.
+              Para recibir tus comisiones necesitas registrar tu email de PayPal en Medios de Pago.
             </span>
             <Button
               size="sm"
-              onClick={() => setIsOnboardingModalOpen(true)}
+              asChild
               className="shrink-0"
             >
-              Conectar cuenta
+              <a href="/dashboard/subscription">Configurar PayPal</a>
             </Button>
           </AlertDescription>
         </Alert>
@@ -383,10 +381,6 @@ export default function GananciasPage() {
         </CardContent>
       </Card>
 
-      <AffiliateConnectOnboardingModal
-        open={isOnboardingModalOpen}
-        onClose={() => setIsOnboardingModalOpen(false)}
-      />
     </div>
   );
 }
