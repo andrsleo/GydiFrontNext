@@ -2,7 +2,7 @@
  * User Bookings Page
  *
  * Unified bookings dashboard for USER role with dynamic tabs based on capabilities:
- * - canRefer: Show "Como Afiliado" tab (bookings from referral links)
+ * - canRefer: Show "Como referido" tab (bookings from referral links)
  * - canPublish: Show "Como Anfitrión" tab (bookings on own properties)
  * - Both: Show both tabs
  *
@@ -62,17 +62,17 @@ export default function UserBookingsPage() {
         <p className="text-muted-foreground mt-2">
           Gestiona tus reservas como{' '}
           {canRefer && canPublish
-            ? 'afiliado y anfitrión'
+            ? 'referido y anfitrión'
             : canRefer
-            ? 'afiliado'
-            : 'anfitrión'}
+              ? 'referido'
+              : 'anfitrión'}
         </p>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue={defaultTab} className="space-y-6">
         <TabsList>
-          {canRefer && <TabsTrigger value="affiliate">Como Afiliado</TabsTrigger>}
+          {canRefer && <TabsTrigger value="affiliate">Como referido</TabsTrigger>}
           {canPublish && <TabsTrigger value="host">Como Anfitrión</TabsTrigger>}
         </TabsList>
 

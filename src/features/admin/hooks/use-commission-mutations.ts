@@ -49,7 +49,7 @@ export function useRetryAffiliateCommission() {
       queryClient.invalidateQueries({ queryKey: commissionKeys.stats() });
 
       toast.success('Reintento programado', {
-        description: `Comisión de afiliado #${data.id} será procesada nuevamente`,
+        description: `Comisión de referido #${data.id} será procesada nuevamente`,
       });
     },
     onError: (error: any) => {

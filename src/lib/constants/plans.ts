@@ -152,7 +152,7 @@ export const PLAN_FEATURES = {
       platformFee: COMMISSION_RATES.FREE.platformChargesHost,
       platformFeeDisplay: '15%',
       benefits: [
-        'GYDI descuenta 15% de cada reserva generada por afiliados',
+        'GYDI descuenta 15% de cada reserva generada por referidos',
         'Tú recibes el 85% restante — solo pagas si hay reserva confirmada',
       ],
     },
@@ -187,12 +187,12 @@ export const PLAN_FEATURES = {
       platformFee: COMMISSION_RATES.PRO.platformChargesHost,
       platformFeeDisplay: '20%',
       benefits: [
-        'GYDI descuenta 20% de cada reserva generada por afiliados',
+        'GYDI descuenta 20% de cada reserva generada por referidos',
         'Tú recibes el 80% restante — 5% más que en el plan FREE',
       ],
     },
 
-    key: 'Sin contratos, cancela cuando quieras. Los beneficios aplican según el rol que uses: afiliado, anfitrión o ambos.',
+    key: 'Sin contratos, cancela cuando quieras. Los beneficios aplican según el rol que uses: referido, anfitrión o ambos.',
     cta: 'Pasar a PRO',
     badge: 'Más popular',
     color: 'blue',
@@ -222,12 +222,12 @@ export const PLAN_FEATURES = {
       platformFee: COMMISSION_RATES.ELITE.platformChargesHost,
       platformFeeDisplay: '15%',
       benefits: [
-        'GYDI descuenta solo 15% de cada reserva generada por afiliados',
+        'GYDI descuenta solo 15% de cada reserva generada por referidos',
         'Tú recibes el 85% restante — la mejor tarifa de la plataforma',
       ],
     },
 
-    key: 'Diseñado para anfitriones con múltiples propiedades y afiliados de alto volumen que quieren maximizar cada reserva.',
+    key: 'Diseñado para anfitriones con múltiples propiedades y referidos de alto volumen que quieren maximizar cada reserva.',
     cta: 'Unirme a ELITE',
     badge: 'Mejor valor',
     color: 'purple',

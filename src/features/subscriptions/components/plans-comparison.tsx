@@ -35,7 +35,7 @@ export function PlansComparison({
         <h2 className="text-3xl font-bold">Elige tu plan</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Selecciona el plan que mejor se adapte a tus necesidades. Puedes ser{' '}
-          <span className="font-semibold text-blue-600">afiliado</span>,{' '}
+          <span className="font-semibold text-blue-600">referido</span>,{' '}
           <span className="font-semibold text-green-600">anfitrión</span>, o{' '}
           <span className="font-semibold">ambos</span>.
         </p>

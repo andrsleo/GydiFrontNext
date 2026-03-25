@@ -145,7 +145,7 @@ export function AffiliateBookingsTable() {
                     <div className="flex flex-col items-center gap-2">
                       <AlertCircle className="h-12 w-12 text-muted-foreground" />
                       <p className="text-muted-foreground">
-                        No tienes reservas como afiliado aún.
+                        No tienes reservas como referido aún.
                       </p>
                       <p className="text-sm text-muted-foreground">
                         Las reservas aparecerán cuando alguien reserve a través de tus

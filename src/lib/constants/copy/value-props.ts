@@ -5,15 +5,15 @@ export const VALUE_PROPS = [
     headline: 'Gana hasta 6% por cada reserva que refieres',
     description:
       'Comparte un link, alguien reserva, tú cobras. Sin inventario, sin inversión, sin complicaciones. Solo tu recomendación y tu comisión llegando cada mes.',
-    cta: 'Quiero ser afiliado',
-    badge: 'Para Afiliados',
+    cta: 'Quiero ser referido',
+    badge: 'Para referidos',
   },
   {
     id: 'hosts',
     title: 'Más ojos en tu propiedad',
     headline: 'Tu propiedad de Airbnb, con el alcance de mil embajadores',
     description:
-      'Lista tu propiedad en GYDI y activa una red de afiliados que la promueven activamente. Más reservas, menos esfuerzo, comisión solo cuando funciona.',
+      'Lista tu propiedad en GYDI y activa una red de referidos que la promueven activamente. Más reservas, menos esfuerzo, comisión solo cuando funciona.',
     cta: 'Registrar mi propiedad',
     badge: 'Para Anfitriones',
   },
@@ -22,7 +22,7 @@ export const VALUE_PROPS = [
     title: 'El complemento que faltaba',
     headline: 'Airbnb te da visibilidad. GYDI te da una red de ventas.',
     description:
-      'No reemplazamos Airbnb, lo potenciamos. Conecta tu listing existente y deja que una comunidad de afiliados motivados lleve huéspedes directamente a tu puerta.',
+      'No reemplazamos Airbnb, lo potenciamos. Conecta tu listing existente y deja que una comunidad de referidos motivados lleve huéspedes directamente a tu puerta.',
     cta: 'Cómo funciona',
     badge: 'Ecosistema GYDI',
   },

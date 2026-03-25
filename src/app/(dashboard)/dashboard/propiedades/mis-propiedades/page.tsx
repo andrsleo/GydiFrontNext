@@ -93,7 +93,7 @@ export default function MyPropertiesPage() {
             <p className="font-medium">Agrega una tarjeta para publicar tus propiedades</p>
             <p className="mt-1 text-xs leading-relaxed">
               Para que tus propiedades puedan recibir reservas, GYDI necesita una tarjeta de crédito o débito.
-              Se cobra una comisión del 15% por cada reserva exitosa generada por afiliados.
+              Se cobra una comisión del 15% por cada reserva exitosa generada por referidos.
             </p>
           </div>
           <Button
@@ -110,21 +110,21 @@ export default function MyPropertiesPage() {
       <AddPaymentMethodDialog
         open={isAddCardOpen}
         onOpenChange={setIsAddCardOpen}
-        description="Agrega una tarjeta de crédito o débito para que GYDI pueda cobrar la comisión del 15% por cada reserva exitosa generada por afiliados."
+        description="Agrega una tarjeta de crédito o débito para que GYDI pueda cobrar la comisión del 15% por cada reserva exitosa generada por referidos."
       />
 
       {/* Status Tabs */}
       <Tabs value={statusTab} onValueChange={(v) => setStatusTab(v as PropertyStatus | 'all')}>
         <div className="overflow-x-auto pb-0.5">
-        <TabsList className="min-w-max">
-          <TabsTrigger value="all">Todas</TabsTrigger>
-          <TabsTrigger value={PropertyStatus.DRAFT}>Borradores</TabsTrigger>
-          <TabsTrigger value={PropertyStatus.SEND_GYDI_COHOST}>Agregar Co-host</TabsTrigger>
-          <TabsTrigger value={PropertyStatus.PENDING_APPROVAL}>En Revisión</TabsTrigger>
-          <TabsTrigger value={PropertyStatus.PUBLISHED}>Publicadas</TabsTrigger>
-          <TabsTrigger value={PropertyStatus.INACTIVE}>Inactivas</TabsTrigger>
-          <TabsTrigger value={PropertyStatus.DENY}>Rechazadas</TabsTrigger>
-        </TabsList>
+          <TabsList className="min-w-max">
+            <TabsTrigger value="all">Todas</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.DRAFT}>Borradores</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.SEND_GYDI_COHOST}>Agregar Co-host</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.PENDING_APPROVAL}>En Revisión</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.PUBLISHED}>Publicadas</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.INACTIVE}>Inactivas</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.DENY}>Rechazadas</TabsTrigger>
+          </TabsList>
         </div>
 
         <TabsContent value="all" className="mt-6">

@@ -27,7 +27,7 @@ export const AUTH_COPY = {
     },
     role_selector: {
       label: 'Quiero unirme como...',
-      affiliate: 'Afiliado (ganar comisiones)',
+      affiliate: 'referido (ganar comisiones)',
       host: 'Anfitrión (listar propiedades)',
       both: 'Las dos cosas',
     },

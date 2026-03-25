@@ -56,7 +56,7 @@ export function AffiliateCommissionsTable() {
   if (error) {
     return (
       <div className="text-center py-10">
-        <p className="text-destructive">Error al cargar comisiones de afiliados</p>
+        <p className="text-destructive">Error al cargar comisiones de referidos</p>
         <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
           Reintentar
         </Button>
@@ -92,7 +92,7 @@ export function AffiliateCommissionsTable() {
             <TableRow>
               <TableHead className="w-[80px]">ID</TableHead>
               <TableHead>Reserva</TableHead>
-              <TableHead>Afiliado ID</TableHead>
+              <TableHead>referido ID</TableHead>
               <TableHead>Plan</TableHead>
               <TableHead>Monto Reserva</TableHead>
               <TableHead>Tasa</TableHead>
@@ -193,7 +193,7 @@ export function AffiliateCommissionsTable() {
 
       {commissions && commissions.length > 0 && (
         <p className="text-sm text-muted-foreground">
-          Mostrando {commissions.length} comisión(es) de afiliados
+          Mostrando {commissions.length} comisión(es) de referidos
         </p>
       )}
     </div>

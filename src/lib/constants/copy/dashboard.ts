@@ -6,13 +6,13 @@ export const DASHBOARD_COPY = {
         'Tu dashboard de comisiones está listo. Genera tu primer link y empieza a ganar desde hoy.',
       cta: 'Generar mi link',
       motivational:
-        'Los afiliados activos en GYDI ganan en promedio $240 al mes. Tu historia empieza ahora.',
+        'Los referidos activos en GYDI ganan en promedio $240 al mes. Tu historia empieza ahora.',
     },
 
     host: {
       title: 'Tu propiedad merece más reservas, {firstName}',
       subtitle:
-        'Lista tu alojamiento y activa una red de afiliados que lo promocionan activamente para ti.',
+        'Lista tu alojamiento y activa una red de referidos que lo promocionan activamente para ti.',
       cta: 'Listar mi propiedad',
       motivational:
         'Las propiedades en GYDI reciben en promedio 3x más visibilidad que en plataformas tradicionales.',
@@ -36,7 +36,7 @@ export const DASHBOARD_COPY = {
     no_properties: {
       title: 'Tu portafolio está esperando',
       description:
-        'Agrega tu primera propiedad y empieza a recibir visitas de una red de afiliados motivados en hacer reservas.',
+        'Agrega tu primera propiedad y empieza a recibir visitas de una red de referidos motivados en hacer reservas.',
       cta: 'Agregar propiedad',
       hint: 'Tip: Las propiedades con descripción completa y 5+ fotos se refieren 3x más.',
     },
@@ -51,7 +51,7 @@ export const DASHBOARD_COPY = {
     no_bookings_host: {
       title: 'La primera reserva está en camino',
       description:
-        'Los afiliados están viendo tu propiedad. Asegúrate de tener disponibilidad actualizada y buenas fotos para maximizar conversiones.',
+        'Los referidos están viendo tu propiedad. Asegúrate de tener disponibilidad actualizada y buenas fotos para maximizar conversiones.',
       cta: 'Editar mi propiedad',
     },
   },
@@ -60,7 +60,7 @@ export const DASHBOARD_COPY = {
     referral_created:
       'Link generado. Ahora comparte: cada visita es una comisión potencial.',
     property_listed:
-      'Propiedad publicada. Ya está visible para toda la red de afiliados.',
+      'Propiedad publicada. Ya está visible para toda la red de referidos.',
     commission_earned: 'Nueva comisión registrada. Sigue así, {firstName}.',
     plan_upgraded: 'Plan actualizado. Tus nuevas comisiones ya están activas.',
   },

@@ -16,6 +16,6 @@ export const HERO_COPY = {
   stats: {
     commission: { value: 'hasta 6%', label: 'Comisión por referido' },
     properties: { value: '500+', label: 'Propiedades disponibles' },
-    paid: { value: '$50K+', label: 'Pagado a afiliados' },
+    paid: { value: '$50K+', label: 'Pagado a referidos' },
   },
 } as const;

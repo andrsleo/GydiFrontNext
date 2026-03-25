@@ -27,8 +27,8 @@ export const metadata: Metadata = {
     default: 'GYDI - Refiere propiedades y gana comisiones reales',
   },
   description:
-    'Plataforma de afiliados para rentals vacacionales. Genera links de referido, comparte propiedades en renta y cobra hasta 10% de comisión por cada reserva. Gratis para comenzar.',
-  keywords: ['plataforma de afiliados', 'referidos de propiedades', 'ganar comisiones rentals', 'complemento airbnb', 'propiedades en renta', 'referidos vacaciones'],
+    'Plataforma de referidos para rentals vacacionales. Genera links de referido, comparte propiedades en renta y cobra hasta 10% de comisión por cada reserva. Gratis para comenzar.',
+  keywords: ['plataforma de referidos', 'referidos de propiedades', 'ganar comisiones rentals', 'complemento airbnb', 'propiedades en renta', 'referidos vacaciones'],
   authors: [{ name: 'GYDI' }],
   openGraph: {
     type: 'website',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     url: 'https://gydi.com',
     siteName: 'GYDI',
     title: 'GYDI - El complemento de Airbnb que te paga por referir',
-    description: 'Conecta viajeros con alojamientos increíbles y gana comisiones reales. Anfitriones de Airbnb: activa una red de afiliados que llena tus fechas disponibles.',
+    description: 'Conecta viajeros con alojamientos increíbles y gana comisiones reales. Anfitriones de Airbnb: activa una red de referidos que llena tus fechas disponibles.',
   },
   twitter: {
     card: 'summary_large_image',

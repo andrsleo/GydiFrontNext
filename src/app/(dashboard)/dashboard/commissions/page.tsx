@@ -65,9 +65,9 @@ export default function UserCommissionsPage() {
         <p className="text-muted-foreground mt-2">
           Gestiona tus comisiones como{' '}
           {canRefer && canPublish
-            ? 'afiliado y anfitrión'
+            ? 'referido y anfitrión'
             : canRefer
-              ? 'afiliado'
+              ? 'referido'
               : 'anfitrión'}
         </p>
       </div>
@@ -104,7 +104,7 @@ export default function UserCommissionsPage() {
               <h3 className="font-semibold mb-2">💸 Comisiones que Pagas</h3>
               <p className="text-sm text-muted-foreground">
                 Estas comisiones las <strong>pagas tú a la plataforma</strong> cuando se
-                reserva una de tus propiedades a través de un afiliado.
+                reserva una de tus propiedades a través de un referido.
               </p>
             </div>
             <HostCommissionsTable />

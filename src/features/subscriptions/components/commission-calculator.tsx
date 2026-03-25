@@ -125,7 +125,7 @@ export function CommissionCalculator() {
           <div className="space-y-2">
             <Label htmlFor="affiliate-plan" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
-              Plan del Afiliado
+              Plan del referido
             </Label>
             <Select value={affiliatePlan} onValueChange={(value) => setAffiliatePlan(value as SubscriptionPlan)}>
               <SelectTrigger id="affiliate-plan">
@@ -192,7 +192,7 @@ export function CommissionCalculator() {
                       <TrendingUp className="h-5 w-5 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">Afiliado Recibe</p>
+                      <p className="text-sm font-medium text-muted-foreground">referido Recibe</p>
                       <p className="text-xs text-muted-foreground">Comisión de plataforma</p>
                     </div>
                   </div>
@@ -245,7 +245,7 @@ export function CommissionCalculator() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Plataforma Gana</p>
-                      <p className="text-xs text-muted-foreground">Después de pagar afiliado</p>
+                      <p className="text-xs text-muted-foreground">Después de pagar referido</p>
                     </div>
                   </div>
                 </div>
@@ -253,7 +253,7 @@ export function CommissionCalculator() {
                   {formatCurrency(platformProfit)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  = {formatCurrency(platformFee)} - {formatCurrency(affiliateEarnings)} (pago a afiliado)
+                  = {formatCurrency(platformFee)} - {formatCurrency(affiliateEarnings)} (pago a referido)
                 </p>
               </CardContent>
             </Card>
@@ -275,7 +275,7 @@ export function CommissionCalculator() {
               <span className="font-semibold text-orange-700">{formatCurrency(hostNetIncome)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span>📈 Afiliado ({affiliatePlan}) recibe:</span>
+              <span>📈 referido ({affiliatePlan}) recibe:</span>
               <span className="font-semibold text-emerald-700">{formatCurrency(affiliateEarnings)}</span>
             </div>
             <div className="flex items-center justify-between">
@@ -286,7 +286,7 @@ export function CommissionCalculator() {
           <div className="pt-3 border-t border-gray-200/50">
             <p className="text-xs text-muted-foreground leading-relaxed">
               <strong>Modelo de negocio:</strong> La plataforma cobra al anfitrión{' '}
-              <strong className="text-orange-700">{formatHostFeeRate(hostPlan)}</strong> y paga al afiliado{' '}
+              <strong className="text-orange-700">{formatHostFeeRate(hostPlan)}</strong> y paga al referido{' '}
               <strong className="text-emerald-700">{formatAffiliateRate(affiliatePlan)}</strong>, manteniendo la diferencia como ganancia.
             </p>
           </div>

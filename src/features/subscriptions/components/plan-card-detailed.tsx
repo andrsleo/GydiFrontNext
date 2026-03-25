@@ -87,7 +87,7 @@ export function PlanCardDetailed({
                 <TrendingUp className="h-4 w-4 text-emerald-600" />
               </div>
               <h4 className="font-semibold text-sm uppercase tracking-wide text-emerald-700">
-                Como Afiliado
+                Como referido
               </h4>
             </div>
             <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">

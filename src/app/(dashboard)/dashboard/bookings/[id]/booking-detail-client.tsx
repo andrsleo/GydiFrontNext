@@ -150,7 +150,7 @@ export function BookingDetailClient({ bookingId }: Props) {
             )}
             {booking.affiliateName && (
               <div>
-                <p className="text-sm text-muted-foreground">Afiliado</p>
+                <p className="text-sm text-muted-foreground">referido</p>
                 <p className="font-medium">{booking.affiliateName}</p>
               </div>
             )}
@@ -194,7 +194,7 @@ export function BookingDetailClient({ bookingId }: Props) {
                 {Math.ceil(
                   (new Date(booking.checkOutDate).getTime() -
                     new Date(booking.checkInDate).getTime()) /
-                    (1000 * 60 * 60 * 24)
+                  (1000 * 60 * 60 * 24)
                 )}{' '}
                 noches
               </p>

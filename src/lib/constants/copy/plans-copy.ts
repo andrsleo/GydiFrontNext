@@ -2,9 +2,9 @@
  * Copies para la sección de Planes y Precios.
  *
  * Roles:
- * - AFILIADO: Refiere propiedades en renta y RECIBE una comisión por cada reserva confirmada.
+ * - referido: Refiere propiedades en renta y RECIBE una comisión por cada reserva confirmada.
  * - ANFITRIÓN: Publica su propiedad en renta y se le DESCUENTA un porcentaje de cada reserva
- *              generada a través de la red de afiliados de GYDI.
+ *              generada a través de la red de referidos de GYDI.
  */
 export const PLANS_COPY = {
   section: {
@@ -12,14 +12,14 @@ export const PLANS_COPY = {
     subtitle: 'Sin contratos. Sin sorpresas. Cambia o cancela cuando quieras.',
     role_explainer: {
       affiliate: {
-        label: 'Como Afiliado',
+        label: 'Como referido',
         description:
           'Refieres propiedades en renta y la plataforma te paga una comisión por cada reserva que generas con tu link.',
       },
       host: {
         label: 'Como Anfitrión',
         description:
-          'Publicas tu propiedad en GYDI y solo pagas una comisión a la plataforma cuando se genera una reserva a través de un afiliado. Sin reserva, sin costo.',
+          'Publicas tu propiedad en GYDI y solo pagas una comisión a la plataforma cuando se genera una reserva a través de un referido. Sin reserva, sin costo.',
       },
     },
   },
@@ -30,7 +30,7 @@ export const PLANS_COPY = {
       tagline: 'Empieza sin riesgo y descubre cómo funciona',
       description:
         'Para quienes quieren probar la plataforma sin comprometer nada. Acceso completo al modelo de referidos sin costo.',
-      target: 'Nuevos afiliados y anfitriones que quieren explorar la plataforma',
+      target: 'Nuevos referidos y anfitriones que quieren explorar la plataforma',
       price: {
         amount: 0,
         label: 'Gratis para siempre',
@@ -44,9 +44,9 @@ export const PLANS_COPY = {
           example: 'En una reserva de $500, ganas $20 (o $30 si tienes una propiedad publicada).',
         },
         host: {
-          headline: 'Se descuenta 15% de reservas generadas por afiliados',
+          headline: 'Se descuenta 15% de reservas generadas por referidos',
           explanation:
-            'Por cada reserva que un afiliado te consiga a través de GYDI, la plataforma retiene el 15%. Recibes el 85% restante. Si no hay reserva, no hay descuento.',
+            'Por cada reserva que un referido te consiga a través de GYDI, la plataforma retiene el 15%. Recibes el 85% restante. Si no hay reserva, no hay descuento.',
           example: 'En una reserva de $500, recibes $425.',
         },
       },
@@ -63,8 +63,8 @@ export const PLANS_COPY = {
       name: 'PRO',
       tagline: 'Más comisión, más herramientas, más resultados',
       description:
-        'Para afiliados y anfitriones que ya vieron el potencial y quieren escalar sus ingresos con mejores tasas y herramientas profesionales.',
-      target: 'Afiliados activos y anfitriones con 1 o más propiedades en renta',
+        'Para referidos y anfitriones que ya vieron el potencial y quieren escalar sus ingresos con mejores tasas y herramientas profesionales.',
+      target: 'referidos activos y anfitriones con 1 o más propiedades en renta',
       price: {
         amount: 19,
         label: '$19 / mes',
@@ -78,10 +78,10 @@ export const PLANS_COPY = {
           example: 'En una reserva de $500, ganas $20-$30. Con analytics, optimizas cuáles links convierten mejor.',
         },
         host: {
-          headline: 'Se descuenta 15% de reservas generadas por afiliados',
+          headline: 'Se descuenta 15% de reservas generadas por referidos',
           explanation:
-            'La misma tarifa competitiva del 15% con acceso a herramientas avanzadas para analizar el rendimiento de tus anuncios, optimizar precios y conectar con los afiliados más activos de la red.',
-          example: 'En una reserva de $500, recibes $425. Con analytics avanzado, identifica qué afiliados generan más reservas.',
+            'La misma tarifa competitiva del 15% con acceso a herramientas avanzadas para analizar el rendimiento de tus anuncios, optimizar precios y conectar con los referidos más activos de la red.',
+          example: 'En una reserva de $500, recibes $425. Con analytics avanzado, identifica qué referidos generan más reservas.',
         },
       },
       benefits: [
@@ -97,8 +97,8 @@ export const PLANS_COPY = {
       name: 'ELITE',
       tagline: 'El máximo retorno para quienes van en serio',
       description:
-        'Para afiliados de alto volumen y anfitriones con múltiples propiedades. Las comisiones más altas y las tarifas más bajas de la plataforma.',
-      target: 'Afiliados con gran red de contactos y anfitriones con portafolio de propiedades en renta',
+        'Para referidos de alto volumen y anfitriones con múltiples propiedades. Las comisiones más altas y las tarifas más bajas de la plataforma.',
+      target: 'referidos con gran red de contactos y anfitriones con portafolio de propiedades en renta',
       price: {
         amount: 39,
         label: '$39 / mes',
@@ -112,9 +112,9 @@ export const PLANS_COPY = {
           example: 'En una reserva de $500, ganas $20-$30. Tu perfil destacado atrae más viajeros a tus links, multiplicando el volumen de reservas.',
         },
         host: {
-          headline: 'Se descuenta 15% de reservas generadas por afiliados',
+          headline: 'Se descuenta 15% de reservas generadas por referidos',
           explanation:
-            'La tarifa estándar del 15% con el máximo nivel de servicio. Manager dedicado, perfil destacado en la red GYDI y acceso anticipado a las mejores propiedades para que tu anuncio reciba la mayor atención de los afiliados más activos.',
+            'La tarifa estándar del 15% con el máximo nivel de servicio. Manager dedicado, perfil destacado en la red GYDI y acceso anticipado a las mejores propiedades para que tu anuncio reciba la mayor atención de los referidos más activos.',
           example: 'En una reserva de $500, recibes $425. Con manager dedicado y visibilidad premium, tu propiedad genera más reservas mes a mes.',
         },
       },
@@ -123,7 +123,7 @@ export const PLANS_COPY = {
         'Reportes exportables en CSV, Excel y PDF',
         'Manager dedicado de cuenta',
         'Acceso anticipado a nuevas propiedades y funcionalidades',
-        'Perfil destacado para atraer más afiliados',
+        'Perfil destacado para atraer más referidos',
       ],
       badge: 'Mejor valor' as string | null,
     },

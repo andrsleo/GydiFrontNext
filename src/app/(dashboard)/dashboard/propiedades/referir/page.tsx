@@ -18,15 +18,14 @@ export default function ReferPropertiesPage() {
         </p>
       </div>
 
-      {/* Banner: PayPal requerido para cobrar comisiones de afiliado */}
-      {payoutStatus && !payoutStatus.onboardingCompleted && (
+      {/* Banner: PayPal requerido para cobrar comisiones como referido */}
+      {payoutStatus && !payoutStatus.paypalEmailConfigured && (
         <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
           <CreditCard className="mt-0.5 h-5 w-5 flex-shrink-0" />
           <div className="flex-1 text-sm">
-            <p className="font-medium">Configura tu PayPal para recibir tus comisiones</p>
+            <p className="font-medium">Activa tu PayPal para cobrar tus comisiones</p>
             <p className="mt-1 text-xs leading-relaxed">
-              Para recibir tus comisiones de afiliado cuando tus referidos reserven,
-              registra tu email de PayPal en Medios de Pago.
+              Para recibir tu pago cada vez que alguien reserve a través de tu enlace, registra el email de tu cuenta PayPal. Si no tienes una, es gratis y toma menos de 5 minutos.
             </p>
           </div>
           <Button

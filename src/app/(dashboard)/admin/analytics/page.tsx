@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
   title: 'Analíticas Globales | Admin GYDI',
-  description: 'Reportes de ingresos, conversiones y top afiliados',
+  description: 'Reportes de ingresos, conversiones y top referidos',
 };
 
 export default function AdminAnalyticsPage() {
@@ -34,7 +34,7 @@ export default function AdminAnalyticsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Analíticas Globales</h1>
           <p className="text-muted-foreground mt-2">
-            Reportes de ingresos, conversiones y top afiliados
+            Reportes de ingresos, conversiones y top referidos
           </p>
         </div>
         <div className="flex gap-2">
@@ -114,7 +114,7 @@ export default function AdminAnalyticsPage() {
       {/* Top Affiliates */}
       <Card>
         <CardHeader>
-          <CardTitle>Top Afiliados</CardTitle>
+          <CardTitle>Top referidos</CardTitle>
           <CardDescription>Usuarios con mayor rendimiento en comisiones</CardDescription>
         </CardHeader>
         <CardContent>

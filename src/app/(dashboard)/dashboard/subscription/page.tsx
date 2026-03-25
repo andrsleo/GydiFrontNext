@@ -1,7 +1,7 @@
 /**
  * Medios de Pago Page
  *
- * Gestión de método de cobro (PayPal) para afiliados y tarjetas de crédito para anfitriones.
+ * Gestión de método de cobro (PayPal) para referidos y tarjetas de crédito para anfitriones.
  *
  * MEMBERSHIPS_DISABLED — La sección de membresías/suscripción está
  * deshabilitada temporalmente. Para re-habilitarla, busca el tag
@@ -58,12 +58,12 @@ export default function SubscriptionPage() {
         </div>
       </div>
 
-      {/* ── Comisiones de afiliado (PayPal) ── */}
+      {/* ── Comisiones como referido (PayPal) ── */}
       <div className="space-y-3">
         <div>
-          <h2 className="text-base font-semibold">Recibir comisiones de afiliado</h2>
+          <h2 className="text-base font-semibold">Recibir comisiones como referido</h2>
           <p className="text-sm text-muted-foreground">
-            Email de PayPal donde recibiras tus comisiones cuando tus referidos reserven.
+            Configura tu PayPal para recibir automáticamente tu comisión cada vez que alguien reserve usando tu enlace de referido.
           </p>
         </div>
         <PayPalEmailSetup />
@@ -76,7 +76,7 @@ export default function SubscriptionPage() {
         <div>
           <h2 className="text-base font-semibold">Metodo de cobro</h2>
           <p className="text-sm text-muted-foreground">
-            Tarjeta que GYDI utiliza para cobrar la comision de plataforma por cada reserva.
+            Tarjeta que GYDI utiliza para cobrar la comisión de plataforma por cada reserva de alguna de tus propiedades publicadas.
           </p>
         </div>
         <PaymentMethodsSection

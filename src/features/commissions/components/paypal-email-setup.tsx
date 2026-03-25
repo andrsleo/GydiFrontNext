@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle2, Info, Mail } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Info, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -105,18 +105,18 @@ export function PayPalEmailSetup() {
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5 text-green-600" />
             <CardTitle className="text-base text-green-800">
-              Metodo de pago configurado
+              PayPal configurado correctamente
             </CardTitle>
           </div>
           <CardDescription>
-            Tus comisiones seran enviadas a tu cuenta de PayPal.
+            Cada vez que alguien reserve a través de tu enlace de referido, recibirás tu comisión directamente aquí.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-4 py-3">
             <Mail className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">
-              PayPal: {payoutStatus?.paypalEmail}
+              {payoutStatus?.paypalEmail}
             </span>
           </div>
           <Button
@@ -124,7 +124,7 @@ export function PayPalEmailSetup() {
             size="sm"
             onClick={() => setIsEditing(true)}
           >
-            Cambiar email
+            Cambiar email de PayPal
           </Button>
         </CardContent>
       </Card>
@@ -136,12 +136,30 @@ export function PayPalEmailSetup() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Configura tu metodo de pago</CardTitle>
+        <CardTitle className="text-base">Configura dónde recibir tus comisiones</CardTitle>
         <CardDescription>
-          Para recibir tus comisiones necesitas una cuenta PayPal.
+          Cada vez que refieras una propiedad y alguien la reserve usando tu enlace, GYDI te pagará tu comisión en PayPal.
+          Es gratis, rápida de crear y funciona en cualquier parte del mundo.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <Alert className="border-blue-200 bg-blue-50 text-blue-800">
+          <Info className="h-4 w-4 text-blue-600" />
+          <AlertDescription>
+            ¿Aún no tienes PayPal?{' '}
+            <a
+              href="https://www.paypal.com/signup"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:text-blue-900"
+            >
+              Crea tu cuenta gratis aquí
+              <ExternalLink className="h-3 w-3" />
+            </a>
+            {' '}— solo necesitas tu email y toma menos de 5 minutos.
+          </AlertDescription>
+        </Alert>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
@@ -149,11 +167,11 @@ export function PayPalEmailSetup() {
               name="paypalEmail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email de PayPal</FormLabel>
+                  <FormLabel>Email de tu cuenta PayPal</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="tu@paypal.com"
+                      placeholder="ejemplo@correo.com"
                       {...field}
                     />
                   </FormControl>
@@ -164,7 +182,7 @@ export function PayPalEmailSetup() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isPending}>
-                {isPending ? 'Guardando...' : 'Guardar email de PayPal'}
+                {isPending ? 'Guardando...' : 'Guardar y activar cobros'}
               </Button>
               {isEditing && (
                 <Button
@@ -185,8 +203,7 @@ export function PayPalEmailSetup() {
         <Alert>
           <Info className="h-4 w-4" />
           <AlertDescription>
-            Recibiras tus comisiones directamente en tu PayPal en las fechas de pago
-            programadas (dias 1 y 15 de cada mes).
+            Una vez configurado, cada reserva generada por tu enlace de referido te pagará una comisión automáticamente en tu PayPal los días 1 y 15 de cada mes.
           </AlertDescription>
         </Alert>
       </CardContent>

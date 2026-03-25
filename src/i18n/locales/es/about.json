@@ -3,7 +3,7 @@
     "badge": "Nuestra Historia",
     "title1": "El complemento que",
     "titleHighlight": "Airbnb no tiene",
-    "subtitle": "Conectamos anfitriones, afiliados y viajeros en una plataforma de referidos que convierte el boca a boca en comisiones reales por reservas vacacionales."
+    "subtitle": "Conectamos anfitriones, referidos y viajeros en una plataforma de referidos que convierte el boca a boca en comisiones reales por reservas vacacionales."
   },
   "story": {
     "title": "Nuestra Historia",
@@ -15,21 +15,21 @@
     "p3Start": "Hoy, GYDI es",
     "p3Main": "el complemento de Airbnb",
     "p3Middle": "que activa una red de",
-    "p3Affiliates": "afiliados motivados",
+    "p3Affiliates": "referidos motivados",
     "p3End1": "que refieren",
     "p3Properties": "propiedades en renta a huéspedes reales",
-    "p3End2": ". Anfitriones consiguen más reservas. Afiliados generan comisiones. Todos ganan.",
+    "p3End2": ". Anfitriones consiguen más reservas. referidos generan comisiones. Todos ganan.",
     "p4Start": "Con más de",
-    "p4Bold": "500 afiliados activos",
+    "p4Bold": "500 referidos activos",
     "p4End": "y cientos de propiedades listadas, estamos construyendo el futuro del mercado inmobiliario digital."
   },
   "mission": {
     "title": "Nuestra Misión",
-    "text": "Crear oportunidades de ingresos reales para cualquier persona, conectando anfitriones con propiedades en renta y afiliados con viajeros a través de una plataforma de referidos transparente y justa."
+    "text": "Crear oportunidades de ingresos reales para cualquier persona, conectando anfitriones con propiedades en renta y referidos con viajeros a través de una plataforma de referidos transparente y justa."
   },
   "vision": {
     "title": "Nuestra Visión",
-    "text": "Ser la red de referidos de propiedades en renta más grande de Latinoamérica, donde anfitriones de Airbnb y afiliados colaboran para generar ingresos reales de manera simple y transparente."
+    "text": "Ser la red de referidos de propiedades en renta más grande de Latinoamérica, donde anfitriones de Airbnb y referidos colaboran para generar ingresos reales de manera simple y transparente."
   },
   "values": {
     "title": "Nuestros Valores",
@@ -46,19 +46,19 @@
     "f2Title": "Comisiones Justas",
     "f2Desc": "Hasta 10% de comisión por referidos. Las tasas más competitivas del mercado.",
     "f3Title": "Comunidad Global",
-    "f3Desc": "Más de 500 afiliados activos en todo el mundo generando ingresos con nosotros.",
+    "f3Desc": "Más de 500 referidos activos en todo el mundo generando ingresos con nosotros.",
     "f4Title": "Soporte Premium",
     "f4Desc": "Equipo dedicado disponible 24/7 para resolver tus dudas y ayudarte a crecer."
   },
   "stats": {
-    "affiliates": "Afiliados Activos",
+    "affiliates": "referidos Activos",
     "properties": "Propiedades Listadas",
     "commissions": "Pagado en Comisiones",
     "countries": "Países Activos"
   },
   "cta": {
     "title": "¿Listo para Unirte a Nosotros?",
-    "subtitle": "Únete como afiliado y gana comisiones por referir propiedades en renta, o como anfitrión y amplía el alcance de tu propiedad con nuestra red de referidos",
+    "subtitle": "Únete como referido y gana comisiones por referir propiedades en renta, o como anfitrión y amplía el alcance de tu propiedad con nuestra red de referidos",
     "register": "Crear Cuenta Gratis",
     "contact": "Contáctanos"
   }

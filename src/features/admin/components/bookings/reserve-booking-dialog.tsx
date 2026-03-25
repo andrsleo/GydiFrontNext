@@ -192,7 +192,7 @@ export function ReserveBookingDialog({
                           <p>
                             Este es el valor <strong>total neto</strong> de la reserva que el
                             huésped pagó en Airbnb. Se usa para calcular las comisiones del
-                            anfitrión (platform fee) y del afiliado.
+                            anfitrión (platform fee) y del referido.
                           </p>
                         </TooltipContent>
                       </Tooltip>

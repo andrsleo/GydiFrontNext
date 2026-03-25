@@ -66,7 +66,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
     label: 'Referidos',
     href: '/dashboard/referidos',
     icon: Share2,
-    description: 'Sistema de referidos y generación de enlaces de afiliado',
+    description: 'Sistema de referidos y generación de enlaces de referido',
     roles: ['ADMIN', 'USER'],
     subItems: [
       {
@@ -92,7 +92,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
     label: 'Reservas',
     href: '/dashboard/bookings',
     icon: Calendar,
-    description: 'Gestión de reservas (como afiliado y/o anfitrión)',
+    description: 'Gestión de reservas (como referido y/o anfitrión)',
     roles: ['ADMIN', 'USER'],
   },
   {
@@ -146,7 +146,7 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
         label: 'Analíticas Globales',
         href: '/admin/analytics',
         icon: BarChart3,
-        description: 'Reportes de ingresos, conversiones, top afiliados',
+        description: 'Reportes de ingresos, conversiones, top referidos',
         roles: ['ADMIN'],
       },
       {

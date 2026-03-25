@@ -15,7 +15,7 @@
   },
   "intro": {
     "title": "¿Por qué usamos Cookies?",
-    "text": "Las cookies nos ayudan a proporcionar, proteger y mejorar GYDI. Nos permiten recordar tus preferencias, entender cómo usas nuestra plataforma, personalizar tu experiencia y rastrear referidos de afiliados para garantizar pagos justos."
+    "text": "Las cookies nos ayudan a proporcionar, proteger y mejorar GYDI. Nos permiten recordar tus preferencias, entender cómo usas nuestra plataforma, personalizar tu experiencia y rastrear referidos de referidos para garantizar pagos justos."
   },
   "s1": {
     "title": "1. ¿Qué son las Cookies?",
@@ -64,7 +64,7 @@
     "currency_pref_duration": "1 año",
     "theme_mode_purpose": "Modo claro/oscuro",
     "theme_mode_duration": "1 año",
-    "referral_id_purpose": "Rastrear enlace de afiliado que te trajo",
+    "referral_id_purpose": "Rastrear enlace de referido que te trajo",
     "referral_id_duration": "30 días",
     "analyticsTitle": "Cookies de Analíticas",
     "analyticsBadge": "Ayudan a mejorar \u2022 Opcionales",
@@ -101,7 +101,7 @@
     "warningText": "Si bloqueas o eliminas cookies, algunas funciones de GYDI pueden no funcionar correctamente:",
     "w1": "No podrás mantener sesión iniciada",
     "w2": "Tus preferencias (idioma, moneda) no se guardarán",
-    "w3": "Los referidos de afiliados pueden no rastrearse correctamente",
+    "w3": "Los referidos de referidos pueden no rastrearse correctamente",
     "w4": "La experiencia de usuario será menos personalizada"
   },
   "s5": {
@@ -109,11 +109,11 @@
     "text": "Algunos navegadores ofrecen una señal \"Do Not Track\" (DNT). Actualmente, no hay estándar industrial sobre cómo responder a DNT. GYDI no responde a señales DNT, pero puedes gestionar cookies mediante las opciones descritas arriba."
   },
   "s6": {
-    "title": "6. Cookies de Afiliados",
-    "highlight": "Las cookies de rastreo de afiliados son esenciales para nuestro modelo de negocio.",
-    "p1Pre": "Cuando haces clic en un enlace de afiliado, establecemos una cookie (",
-    "p1Post": ") que dura 30 días. Si realizas una compra o reserva dentro de ese período, el afiliado recibe su comisión.",
-    "importantTitle": "Importante para Afiliados:",
+    "title": "6. Cookies de referidos",
+    "highlight": "Las cookies de rastreo de referidos son esenciales para nuestro modelo de negocio.",
+    "p1Pre": "Cuando haces clic en un enlace de referido, establecemos una cookie (",
+    "p1Post": ") que dura 30 días. Si realizas una compra o reserva dentro de ese período, el referido recibe su comisión.",
+    "importantTitle": "Importante para referidos:",
     "importantText": "Si tus referidos bloquean cookies, es posible que no se rastreen correctamente y pierdas comisiones. Recomendamos incluir un aviso en tus promociones informando que las cookies son necesarias para rastrear referidos."
   },
   "s7": {
@@ -130,7 +130,7 @@
     "settingsLabel": "Configuración de Cookies:",
     "settingsText": "Accede desde tu",
     "settingsLink": "Panel de Control",
-    "tipPre": "\ud83d\udca1 Consejo: Si tienes dudas sobre cómo las cookies afectan tus ganancias como afiliado, consulta nuestra",
+    "tipPre": "\ud83d\udca1 Consejo: Si tienes dudas sobre cómo las cookies afectan tus ganancias como referido, consulta nuestra",
     "tipContact": "página de contacto",
     "tipMid": "o nuestra",
     "tipPrivacy": "Política de Privacidad."

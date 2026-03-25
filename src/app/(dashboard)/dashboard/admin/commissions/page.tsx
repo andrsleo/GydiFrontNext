@@ -15,7 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata = {
   title: 'Gestión de Comisiones | GYDI Admin',
-  description: 'Administra comisiones de hosts y afiliados',
+  description: 'Administra comisiones de hosts y referidos',
 };
 
 export default function AdminCommissionsPage() {
@@ -25,7 +25,7 @@ export default function AdminCommissionsPage() {
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Gestión de Comisiones</h1>
         <p className="text-muted-foreground mt-2">
-          Monitorea comisiones cobradas a hosts y pagadas a afiliados
+          Monitorea comisiones cobradas a hosts y pagadas a referidos
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export default function AdminCommissionsPage() {
       <Tabs defaultValue="host" className="space-y-4">
         <TabsList>
           <TabsTrigger value="host">Comisiones Hosts (Cobrado)</TabsTrigger>
-          <TabsTrigger value="affiliate">Comisiones Afiliados (Pagado)</TabsTrigger>
+          <TabsTrigger value="affiliate">Comisiones referidos (Pagado)</TabsTrigger>
         </TabsList>
 
         <TabsContent value="host" className="space-y-4">
@@ -66,9 +66,9 @@ export default function AdminCommissionsPage() {
         <TabsContent value="affiliate" className="space-y-4">
           <div className="rounded-lg border bg-card p-6">
             <div className="mb-4">
-              <h2 className="text-xl font-semibold">Comisiones de Afiliados</h2>
+              <h2 className="text-xl font-semibold">Comisiones de referidos</h2>
               <p className="text-sm text-muted-foreground">
-                Montos pagados a afiliados por referidos exitosos
+                Montos pagados a referidos por referidos exitosos
               </p>
             </div>
             <Suspense fallback={<Skeleton className="h-96 w-full" />}>

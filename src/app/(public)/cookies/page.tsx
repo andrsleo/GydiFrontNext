@@ -591,7 +591,7 @@ export default function CookiesPage() {
               </div>
             </div>
 
-            {/* 6. Cookies de Afiliados */}
+            {/* 6. Cookies de referidos */}
             <div className="mb-12">
               <h2 className="mb-6 text-3xl">{t('s6.title')}</h2>
               <div className="space-y-4 text-muted-foreground">

@@ -75,7 +75,7 @@ export function HostCommissionsTable() {
                 <TableHead>ID</TableHead>
                 <TableHead>Reserva</TableHead>
                 <TableHead>Propiedad</TableHead>
-                <TableHead>Afiliado</TableHead>
+                <TableHead>referido</TableHead>
                 <TableHead>Plan</TableHead>
                 <TableHead>Monto Reserva</TableHead>
                 <TableHead className="text-right">Comisión</TableHead>
@@ -132,7 +132,7 @@ export function HostCommissionsTable() {
                       </p>
                       <p className="text-sm text-muted-foreground">
                         Las comisiones aparecerán cuando se completen reservas en tus
-                        propiedades a través de afiliados.
+                        propiedades a través de referidos.
                       </p>
                     </div>
                   </TableCell>

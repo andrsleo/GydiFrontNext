@@ -73,14 +73,14 @@ export function CommissionStatsCards() {
       {/* Affiliate Commissions (Platform pays affiliates) */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Comisiones Afiliados</CardTitle>
+          <CardTitle className="text-sm font-medium">Comisiones referidos</CardTitle>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">
             {stats.currency} {stats.totalAffiliateCommissions.toFixed(2)}
           </div>
-          <p className="text-xs text-muted-foreground">Total pagado a afiliados</p>
+          <p className="text-xs text-muted-foreground">Total pagado a referidos</p>
         </CardContent>
       </Card>
 
@@ -124,7 +124,7 @@ export function CommissionStatsCards() {
           <div className="text-2xl font-bold text-orange-600">
             {stats.currency} {stats.pendingAffiliatePayments.toFixed(2)}
           </div>
-          <p className="text-xs text-muted-foreground">Por pagar a afiliados</p>
+          <p className="text-xs text-muted-foreground">Por pagar a referidos</p>
         </CardContent>
       </Card>
     </div>

@@ -87,7 +87,7 @@ const stats = [
     bgColor: 'bg-blue-50',
   },
   {
-    name: 'Afiliados Activos',
+    name: 'referidos Activos',
     value: '89',
     change: '70% del total',
     color: 'text-green-600',
@@ -110,7 +110,7 @@ const stats = [
 ];
 
 const roleConfig = {
-  AFFILIATE: { label: 'Afiliado', color: 'bg-blue-100 text-blue-800' },
+  AFFILIATE: { label: 'referido', color: 'bg-blue-100 text-blue-800' },
   HOST: { label: 'Host', color: 'bg-purple-100 text-purple-800' },
   ADMIN: { label: 'Admin', color: 'bg-red-100 text-red-800' },
 };
@@ -143,7 +143,7 @@ export default function UsuariosPage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Usuarios</h1>
           <p className="text-muted-foreground">
-            Gestiona afiliados, hosts y administradores
+            Gestiona referidos, hosts y administradores
           </p>
         </div>
         <Button className="gap-2">
@@ -190,7 +190,7 @@ export default function UsuariosPage() {
             className="rounded-md border border-input bg-background px-3 py-2 text-sm"
           >
             <option value="all">Todos los roles</option>
-            <option value="AFFILIATE">Afiliados</option>
+            <option value="AFFILIATE">referidos</option>
             <option value="HOST">Hosts</option>
             <option value="ADMIN">Administradores</option>
           </select>
