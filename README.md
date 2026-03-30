@@ -18,6 +18,8 @@ Frontend moderno para GYDI 2.0, plataforma de afiliados para propiedades vacacio
   - Playwright (E2E tests)
   - React Testing Library
 
+Esto es un ejemplo de claude code en acción en github actions
+
 ## 📁 Estructura del Proyecto
 
 ```
