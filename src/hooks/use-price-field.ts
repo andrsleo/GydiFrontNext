@@ -38,7 +38,7 @@ const PLACEHOLDER_BY_TYPE: Record<PriceFieldType, string> = {
 
 export function usePriceField(fieldType: PriceFieldType): PriceFieldMeta {
   const { currency } = useCurrencyStore();
-  const meta = CURRENCY_META[currency];
+  const meta = CURRENCY_META[currency] ?? CURRENCY_META['USD'];
 
   return {
     currency,
