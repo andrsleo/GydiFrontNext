@@ -95,15 +95,19 @@ export const LISTING_TYPE_DESCRIPTIONS: Record<PropertyListingType, string> = {
 };
 
 /**
- * Currency Enum
+ * Currency Enum — mirrors SupportedCurrency in currency-config.ts
+ * These values match the backend DB constraints (V13, V26 migrations).
  */
 export enum Currency {
   USD = 'USD',
   EUR = 'EUR',
-  // MXN = 'MXN',
-  // COP = 'COP',
-  // CAD = 'CAD',
-  // GBP = 'GBP',
+  MXN = 'MXN',
+  COP = 'COP',
+  CLP = 'CLP',
+  BRL = 'BRL',
+  PEN = 'PEN',
+  CAD = 'CAD',
+  GBP = 'GBP',
 }
 
 /**
@@ -205,7 +209,7 @@ export interface PropertyDetailResponse extends PropertyResponse {
 export interface CreatePropertyRequest {
   title: string;
   description?: string;
-  pricePerNight: number;
+  pricePerNight?: number;
   currency: Currency;
   salePrice?: number;
   country: string;

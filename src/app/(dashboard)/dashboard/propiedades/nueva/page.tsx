@@ -6,14 +6,28 @@ import { useCreateProperty, useCloudinaryDirectUpload, useUploadVideos, usePrope
 import { PropertyForm, ImageUploader, VideoUploader, ImageOrganizer } from '@/features/properties/components';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, Upload, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Save, Upload, ArrowRight, ClipboardList, ImageIcon, SlidersHorizontal, Video, Check } from 'lucide-react';
 import Link from 'next/link';
 import { CreatePropertyFormData } from '@/features/properties/schemas';
-import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
+
+type WizardStep = 'details' | 'images' | 'organize' | 'videos';
+
+const STEPS: { key: WizardStep; icon: React.ElementType; labelKey: string; descKey: string }[] = [
+  { key: 'details',  icon: ClipboardList,     labelKey: 'page.steps.details',  descKey: 'page.cards.detailsDesc'  },
+  { key: 'images',   icon: ImageIcon,          labelKey: 'page.steps.images',   descKey: 'page.cards.imagesDesc'   },
+  { key: 'organize', icon: SlidersHorizontal,  labelKey: 'page.steps.organize', descKey: 'page.cards.organizeDesc' },
+  { key: 'videos',   icon: Video,              labelKey: 'page.steps.videos',   descKey: 'page.cards.videosDesc'   },
+];
+
+function getStepIndex(step: WizardStep): number {
+  return STEPS.findIndex((s) => s.key === step);
+}
 
 export default function NewPropertyPage() {
   const router = useRouter();
-  const [step, setStep] = useState<'details' | 'images' | 'organize' | 'videos'>('details');
+  const { t } = useTranslation('properties');
+  const [step, setStep] = useState<WizardStep>('details');
   const [propertyId, setPropertyId] = useState<string | null>(null);
   const [images, setImages] = useState<File[]>([]);
   const [videos, setVideos] = useState<File[]>([]);
@@ -23,18 +37,15 @@ export default function NewPropertyPage() {
   const { uploadImagesAsync, isUploading: isUploadingImages } = useCloudinaryDirectUpload();
   const uploadVideos = useUploadVideos();
 
-  // Fetch property detail after images are uploaded to get image data
   const { data: property } = usePropertyById({
     id: propertyId || '',
-    enabled: !!propertyId && imagesUploaded
+    enabled: !!propertyId && imagesUploaded,
   });
 
+  const currentStepIndex = getStepIndex(step);
+
   const handleCreateProperty = async (data: CreatePropertyFormData) => {
-    // Sanitize data: convert nulls to undefined for optional fields
-    const sanitizedData = {
-      ...data,
-      salePrice: data.salePrice ?? undefined,
-    };
+    const sanitizedData = { ...data, pricePerNight: data.pricePerNight ?? undefined, salePrice: data.salePrice ?? undefined };
     const property = await createProperty.mutateAsync(sanitizedData);
     setPropertyId(property.id);
     setStep('images');
@@ -43,9 +54,7 @@ export default function NewPropertyPage() {
 
   const handleUploadImages = async () => {
     if (!propertyId || images.length === 0) return;
-
     try {
-      // Use direct Cloudinary upload (bypasses Vercel size limits)
       await uploadImagesAsync({ propertyId, files: images });
       setImagesUploaded(true);
       setStep('organize');
@@ -56,7 +65,6 @@ export default function NewPropertyPage() {
 
   const handleUploadVideos = async () => {
     if (!propertyId) return;
-
     try {
       if (videos.length > 0) {
         await uploadVideos.mutateAsync({ propertyId, files: videos });
@@ -68,60 +76,91 @@ export default function NewPropertyPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-6 max-w-3xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center gap-3">
         <Link href="/dashboard/propiedades">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" aria-label="Volver">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Nueva Propiedad</h1>
-          <p className="text-muted-foreground">
-            Crea una nueva propiedad en 3 pasos
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('page.title')}</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">{t('page.subtitle')}</p>
         </div>
       </div>
 
-      {/* Progress Steps */}
-      <div className="flex items-center gap-2">
-        <div className={`flex items-center gap-2 ${step === 'details' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'details' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-            1
-          </div>
-          <span className="font-medium hidden sm:inline">Detalles</span>
-        </div>
-        <div className="flex-1 h-px bg-border" />
-        <div className={`flex items-center gap-2 ${step === 'images' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'images' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-            2
-          </div>
-          <span className="font-medium hidden sm:inline">Imágenes</span>
-        </div>
-        <div className="flex-1 h-px bg-border" />
-        <div className={`flex items-center gap-2 ${step === 'organize' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'organize' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-            3
-          </div>
-          <span className="font-medium hidden sm:inline">Organizar</span>
-        </div>
-        <div className="flex-1 h-px bg-border" />
-        <div className={`flex items-center gap-2 ${step === 'videos' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step === 'videos' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-            4
-          </div>
-          <span className="font-medium hidden sm:inline">Videos</span>
-        </div>
-      </div>
+      {/* Progress Stepper */}
+      <nav aria-label="Pasos del formulario">
+        <ol className="flex items-start gap-0">
+          {STEPS.map((s, index) => {
+            const isCompleted = index < currentStepIndex;
+            const isCurrent  = index === currentStepIndex;
+            const isUpcoming  = index > currentStepIndex;
+            const Icon = s.icon;
+
+            return (
+              <li key={s.key} className="flex items-center flex-1 last:flex-none">
+                <div className="flex flex-col items-center gap-1.5">
+                  {/* Circle */}
+                  <div
+                    className={[
+                      'w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-300',
+                      isCompleted ? 'bg-primary border-primary text-primary-foreground'       : '',
+                      isCurrent   ? 'bg-primary border-primary text-primary-foreground shadow-md scale-110' : '',
+                      isUpcoming  ? 'bg-background border-muted-foreground/30 text-muted-foreground/50'   : '',
+                    ].join(' ')}
+                    aria-current={isCurrent ? 'step' : undefined}
+                  >
+                    {isCompleted
+                      ? <Check className="h-4 w-4" />
+                      : <Icon className="h-4 w-4" />}
+                  </div>
+                  {/* Label */}
+                  <span
+                    className={[
+                      'text-xs font-medium hidden sm:block transition-colors duration-300',
+                      isCurrent   ? 'text-primary'              : '',
+                      isCompleted ? 'text-primary/70'           : '',
+                      isUpcoming  ? 'text-muted-foreground/50'  : '',
+                    ].join(' ')}
+                  >
+                    {t(s.labelKey)}
+                  </span>
+                </div>
+
+                {/* Connector line — skip after last item */}
+                {index < STEPS.length - 1 && (
+                  <div className="flex-1 mx-2 mt-[-18px]">
+                    <div
+                      className={[
+                        'h-0.5 w-full rounded transition-colors duration-500',
+                        isCompleted ? 'bg-primary' : 'bg-muted-foreground/20',
+                      ].join(' ')}
+                    />
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+
+      {/* Step content */}
 
       {/* Step 1: Property Details */}
       {step === 'details' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Información de la Propiedad</CardTitle>
-            <CardDescription>
-              Completa los detalles básicos de tu propiedad
-            </CardDescription>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <ClipboardList className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">{t('page.cards.detailsTitle')}</CardTitle>
+                <CardDescription className="mt-0.5">{t('page.cards.detailsDesc')}</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <PropertyForm
@@ -135,31 +174,32 @@ export default function NewPropertyPage() {
 
       {/* Step 2: Upload Images */}
       {step === 'images' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Imágenes de la Propiedad</CardTitle>
-            <CardDescription>
-              Sube hasta 20 imágenes (mínimo 4 para publicar)
-            </CardDescription>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <ImageIcon className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">{t('page.cards.imagesTitle')}</CardTitle>
+                <CardDescription className="mt-0.5">{t('page.cards.imagesDesc')}</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ImageUploader
-              maxFiles={20}
-              onFilesSelected={setImages}
-            />
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setStep('details')}
-              >
-                Atrás
+            <ImageUploader maxFiles={20} onFilesSelected={setImages} />
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" onClick={() => setStep('details')}>
+                {t('page.buttons.back')}
               </Button>
               <Button
                 onClick={handleUploadImages}
                 disabled={images.length === 0 || isUploadingImages}
               >
                 <Upload className="h-4 w-4 mr-2" />
-                {isUploadingImages ? 'Subiendo...' : `Subir ${images.length} Imágenes`}
+                {isUploadingImages
+                  ? t('page.buttons.uploading')
+                  : t('page.buttons.uploadImages', { count: String(images.length) })}
               </Button>
             </div>
           </CardContent>
@@ -168,12 +208,17 @@ export default function NewPropertyPage() {
 
       {/* Step 3: Organize Images */}
       {step === 'organize' && property && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Organizar Fotos</CardTitle>
-            <CardDescription>
-              Reordena las imágenes y selecciona la foto de portada
-            </CardDescription>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <SlidersHorizontal className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">{t('page.cards.organizeTitle')}</CardTitle>
+                <CardDescription className="mt-0.5">{t('page.cards.organizeDesc')}</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <ImageOrganizer
@@ -181,17 +226,12 @@ export default function NewPropertyPage() {
               images={property.images}
               coverImageId={property.coverImageId}
             />
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setStep('images')}
-              >
-                Atrás
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" onClick={() => setStep('images')}>
+                {t('page.buttons.back')}
               </Button>
-              <Button
-                onClick={() => setStep('videos')}
-              >
-                Continuar
+              <Button onClick={() => setStep('videos')}>
+                {t('page.buttons.continue')}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
@@ -201,32 +241,31 @@ export default function NewPropertyPage() {
 
       {/* Step 4: Upload Videos */}
       {step === 'videos' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Videos de la Propiedad</CardTitle>
-            <CardDescription>
-              Sube hasta 2 videos (opcional)
-            </CardDescription>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <Video className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">{t('page.cards.videosTitle')}</CardTitle>
+                <CardDescription className="mt-0.5">{t('page.cards.videosDesc')}</CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <VideoUploader
-              maxFiles={2}
-              onFilesSelected={setVideos}
-            />
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setStep('organize')}
-              >
-                Atrás
+            <VideoUploader maxFiles={2} onFilesSelected={setVideos} />
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" onClick={() => setStep('organize')}>
+                {t('page.buttons.back')}
               </Button>
-              <Button
-                onClick={handleUploadVideos}
-                disabled={uploadVideos.isPending}
-              >
+              <Button onClick={handleUploadVideos} disabled={uploadVideos.isPending}>
                 <Save className="h-4 w-4 mr-2" />
-                {uploadVideos.isPending ? 'Subiendo...' :
-                  videos.length > 0 ? `Subir ${videos.length} Videos y Finalizar` : 'Omitir y Finalizar'}
+                {uploadVideos.isPending
+                  ? t('page.buttons.uploading')
+                  : videos.length > 0
+                    ? t('page.buttons.uploadVideos', { count: String(videos.length) })
+                    : t('page.buttons.skipAndFinish')}
               </Button>
             </div>
           </CardContent>

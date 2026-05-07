@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { CountryCitySelector } from '@/components/shared/country-city-selector';
@@ -42,6 +41,27 @@ import { useTranslation } from '@/hooks/use-translation';
 import { usePriceField } from '@/hooks/use-price-field';
 import { useCurrencyStore } from '@/store/currency-store';
 import { CURRENCY_META } from '@/lib/constants/currency-config';
+
+// ── Amenity helper functions (module scope — no component state dependency) ──
+
+const toAmenityKey = (name: string): string =>
+  name.replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+
+const getAmenityLabel = (name: string, t: (key: string) => string): string => {
+  const translated = t(`form.amenities.names.${toAmenityKey(name)}`);
+  return translated.startsWith('form.amenities.names.') ? name : translated;
+};
+
+const getCategoryLabel = (category: string, t: (key: string) => string): string => {
+  const translated = t(`form.amenities.categories.${category}`);
+  return translated.startsWith('form.amenities.categories.') ? category : translated;
+};
+
+const getAmenityDescription = (name: string, fallback: string | null, t: (key: string) => string): string | undefined => {
+  if (!fallback) return undefined;
+  const translated = t(`form.amenities.descriptions.${toAmenityKey(name)}`);
+  return translated.startsWith('form.amenities.descriptions.') ? fallback : translated;
+};
 
 interface PropertyFormProps {
   mode: 'create' | 'edit';
@@ -81,7 +101,7 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
     register,
     handleSubmit,
     control,
-    formState: { errors, touchedFields },
+    formState: { errors },
     watch,
     setError,
     setValue,
@@ -114,27 +134,6 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
 
   const perNightMeta = usePriceField('per-night');
   const saleMeta = usePriceField('sale');
-
-  // Converts an amenity name (English, from API) to a translation-safe key
-  // "Air Conditioning" → "Air_Conditioning", "Children's Books" → "Children_s_Books"
-  const toAmenityKey = (name: string) =>
-    name.replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
-
-  const getAmenityLabel = (name: string): string => {
-    const translated = t(`form.amenities.names.${toAmenityKey(name)}`);
-    return translated.startsWith('form.amenities.names.') ? name : translated;
-  };
-
-  const getCategoryLabel = (category: string): string => {
-    const translated = t(`form.amenities.categories.${category}`);
-    return translated.startsWith('form.amenities.categories.') ? category : translated;
-  };
-
-  const getAmenityDescription = (name: string, fallback: string | null): string | undefined => {
-    if (!fallback) return undefined;
-    const translated = t(`form.amenities.descriptions.${toAmenityKey(name)}`);
-    return translated.startsWith('form.amenities.descriptions.') ? fallback : translated;
-  };
 
   // Fetch available amenities
   const { data: amenities, isLoading: isLoadingAmenities } = useAmenities();
@@ -644,14 +643,14 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
         <div className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-full px-3 py-1 mb-4">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
           <span className="text-xs font-semibold text-green-700">
-            {perNightMeta.code} — {CURRENCY_META[storeCurrency]?.name}
+            {perNightMeta.code} — {CURRENCY_META[perNightMeta.currency]?.name}
           </span>
-          <span className="text-xs text-muted-foreground">· {t('form.pricing.currencyBadge', { code: perNightMeta.code, name: CURRENCY_META[storeCurrency]?.name })}</span>
+          <span className="text-xs text-muted-foreground">· {t('form.pricing.currencyBadge', { code: perNightMeta.code, name: CURRENCY_META[perNightMeta.currency]?.name })}</span>
         </div>
 
         <div className={
           listingTypeValue === PropertyListingType.BOTH
-            ? 'grid grid-cols-2 gap-4 max-w-lg'
+            ? 'grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg'
             : 'max-w-xs'
         }>
           {/* pricePerNight — shown for SHORT_TERM_RENTAL and BOTH */}
@@ -750,9 +749,9 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
                 options={
                   amenities?.map((amenity) => ({
                     value: amenity.name,
-                    label: getAmenityLabel(amenity.name),
-                    description: getAmenityDescription(amenity.name, amenity.description),
-                    category: getCategoryLabel(amenity.category),
+                    label: getAmenityLabel(amenity.name, t),
+                    description: getAmenityDescription(amenity.name, amenity.description, t),
+                    category: getCategoryLabel(amenity.category, t),
                   })) || []
                 }
                 value={field.value || []}

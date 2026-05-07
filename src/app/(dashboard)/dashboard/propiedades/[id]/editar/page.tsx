@@ -9,7 +9,7 @@ import type { PropertyFormHandle } from '@/features/properties/components/proper
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Eye, Save } from 'lucide-react';
+import { ArrowLeft, Eye, Save, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { UpdatePropertyFormData } from '@/features/properties/schemas';
 import { PropertyStatus } from '@/features/properties/types';
@@ -79,6 +79,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
     // Sanitize data: convert nulls to undefined for optional fields
     const sanitizedData = {
       ...data,
+      pricePerNight: data.pricePerNight ?? undefined,
       salePrice: data.salePrice ?? undefined,
     };
     return updateProperty.mutateAsync({ id, data: sanitizedData });
@@ -86,17 +87,34 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-[600px] w-full" />
+      <div className="space-y-6 max-w-3xl">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-9 w-9 rounded-md" />
+          <div className="space-y-1.5 flex-1">
+            <Skeleton className="h-7 w-48" />
+            <Skeleton className="h-4 w-72" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-[500px] w-full rounded-xl" />
       </div>
     );
   }
 
   if (!property) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">Propiedad no encontrada</p>
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+          <Pencil className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <p className="text-base font-medium">Propiedad no encontrada</p>
+        <p className="text-sm text-muted-foreground">Verifica que la URL sea correcta o vuelve al listado.</p>
+        <Link href="/dashboard/propiedades">
+          <Button variant="outline" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Volver a propiedades
+          </Button>
+        </Link>
       </div>
     );
   }
@@ -104,22 +122,26 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-          <Link href="/dashboard/propiedades">
-            <Button variant="ghost" size="icon" aria-label="Volver">
+      <div className="space-y-3 sm:space-y-0 sm:flex sm:items-start sm:justify-between gap-4">
+        <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
+          <Link href="/dashboard/propiedades" className="mt-0.5 shrink-0">
+            <Button variant="ghost" size="icon" aria-label="Volver a propiedades">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Editar Propiedad</h1>
+            <div className="flex flex-wrap items-center gap-2 mb-0.5">
+              <div className="flex items-center gap-1.5">
+                <Pencil className="h-4 w-4 text-muted-foreground shrink-0" />
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Editar Propiedad</h1>
+              </div>
               <PropertyStatusBadge status={property.status as PropertyStatus} />
             </div>
-            <p className="text-sm sm:text-base text-muted-foreground truncate">{property.title}</p>
+            <p className="text-sm text-muted-foreground truncate max-w-md">{property.title}</p>
           </div>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
+
+        <div className="flex gap-2 w-full sm:w-auto sm:shrink-0 ml-10 sm:ml-0">
           {property.slug ? (
             <Link href={`/propiedades/${property.slug}`} target="_blank" className="flex-1 sm:flex-initial">
               <Button variant="outline" className="w-full sm:w-auto">
@@ -141,7 +163,9 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
             className="flex-1 sm:flex-initial"
           >
             <Save className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">{updateProperty.isPending ? 'Guardando...' : 'Update Property'}</span>
+            <span className="hidden sm:inline">
+              {updateProperty.isPending ? 'Guardando...' : 'Guardar cambios'}
+            </span>
             <span className="sm:hidden">{updateProperty.isPending ? '...' : 'Guardar'}</span>
           </Button>
         </div>
@@ -149,24 +173,28 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full grid grid-cols-2">
-          <TabsTrigger value="details">Detalles</TabsTrigger>
-          <TabsTrigger value="media" className="text-xs sm:text-sm">
+          <TabsTrigger value="details" className="gap-1.5">
+            <span className="hidden sm:inline">Detalles de la propiedad</span>
+            <span className="sm:hidden">Detalles</span>
+          </TabsTrigger>
+          <TabsTrigger value="media" className="gap-1.5">
             <span className="hidden sm:inline">
-              Media ({property.imageCount} imgs, {property.videoCount} videos)
+              Fotos y videos
+              {(property.imageCount > 0 || property.videoCount > 0) && (
+                <span className="ml-1.5 text-xs bg-muted-foreground/20 rounded-full px-1.5 py-0.5">
+                  {property.imageCount + property.videoCount}
+                </span>
+              )}
             </span>
-            <span className="sm:hidden">
-              Media ({property.imageCount + property.videoCount})
-            </span>
+            <span className="sm:hidden">Media ({property.imageCount + property.videoCount})</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="details" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Información de la Propiedad</CardTitle>
-              <CardDescription>
-                Actualiza los detalles de tu propiedad
-              </CardDescription>
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Información de la Propiedad</CardTitle>
+              <CardDescription>Actualiza los detalles de tu propiedad. Los cambios se guardan con el botón de arriba.</CardDescription>
             </CardHeader>
             <CardContent>
               <PropertyForm
@@ -181,15 +209,13 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
           </Card>
         </TabsContent>
 
-        <TabsContent value="media" className="mt-6 space-y-6">
+        <TabsContent value="media" className="mt-6 space-y-5">
           {/* Organize Images */}
           {property.images.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Organizar Fotos</CardTitle>
-                <CardDescription>
-                  Reordena las imágenes y selecciona la foto de portada
-                </CardDescription>
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Organizar Fotos</CardTitle>
+                <CardDescription>Arrastra para reordenar. Haz clic en una imagen para marcarla como portada.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ImageOrganizer
@@ -204,12 +230,10 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
 
           {/* Organize Videos */}
           {property.videos.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Administrar Videos</CardTitle>
-                <CardDescription>
-                  Elimina videos que ya no desees mostrar
-                </CardDescription>
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Administrar Videos</CardTitle>
+                <CardDescription>Elimina los videos que ya no desees mostrar en tu propiedad.</CardDescription>
               </CardHeader>
               <CardContent>
                 <VideoOrganizer
@@ -221,14 +245,12 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
             </Card>
           )}
 
-          {/* Current Media */}
+          {/* Current Media Gallery */}
           {(property.images.length > 0 || property.videos.length > 0) && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Vista Previa de Media</CardTitle>
-                <CardDescription>
-                  Imágenes y videos de tu propiedad
-                </CardDescription>
+            <Card className="border-0 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Vista Previa</CardTitle>
+                <CardDescription>Así se verán las fotos y videos en tu listado.</CardDescription>
               </CardHeader>
               <CardContent>
                 <PropertyGallery images={property.images} videos={property.videos} title={property.title} />
@@ -237,38 +259,41 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
           )}
 
           {/* Upload New Images */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Agregar Imágenes</CardTitle>
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Agregar Imágenes</CardTitle>
               <CardDescription>
-                Sube hasta {20 - property.imageCount} imágenes más (tienes {property.imageCount}/20)
+                {property.imageCount < 20
+                  ? `Puedes subir hasta ${20 - property.imageCount} imágenes más. Actualmente tienes ${property.imageCount} de 20.`
+                  : 'Has alcanzado el límite de 20 imágenes. Elimina alguna para agregar nuevas.'}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <ImageUploader
                 maxFiles={20 - property.imageCount}
                 onFilesSelected={async (files) => {
                   try {
-                    // Use direct Cloudinary upload (bypasses Vercel size limits)
                     await uploadImagesAsync({ propertyId: id, files });
                   } catch (error) {
                     console.error('Error uploading images:', error);
                   }
                 }}
-                disabled={isUploadingImages}
+                disabled={isUploadingImages || property.imageCount >= 20}
               />
             </CardContent>
           </Card>
 
           {/* Upload New Videos */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Agregar Videos</CardTitle>
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Agregar Videos</CardTitle>
               <CardDescription>
-                Sube hasta {2 - property.videoCount} videos más (tienes {property.videoCount}/2)
+                {property.videoCount < 2
+                  ? `Puedes subir hasta ${2 - property.videoCount} video${2 - property.videoCount !== 1 ? 's' : ''} más. Actualmente tienes ${property.videoCount} de 2.`
+                  : 'Has alcanzado el límite de 2 videos. Elimina alguno para agregar nuevos.'}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <VideoUploader
                 maxFiles={2 - property.videoCount}
                 onFilesSelected={async (files) => {
@@ -278,7 +303,7 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
                     console.error('Error uploading videos:', error);
                   }
                 }}
-                disabled={uploadVideos.isPending}
+                disabled={uploadVideos.isPending || property.videoCount >= 2}
               />
             </CardContent>
           </Card>
