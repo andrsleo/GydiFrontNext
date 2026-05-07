@@ -27,7 +27,9 @@ export const createPropertySchema = z.object({
     .number()
     .positive('Price must be positive')
     .min(1, 'Price must be at least 1')
-    .max(999999999.99, 'Price is too high'),
+    .max(999999999.99, 'Price is too high')
+    .optional()
+    .nullable(),
 
   currency: z.nativeEnum(Currency, {
     errorMap: () => ({ message: 'Invalid currency' }),
@@ -178,7 +180,7 @@ export const createPropertySchema = z.object({
       data.listingType === PropertyListingType.SHORT_TERM_RENTAL ||
       data.listingType === PropertyListingType.BOTH
     ) {
-      return data.pricePerNight > 0;
+      return data.pricePerNight != null && data.pricePerNight > 0;
     }
     return true;
   },
@@ -224,7 +226,9 @@ export const updatePropertySchema = z.object({
     .number()
     .positive('Price must be positive')
     .min(1, 'Price must be at least 1')
-    .max(999999999.99, 'Price is too high'),
+    .max(999999999.99, 'Price is too high')
+    .optional()
+    .nullable(),
 
   currency: z.nativeEnum(Currency, {
     errorMap: () => ({ message: 'Invalid currency' }),
@@ -374,7 +378,7 @@ export const updatePropertySchema = z.object({
       data.listingType === PropertyListingType.SHORT_TERM_RENTAL ||
       data.listingType === PropertyListingType.BOTH
     ) {
-      return data.pricePerNight > 0;
+      return data.pricePerNight != null && data.pricePerNight > 0;
     }
     return true;
   },
