@@ -1,5 +1,15 @@
 import { render, screen } from '@testing-library/react';
-import { vi, describe, it, expect } from 'vitest';
+import { vi, describe, it, expect, beforeAll } from 'vitest';
+
+// Mock IntersectionObserver (not available in jsdom)
+beforeAll(() => {
+  global.IntersectionObserver = class {
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+    constructor(_cb: IntersectionObserverCallback, _opts?: IntersectionObserverInit) {}
+  } as unknown as typeof IntersectionObserver;
+});
 
 // Mock framer-motion — all motion components render as plain divs
 vi.mock('framer-motion', () => ({
