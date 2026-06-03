@@ -6,8 +6,7 @@ import { Bell, Settings, LogOut } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { CurrencySelector } from '@/components/shared/currency-selector';
-import { LanguageSelector } from '@/components/shared/language-selector';
+import { PreferencesSelector } from '@/components/shared/preferences-selector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,8 +59,8 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          {/* <CurrencySelector className="hidden sm:flex" /> */}
-          <LanguageSelector className="hidden sm:flex" />
+          <PreferencesSelector compact className="sm:hidden" />
+          <PreferencesSelector className="hidden sm:flex" />
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />

@@ -3,83 +3,59 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { propertyActionsApi } from '../api/property-actions.api';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 export function usePublishProperty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: (propertyId: string) => propertyActionsApi.publish(propertyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      toast.success('Propiedad publicada exitosamente');
+      toast.success(t('toasts.property.published'));
     },
     onError: (error: any) => {
       const errorData = error.response?.data;
-      let errorMessage = errorData?.message || 'Error al publicar la propiedad';
+      let errorMessage = errorData?.message || t('toasts.property.publishError');
 
-      // Transform technical error messages into user-friendly messages
       const transformErrorMessage = (msg: string): string => {
-        // Pattern: "Property must have at least X images (currently has Y)"
         const imageMatch = msg.match(/must have at least (\d+) images.*currently has (\d+)/i);
         if (imageMatch) {
-          const required = imageMatch[1];
-          const current = imageMatch[2];
-          return `Necesitas al menos ${required} imágenes para publicar (tienes ${current})`;
+          return t('toasts.property.publishMinImages', { required: imageMatch[1], current: imageMatch[2] });
         }
-
-        // Pattern: "Property must have at least X videos"
         const videoMatch = msg.match(/must have at least (\d+) videos/i);
         if (videoMatch) {
-          const required = videoMatch[1];
-          return `Necesitas al menos ${required} video(s) para publicar`;
+          return t('toasts.property.publishMinVideos', { required: videoMatch[1] });
         }
-
-        // Pattern: "Description is required" or "Title is required"
         if (msg.includes('Description') && msg.includes('required')) {
-          return 'La descripción es obligatoria para publicar';
+          return t('toasts.property.publishMissingDesc');
         }
         if (msg.includes('Title') && msg.includes('required')) {
-          return 'El título es obligatorio para publicar';
+          return t('toasts.property.publishMissingTitle');
         }
-
-        // Pattern: "Address is required"
         if (msg.includes('Address') && msg.includes('required')) {
-          return 'La dirección es obligatoria para publicar';
+          return t('toasts.property.publishMissingAddress');
         }
-
-        // Pattern: "Amenities" validation
         if (msg.includes('amenities') || msg.includes('Amenities')) {
-          return 'Debes agregar al menos 3 amenidades para publicar';
+          return t('toasts.property.publishMissingAmenities');
         }
-
-        // Pattern: "Property domain exception:" - remove technical prefix
         if (msg.includes('Property domain exception:')) {
           return msg.replace('Property domain exception:', '').trim();
         }
-
         return msg;
       };
 
-      // Check if there are validation errors with details
       if (errorData?.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
         const errorsList = errorData.errors
           .map((err: any) => `• ${transformErrorMessage(err.message)}`)
           .join('\n');
-
-        toast.error(
-          `No se puede publicar la propiedad:\n\n${errorsList}`,
-          {
-            duration: 10000,
-            style: {
-              whiteSpace: 'pre-line',
-            },
-          }
-        );
-      } else {
-        const friendlyMessage = transformErrorMessage(errorMessage);
-        toast.error(friendlyMessage, {
-          duration: 6000,
+        toast.error(`${t('toasts.property.publishCannotMsg')}\n\n${errorsList}`, {
+          duration: 10000,
+          style: { whiteSpace: 'pre-line' },
         });
+      } else {
+        toast.error(transformErrorMessage(errorMessage), { duration: 6000 });
       }
     },
   });
@@ -87,15 +63,16 @@ export function usePublishProperty() {
 
 export function useSubmitForApproval() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: (propertyId: string) => propertyActionsApi.submitForApproval(propertyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      toast.success('Propiedad enviada a revisión exitosamente');
+      toast.success(t('toasts.property.submitForApproval'));
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message || error?.message || 'Error al enviar a revisión';
+      const message = error?.response?.data?.message || error?.message || t('toasts.property.submitError');
       toast.error(message);
     },
   });
@@ -103,67 +80,72 @@ export function useSubmitForApproval() {
 
 export function useActivateProperty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: (propertyId: string) => propertyActionsApi.activate(propertyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      toast.success('Propiedad reactivada exitosamente');
+      toast.success(t('toasts.property.activated'));
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Error al reactivar la propiedad');
+      toast.error(error.response?.data?.message || t('toasts.property.activateError'));
     },
   });
 }
 
 export function useDeactivateProperty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: (propertyId: string) => propertyActionsApi.deactivate(propertyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      toast.success('Propiedad desactivada exitosamente');
+      toast.success(t('toasts.property.deactivated'));
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Error al desactivar la propiedad');
+      toast.error(error.response?.data?.message || t('toasts.property.deactivateError'));
     },
   });
 }
 
 export function useDeleteProperty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: (propertyId: string) => propertyActionsApi.delete(propertyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      toast.success('Propiedad eliminada exitosamente');
+      toast.success(t('toasts.property.deleted'));
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Error al eliminar la propiedad');
+      toast.error(error.response?.data?.message || t('toasts.property.deleteError'));
     },
   });
 }
 
 export function useAdminApproveProperty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: (propertyId: string) => propertyActionsApi.adminApprove(propertyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'properties'] });
-      toast.success('Propiedad aprobada exitosamente');
+      toast.success(t('toasts.property.approved'));
     },
     onError: () => {
-      toast.error('Error al aprobar la propiedad');
+      toast.error(t('toasts.property.approveError'));
     },
   });
 }
 
 export function useAdminDenyProperty() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: ({ propertyId, reason }: { propertyId: string; reason: string }) =>
@@ -171,10 +153,10 @@ export function useAdminDenyProperty() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'properties'] });
-      toast.success('Propiedad rechazada');
+      toast.success(t('toasts.property.denied'));
     },
     onError: () => {
-      toast.error('Error al rechazar la propiedad');
+      toast.error(t('toasts.property.denyError'));
     },
   });
 }

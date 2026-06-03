@@ -1,0 +1,88 @@
+{
+  "page": {
+    "title": "Temporadas",
+    "subtitle": "Configura las temporadas alta, media y baja por alcance geográfico",
+    "newSeason": "Nueva Temporada",
+    "loading": "Cargando temporadas...",
+    "empty": "No hay temporadas configuradas",
+    "emptySubtitle": "Crea tu primera temporada para definir precios por período"
+  },
+  "table": {
+    "name": "Nombre",
+    "type": "Tipo",
+    "scope": "Alcance",
+    "location": "Ubicación",
+    "startDate": "Inicio",
+    "endDate": "Fin",
+    "recurrence": "Recurrencia",
+    "system": "Sistema",
+    "actions": "Acciones"
+  },
+  "type": {
+    "HIGH": "Alta",
+    "MEDIUM": "Media",
+    "LOW": "Baja"
+  },
+  "scope": {
+    "GLOBAL": "Global",
+    "REGION": "Región",
+    "COUNTRY": "País",
+    "SUBREGION": "Subregión"
+  },
+  "recurrence": {
+    "NONE": "Una vez",
+    "YEARLY": "Anual"
+  },
+  "badge": {
+    "system": "Sistema",
+    "custom": "Custom"
+  },
+  "form": {
+    "titleCreate": "Nueva Temporada",
+    "titleEdit": "Editar Temporada",
+    "name": "Nombre",
+    "namePlaceholder": "Ej: Temporada Alta Caribe",
+    "seasonType": "Tipo de temporada",
+    "scope": "Alcance geográfico",
+    "scopeHint": "Define qué tan amplia es la cobertura de esta temporada",
+    "region": "Regiones",
+    "regionPlaceholder": "Selecciona una o más regiones",
+    "countries": "Países",
+    "countriesPlaceholder": "Selecciona uno o más países",
+    "subregions": "Subregiones",
+    "subregionsPlaceholder": "Selecciona una o más subregiones",
+    "searchPlaceholder": "Buscar...",
+    "noResults": "Sin resultados",
+    "noSubregionsForCountries": "Los países seleccionados no tienen subregiones predefinidas. Puedes cambiar el alcance a País.",
+    "willCreate": "Se crearán {{count}} registros (uno por ubicación seleccionada)",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "recurrence": "Recurrencia",
+    "recurrenceHint": "Anual: se repite cada año en las mismas fechas",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "saving": "Guardando..."
+  },
+  "delete": {
+    "title": "Eliminar temporada",
+    "description": "¿Estás seguro de que quieres eliminar la temporada \"{{name}}\"? Esta acción no se puede deshacer.",
+    "descriptionGroup": "¿Estás seguro de que quieres eliminar {{count}} registros de la temporada \"{{name}}\"? Esta acción no se puede deshacer.",
+    "confirm": "Eliminar",
+    "cancel": "Cancelar",
+    "deleting": "Eliminando..."
+  },
+  "validation": {
+    "nameRequired": "El nombre es obligatorio",
+    "typeRequired": "El tipo de temporada es obligatorio",
+    "startDateRequired": "La fecha de inicio es obligatoria",
+    "endDateRequired": "La fecha de fin es obligatoria",
+    "endDateAfterStart": "La fecha de fin debe ser posterior a la de inicio",
+    "regionRequired": "Selecciona al menos una región",
+    "countryRequired": "Selecciona al menos un país",
+    "subregionRequired": "Selecciona al menos una subregión"
+  },
+  "tooltip": {
+    "editSystem": "Las temporadas del sistema no se pueden editar",
+    "deleteSystem": "Las temporadas del sistema no se pueden eliminar"
+  }
+}

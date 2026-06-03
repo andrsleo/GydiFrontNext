@@ -22,7 +22,7 @@ import type { PlanResponse } from '@/features/subscriptions/types';
 export function getRecommendedUpgradePlan(
   plans: PlanResponse[],
   currentPlanCode: string
-): PlanCode | undefined {
+): string | undefined {
   if (!plans || plans.length === 0) {
     return undefined;
   }

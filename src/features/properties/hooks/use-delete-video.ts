@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { mediaApi } from '../api/media.api';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface DeleteVideoParams {
   propertyId: string;
@@ -16,6 +17,7 @@ interface DeleteVideoParams {
  */
 export function useDeleteVideo() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: async ({ propertyId, videoId }: DeleteVideoParams) => {
@@ -34,10 +36,10 @@ export function useDeleteVideo() {
         refetchType: 'active',
       });
 
-      toast.success('Video eliminado correctamente');
+      toast.success(t('toasts.videos.deleted'));
     },
     onError: (error: Error) => {
-      toast.error('Error al eliminar video', {
+      toast.error(t('toasts.videos.deleteError'), {
         description: error.message,
       });
     },

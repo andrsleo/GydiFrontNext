@@ -1,4 +1,40 @@
 {
+  "myProperties": {
+    "title": "Mis Propiedades",
+    "subtitle": "Gestiona tus propiedades en renta",
+    "newProperty": "Nueva Propiedad",
+    "emptyState": "No tienes propiedades",
+    "emptyStateStatus": " en estado {{status}}",
+    "createFirst": "Crear Primera Propiedad",
+    "bannerTitle": "Agrega una tarjeta para publicar tus propiedades",
+    "bannerText": "Para que tus propiedades puedan recibir reservas, GYDI necesita una tarjeta de crédito o débito. Se cobra una comisión del 15% por cada reserva exitosa generada por referidos.",
+    "bannerButton": "Agregar tarjeta",
+    "tabs": {
+      "all": "Todas",
+      "draft": "Borradores",
+      "pending": "En Revisión",
+      "published": "Publicadas",
+      "inactive": "Inactivas",
+      "denied": "Rechazadas"
+    }
+  },
+  "card": {
+    "validatePrice": "Validar precio",
+    "requiresCorrections": "Requiere correcciones",
+    "status": {
+      "DRAFT": "Borrador",
+      "PENDING_APPROVAL": "En Revisión",
+      "PUBLISHED": "Publicada",
+      "INACTIVE": "Inactiva",
+      "DENY": "Rechazada",
+      "DELETED": "Eliminada"
+    },
+    "listingType": {
+      "SHORT_TERM_RENTAL": "Renta Corta",
+      "SALE": "Venta",
+      "BOTH": "Renta/Venta"
+    }
+  },
   "page": {
     "title": "Nueva Propiedad",
     "subtitle": "Crea una nueva propiedad en 4 pasos",
@@ -327,10 +363,170 @@
         "Luggage_Storage": "Almacenamiento de equipaje"
       }
     },
+    "validationError": "Por favor completa todos los campos requeridos antes de enviar.",
     "buttons": {
       "saving": "Guardando...",
       "create": "Crear Propiedad",
       "update": "Actualizar Propiedad"
+    }
+  },
+  "uploader": {
+    "images": {
+      "ariaLabel": "Zona de carga de imágenes",
+      "dropHere": "Suelta las imágenes aquí",
+      "dragOrClick": "Arrastra imágenes o haz clic para seleccionar",
+      "formatsHint": "{{formats}} — hasta {{max}} fotos, {{size}} cada una",
+      "selectFiles": "Seleccionar archivos",
+      "selectedLabel": "Imágenes seleccionadas",
+      "clearAll": "Limpiar todo",
+      "minRequired": "Mínimo {{min}} imágenes requeridas para publicar",
+      "removeAria": "Eliminar imagen {{n}}",
+      "tooMany": "Demasiados archivos",
+      "tooManyDesc": "Máximo {{max}} imágenes permitidas",
+      "noValidFiles": "No hay archivos válidos",
+      "rejected": "{{count}} archivo(s) rechazado(s)",
+      "selectValidFiles": "Por favor selecciona imágenes válidas",
+      "added": "Imágenes agregadas",
+      "addedDesc": "{{count}} imagen(es) lista(s) para subir",
+      "invalidType": "Tipo de archivo inválido: {{name}}",
+      "invalidTypeDesc": "Solo se permiten formatos {{formats}}",
+      "tooLarge": "Archivo muy grande: {{name}}",
+      "tooLargeDesc": "El tamaño máximo es {{size}}"
+    },
+    "videos": {
+      "ariaLabel": "Zona de carga de videos",
+      "dropHere": "Suelta los videos aquí",
+      "dragOrClick": "Arrastra videos o haz clic para seleccionar",
+      "formatsHint": "{{formats}} — hasta {{max}} videos, {{size}} cada uno",
+      "selectFiles": "Seleccionar archivos",
+      "selectedLabel": "Videos seleccionados",
+      "clearAll": "Limpiar todo",
+      "removeAria": "Eliminar video {{n}}",
+      "tooMany": "Demasiados archivos",
+      "tooManyDesc": "Máximo {{max}} videos permitidos",
+      "noValidFiles": "No hay archivos válidos",
+      "rejected": "{{count}} archivo(s) rechazado(s)",
+      "selectValidFiles": "Por favor selecciona videos válidos",
+      "added": "Videos agregados",
+      "addedDesc": "{{count}} video(s) listo(s) para subir",
+      "invalidType": "Tipo de archivo inválido: {{name}}",
+      "invalidTypeDesc": "Solo se permiten formatos {{formats}}",
+      "tooLarge": "Archivo muy grande: {{name}}",
+      "tooLargeDesc": "El tamaño máximo es {{size}}"
+    }
+  },
+  "editPage": {
+    "title": "Editar Propiedad",
+    "notFound": {
+      "title": "Propiedad no encontrada",
+      "desc": "Verifica que la URL sea correcta o vuelve al listado.",
+      "back": "Volver a propiedades"
+    },
+    "ariaBack": "Volver a propiedades",
+    "header": {
+      "preview": "Vista Previa",
+      "saving": "Guardando...",
+      "save": "Guardar cambios",
+      "saveShort": "Guardar"
+    },
+    "tabs": {
+      "details": "Detalles de la propiedad",
+      "detailsShort": "Detalles",
+      "detailsDesc": "Información, ubicación y precio",
+      "media": "Fotos y videos",
+      "mediaShort": "Media",
+      "mediaDesc": "{{images}} fotos · {{videos}} videos"
+    },
+    "details": {
+      "cardTitle": "Información de la Propiedad",
+      "cardDesc": "Actualiza los detalles de tu propiedad. Los cambios se guardan con el botón de arriba."
+    },
+    "media": {
+      "bannerOk": "Tu propiedad tiene {{count}} fotos — cumple el mínimo de {{min}} para publicar.",
+      "bannerWarn": "Tienes {{count}} de {{min}} fotos mínimas requeridas para publicar. Sube {{remaining}} más.",
+      "organizeTitle": "Organizar Fotos",
+      "organizeDesc": "Arrastra para reordenar. Haz clic en una imagen para marcarla como portada.",
+      "videosTitle": "Administrar Videos",
+      "videosDesc": "Elimina los videos que ya no desees mostrar en tu propiedad.",
+      "previewTitle": "Vista Previa",
+      "previewDesc": "Así se verán las fotos y videos en tu listado.",
+      "addImagesTitle": "Agregar Imágenes",
+      "addImagesSlotsAvail": "Puedes agregar hasta {{count}} imagen(es) más. Tienes {{current}}/{{max}}.",
+      "addImagesLimit": "Límite alcanzado ({{max}}/{{max}}). Elimina alguna para agregar nuevas.",
+      "uploadImages": "Subir {{count}} imagen(es)",
+      "uploading": "Subiendo...",
+      "addVideosTitle": "Agregar Videos",
+      "addVideosSlotsAvail": "Puedes agregar hasta {{count}} video(s) más. Tienes {{current}}/{{max}}.",
+      "addVideosLimit": "Límite alcanzado ({{max}}/{{max}}). Elimina alguno para agregar nuevos.",
+      "uploadVideos": "Subir {{count}} video(s)"
+    },
+    "addCardDesc": "Para enviar tu propiedad a revisión necesitas agregar una tarjeta. La plataforma cobra comisiones cuando se realizan reservas en tu propiedad."
+  },
+  "toasts": {
+    "property": {
+      "published": "Propiedad publicada exitosamente",
+      "publishCannotMsg": "No se puede publicar la propiedad:",
+      "publishMinImages": "Necesitas al menos {{required}} imágenes para publicar (tienes {{current}})",
+      "publishMinVideos": "Necesitas al menos {{required}} video(s) para publicar",
+      "publishMissingDesc": "La descripción es obligatoria para publicar",
+      "publishMissingTitle": "El título es obligatorio para publicar",
+      "publishMissingAddress": "La dirección es obligatoria para publicar",
+      "publishMissingAmenities": "Debes agregar al menos 3 amenidades para publicar",
+      "publishError": "Error al publicar la propiedad",
+      "submitForApproval": "Propiedad enviada a revisión",
+      "submitError": "Error al enviar a revisión",
+      "activated": "Propiedad reactivada exitosamente",
+      "activateError": "Error al reactivar la propiedad",
+      "deactivated": "Propiedad desactivada exitosamente",
+      "deactivateError": "Error al desactivar la propiedad",
+      "deleted": "Propiedad eliminada exitosamente",
+      "deleteError": "Error al eliminar la propiedad",
+      "approved": "Propiedad aprobada exitosamente",
+      "approveError": "Error al aprobar la propiedad",
+      "denied": "Propiedad rechazada",
+      "denyError": "Error al rechazar la propiedad",
+      "pendingApprovalTitle": "Propiedad enviada a revisión",
+      "pendingApprovalDesc": "Tu propiedad cumple todos los requisitos y ha sido enviada al equipo de GYDI para revisión.",
+      "updated": "Propiedad actualizada",
+      "updatedDesc": "{{title}} se ha actualizado correctamente",
+      "created": "Propiedad creada exitosamente",
+      "createdDesc": "{{title}} ha sido creada",
+      "updateError": "Error al actualizar propiedad",
+      "createError": "Ocurrió un error inesperado",
+      "createErrorRetry": "Por favor intenta de nuevo",
+      "genericError": "Algo salió mal",
+      "genericSaveError": "No pudimos guardar los cambios. Inténtalo de nuevo.",
+      "genericCreateError": "No pudimos crear la propiedad. Inténtalo de nuevo.",
+      "validationError": "Error de validación",
+      "icalError": "Problema con el enlace del calendario",
+      "icalHttps": "El enlace debe ser seguro (comenzar con https://)",
+      "icalNotFound": "No pudimos acceder al enlace. Verifica que sea correcto y público.",
+      "icalInvalid": "El enlace no parece ser un calendario válido de Airbnb/iCal.",
+      "icalTimeout": "Tardó demasiado en responder. Inténtalo de nuevo más tarde.",
+      "icalTooLarge": "El archivo del calendario es demasiado grande.",
+      "icalGeneric": "El enlace proporcionado no es válido. Por favor verifícalo."
+    },
+    "images": {
+      "reordered": "Imágenes reorganizadas",
+      "reorderedDesc": "{{count}} imágenes actualizadas",
+      "reorderError": "Error al reorganizar imágenes",
+      "deleted": "Imagen eliminada correctamente",
+      "deleteError": "Error al eliminar imagen",
+      "uploaded": "Imágenes subidas exitosamente",
+      "uploadedDesc": "{{count}} imagen(es) subida(s)",
+      "uploadedCloudinaryDesc": "{{count}} imagen(es) subida(s) a Cloudinary",
+      "uploadError": "Error al subir imágenes"
+    },
+    "videos": {
+      "reordered": "Videos reorganizados",
+      "reorderedDesc": "{{count}} videos actualizados",
+      "reorderError": "Error al reorganizar videos",
+      "deleted": "Video eliminado correctamente",
+      "deleteError": "Error al eliminar video",
+      "uploaded": "Videos subidos exitosamente",
+      "uploadedDesc": "{{count}} video(s) subido(s)",
+      "uploadedCloudinaryDesc": "{{count}} video(s) subido(s) a Cloudinary",
+      "uploadError": "Error al subir videos"
     }
   }
 }

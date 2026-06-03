@@ -14,12 +14,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { CountryCitySelector } from '@/components/shared/country-city-selector';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   AlertCircle,
-  HelpCircle,
   FileText,
-  Link2,
   MapPin,
   BedDouble,
   Bath,
@@ -27,14 +24,15 @@ import {
   DollarSign,
   Star,
 } from 'lucide-react';
-import { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
+import { forwardRef, useImperativeHandle, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
 import {
   createPropertySchema,
   updatePropertySchema,
   type CreatePropertyFormData,
   type UpdatePropertyFormData,
 } from '../schemas';
-import { useAmenities, useValidateICalUrl } from '../hooks';
+import { useAmenities } from '../hooks';
 import { AiEnhanceButton } from './ai-enhance-button';
 import { PropertyType, PropertyListingType, Currency } from '../types';
 import { useTranslation } from '@/hooks/use-translation';
@@ -117,8 +115,7 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
       bathrooms: 1,
       maxGuests: 2,
       amenities: [],
-      airbnbUrl: '',
-      icalUrlAirbnb: '',
+
     },
   });
 
@@ -138,79 +135,42 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
   // Fetch available amenities
   const { data: amenities, isLoading: isLoadingAmenities } = useAmenities();
 
-  // iCal URL validation
-  const { mutate: validateICalUrl, isPending: isValidating, data: validationResult } = useValidateICalUrl();
-  const [icalUrlValidated, setIcalUrlValidated] = useState<string>('');
-  const icalUrlValue = watch('icalUrlAirbnb');
   const titleValue = (watch('title') as string) || '';
   const descriptionValue = (watch('description') as string) || '';
 
-  // Validate iCal URL on blur
-  const handleICalUrlBlur = () => {
-    const url = icalUrlValue as string | undefined;
-    if (url && url.trim() && url !== icalUrlValidated) {
-      validateICalUrl({ icalUrl: url }, {
-        onSuccess: () => {
-          setIcalUrlValidated(url);
-        }
-      });
-    }
+  const handleFormSubmit = async (data: CreatePropertyFormData | UpdatePropertyFormData) => {
+    await onSubmit(data);
   };
 
-  const handleFormSubmit = async (data: CreatePropertyFormData | UpdatePropertyFormData) => {
-    try {
-      await onSubmit(data);
-    } catch (error: any) {
-      // Extract backend error data safely
-      const backendData = error?.response?.data;
-      const backendMessage = backendData?.message || error?.message || '';
-
-      // Check for iCal URL errors (case insensitive)
-      const isICalError =
-        backendMessage.toLowerCase().includes('ical url') ||
-        backendMessage.toLowerCase().includes('ical data') ||
-        backendMessage.toLowerCase().includes('begin:vcalendar');
-
-      if (isICalError) {
-        let userMsg = t('form.icalUrl.errors.invalidData');
-
-        if (backendMessage.includes('missing BEGIN:VCALENDAR') || backendMessage.includes('does not contain valid iCal')) {
-          userMsg = t('form.icalUrl.errors.missingVcalendar');
-        } else if (backendMessage.includes('HTTPS protocol')) {
-          userMsg = t('form.icalUrl.errors.notHttps');
-        } else if (backendMessage.includes('HTTP 404') || backendMessage.includes('Unable to access')) {
-          userMsg = t('form.icalUrl.errors.notFound');
-        } else if (backendMessage.includes('Timeout')) {
-          userMsg = t('form.icalUrl.errors.timeout');
+  const handleInvalidSubmit = useCallback((errors: Record<string, any>) => {
+    // Scroll to the first field with an error
+    const fieldOrder = [
+      'title', 'description', 'listingType', 'propertyType',
+      'country', 'city', 'address', 'postalCode',
+      'bedrooms', 'bathrooms', 'maxGuests',
+      'pricePerNight', 'salePrice', 'amenities',
+    ];
+    for (const field of fieldOrder) {
+      if (errors[field]) {
+        const el = document.getElementById(field);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+          break;
         }
-
-        // Set error on the field
-        setError('icalUrlAirbnb', {
-          type: 'manual',
-          message: userMsg
-        }, { shouldFocus: true });
-
-        // Force scroll to the field with a slight delay to ensure UI update
-        setTimeout(() => {
-          const element = document.getElementById('icalUrlAirbnb');
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            element.focus();
-            // Add a temporary highlight effect
-            element.classList.add('ring-2', 'ring-red-500', 'ring-offset-2');
-            setTimeout(() => element.classList.remove('ring-2', 'ring-red-500', 'ring-offset-2'), 2000);
-          }
-        }, 100);
       }
     }
-  };
+    toast.error(t('form.validationError') || 'Please fill in all required fields before submitting.');
+  }, [t]);
 
   useImperativeHandle(ref, () => ({
-    submit: () => handleSubmit(handleFormSubmit)(),
+    submit: () => handleSubmit(handleFormSubmit, handleInvalidSubmit)(),
   }));
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
+    <form onSubmit={handleSubmit(handleFormSubmit, handleInvalidSubmit)} className="space-y-8">
+      {/* Hidden currency field — registered so zodResolver receives the value set via setValue */}
+      <input type="hidden" {...register('currency')} />
 
       {/* ── Section: Basic Info ── */}
       <section aria-labelledby="section-basic">
@@ -359,105 +319,6 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
                 </p>
               )}
             </div>
-          </div>
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* ── Section: Links ── */}
-      <section aria-labelledby="section-links">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="p-1.5 rounded-md bg-muted">
-            <Link2 className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <h2 id="section-links" className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-            {t('form.sections.links')}
-          </h2>
-        </div>
-
-        <div className="space-y-5">
-          {/* Airbnb URL */}
-          <div className="space-y-1.5">
-            <Label htmlFor="airbnbUrl" className="text-sm font-medium">
-              {t('form.airbnbUrl.label')} <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="airbnbUrl"
-              {...register('airbnbUrl')}
-              placeholder="https://www.airbnb.com/rooms/12345 or https://abnb.me/..."
-              disabled={isSubmitting}
-              error={!!errors.airbnbUrl}
-              aria-describedby={errors.airbnbUrl ? 'airbnbUrl-error' : 'airbnbUrl-help'}
-            />
-            {errors.airbnbUrl ? (
-              <p id="airbnbUrl-error" className="text-sm text-destructive flex items-center gap-1">
-                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                {errors.airbnbUrl.message}
-              </p>
-            ) : (
-              <p id="airbnbUrl-help" className="text-xs text-muted-foreground">{t('form.airbnbUrl.helper')}</p>
-            )}
-          </div>
-
-          {/* iCal URL */}
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-1.5">
-              <Label htmlFor="icalUrlAirbnb" className="text-sm font-medium">
-                {t('form.icalUrl.label')}
-              </Label>
-              <span className="text-xs text-muted-foreground">({t('form.icalUrl.optional')})</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button type="button" className="inline-flex items-center ml-0.5" aria-label="Ayuda iCal">
-                      <HelpCircle className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs p-4" side="right">
-                    <div className="space-y-2">
-                      <p className="font-semibold text-sm">{t('form.icalUrl.tooltip.title')}</p>
-                      <ol className="text-xs space-y-1 list-decimal list-inside">
-                        <li>{t('form.icalUrl.tooltip.step1')}</li>
-                        <li>{t('form.icalUrl.tooltip.step2')}</li>
-                        <li>{t('form.icalUrl.tooltip.step3')}</li>
-                        <li>{t('form.icalUrl.tooltip.step4')}</li>
-                        <li>{t('form.icalUrl.tooltip.step5')}</li>
-                      </ol>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <Input
-              id="icalUrlAirbnb"
-              {...register('icalUrlAirbnb')}
-              placeholder="https://www.airbnb.com/calendar/ical/..."
-              disabled={isSubmitting}
-              error={!!errors.icalUrlAirbnb}
-              aria-describedby={errors.icalUrlAirbnb ? 'icalUrlAirbnb-error' : 'icalUrlAirbnb-help'}
-              onBlur={handleICalUrlBlur}
-            />
-            {errors.icalUrlAirbnb && (
-              <p id="icalUrlAirbnb-error" className="text-sm text-destructive flex items-center gap-1">
-                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                {errors.icalUrlAirbnb.message}
-              </p>
-            )}
-            {isValidating && (
-              <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                <span className="inline-block h-3 w-3 rounded-full border-2 border-muted-foreground border-t-transparent animate-spin" aria-hidden="true" />
-                {t('form.icalUrl.validating')}
-              </p>
-            )}
-            {!isValidating && validationResult && (
-              <p className={`text-xs font-medium flex items-center gap-1 ${validationResult.valid ? 'text-green-600' : 'text-destructive'}`}>
-                {validationResult.valid ? '✓' : '✗'} {validationResult.message}
-              </p>
-            )}
-            {!errors.icalUrlAirbnb && !isValidating && !validationResult && (
-              <p id="icalUrlAirbnb-help" className="text-xs text-muted-foreground">{t('form.icalUrl.helper')}</p>
-            )}
           </div>
         </div>
       </section>
@@ -683,7 +544,7 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
                   {errors.pricePerNight.message}
                 </p>
               )}
-              <p className="text-xs text-muted-foreground">{perNightMeta.helperText}</p>
+              <p className="text-xs text-muted-foreground">{t('form.pricing.helperPerNight', { name: CURRENCY_META[perNightMeta.currency]?.name ?? '', code: perNightMeta.code })}</p>
             </div>
           )}
 
@@ -717,7 +578,7 @@ export const PropertyForm = forwardRef<PropertyFormHandle, PropertyFormProps>(fu
                   {errors.salePrice.message}
                 </p>
               )}
-              <p className="text-xs text-muted-foreground">{saleMeta.helperText}</p>
+              <p className="text-xs text-muted-foreground">{t('form.pricing.helperSale', { name: CURRENCY_META[saleMeta.currency]?.name ?? '', code: saleMeta.code })}</p>
             </div>
           )}
         </div>

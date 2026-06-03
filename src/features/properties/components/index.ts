@@ -15,5 +15,3 @@ export { ImageOrganizer } from './image-organizer';
 export { VideoOrganizer } from './video-organizer';
 export { ReferPropertiesTab } from './refer-properties-tab';
 export { AirbnbImportWizard } from './airbnb-import-wizard';
-export { CohostInstructionsDialog } from './cohost-instructions-dialog';
-

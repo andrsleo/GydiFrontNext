@@ -37,9 +37,8 @@ export interface BookingDto {
   checkOutDate: string; // ISO date
 
   // Guest info
+  guestName: string;
   guestEmail: string;
-  guestFirstName: string;
-  guestLastName: string;
   guestPhone?: string;
   guestsCount: number;
 
@@ -63,6 +62,21 @@ export interface BookingDto {
   propertyTitle?: string;
   hostName?: string;
   affiliateName?: string;
+
+  // Fase 1 — Host confirmation/rejection
+  termsAcceptedAt?: string;       // ISO timestamp
+  confirmedByHostAt?: string;     // ISO timestamp
+  rejectedByHostAt?: string;      // ISO timestamp
+  rejectionReason?: string;
+
+  // Fase 2 — Stripe payment fields
+  stripeBookingIntentId?: string;
+  stripeDepositIntentId?: string;
+  depositAmount?: number;
+  depositCurrency?: string;
+  depositCapturedAt?: string;
+  depositCaptureAmount?: number;
+  paymentReleasedAt?: string;
 }
 
 /**
@@ -100,17 +114,31 @@ export interface CreateBookingRequest {
   guestEmail: string; // (was clientEmail)
   guestPhone: string; // (was clientPhone)
   guestsCount: number; // Number of guests (NEW field)
+  termsAccepted: boolean;           // Fase 1: T&C acceptance required
+  stripePaymentMethodId?: string;   // Fase 2: optional in Fase 1
+  contentPostId?: number;           // Phase 4: social commerce attribution (optional)
 }
 
 /**
- * Create Booking Response
+ * Reject Booking Request — for host to reject a booking with a reason
  */
-export interface CreateBookingResponse {
-  bookingId: string;
-  status: BookingStatus;
-  totalAmount: number;
-  currency: string;
-  createdAt: string;
+export interface RejectBookingRequest {
+  reason: string;
+}
+
+/**
+ * Block Dates Request — host blocks unavailable dates manually
+ */
+export interface BlockDatesRequest {
+  dates: string[]; // ['YYYY-MM-DD', ...]
+}
+
+/**
+ * Capture Damage Deposit Request — host captures partial or full damage deposit
+ */
+export interface CaptureDamageDepositRequest {
+  damageAmountCents?: number; // null = full capture
+  description: string;
 }
 
 /**

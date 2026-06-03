@@ -1,0 +1,88 @@
+{
+  "page": {
+    "title": "Seasons",
+    "subtitle": "Configure high, mid, and low seasons by geographic scope",
+    "newSeason": "New Season",
+    "loading": "Loading seasons...",
+    "empty": "No seasons configured",
+    "emptySubtitle": "Create your first season to define pricing periods"
+  },
+  "table": {
+    "name": "Name",
+    "type": "Type",
+    "scope": "Scope",
+    "location": "Location",
+    "startDate": "Start",
+    "endDate": "End",
+    "recurrence": "Recurrence",
+    "system": "System",
+    "actions": "Actions"
+  },
+  "type": {
+    "HIGH": "High",
+    "MEDIUM": "Mid",
+    "LOW": "Low"
+  },
+  "scope": {
+    "GLOBAL": "Global",
+    "REGION": "Region",
+    "COUNTRY": "Country",
+    "SUBREGION": "Subregion"
+  },
+  "recurrence": {
+    "NONE": "Once",
+    "YEARLY": "Yearly"
+  },
+  "badge": {
+    "system": "System",
+    "custom": "Custom"
+  },
+  "form": {
+    "titleCreate": "New Season",
+    "titleEdit": "Edit Season",
+    "name": "Name",
+    "namePlaceholder": "E.g. Caribbean High Season",
+    "seasonType": "Season type",
+    "scope": "Geographic scope",
+    "scopeHint": "Defines how broad the coverage of this season is",
+    "region": "Regions",
+    "regionPlaceholder": "Select one or more regions",
+    "countries": "Countries",
+    "countriesPlaceholder": "Select one or more countries",
+    "subregions": "Subregions",
+    "subregionsPlaceholder": "Select one or more subregions",
+    "searchPlaceholder": "Search...",
+    "noResults": "No results found",
+    "noSubregionsForCountries": "The selected countries have no predefined subregions. You can change the scope to Country.",
+    "willCreate": "{{count}} records will be created (one per selected location)",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "recurrence": "Recurrence",
+    "recurrenceHint": "Yearly: repeats every year on the same dates",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saving": "Saving..."
+  },
+  "delete": {
+    "title": "Delete season",
+    "description": "Are you sure you want to delete the season \"{{name}}\"? This action cannot be undone.",
+    "descriptionGroup": "Are you sure you want to delete {{count}} records for the season \"{{name}}\"? This action cannot be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel",
+    "deleting": "Deleting..."
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "typeRequired": "Season type is required",
+    "startDateRequired": "Start date is required",
+    "endDateRequired": "End date is required",
+    "endDateAfterStart": "End date must be after start date",
+    "regionRequired": "Select at least one region",
+    "countryRequired": "Select at least one country",
+    "subregionRequired": "Select at least one subregion"
+  },
+  "tooltip": {
+    "editSystem": "System seasons cannot be edited",
+    "deleteSystem": "System seasons cannot be deleted"
+  }
+}

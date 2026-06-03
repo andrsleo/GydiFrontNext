@@ -39,6 +39,8 @@ import { CommissionStatusBadge } from './commission-status-badge';
 import type { AffiliateCommissionStatus } from '../../types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MoreHorizontal, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/format';
+import type { SupportedCurrency } from '@/lib/constants/currency-config';
 
 export function AffiliateCommissionsTable() {
   const [statusFilter, setStatusFilter] = useState<AffiliateCommissionStatus | 'ALL'>('ALL');
@@ -85,8 +87,89 @@ export function AffiliateCommissionsTable() {
         </Select>
       </div>
 
-      {/* Table */}
-      <div className="border rounded-lg">
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="border rounded-lg p-4 space-y-2">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          ))
+        ) : commissions && commissions.length > 0 ? (
+          commissions.map((commission) => (
+            <div key={commission.id} className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="font-medium text-sm">Reserva #{commission.bookingId}</p>
+                  <p className="text-xs text-muted-foreground">Comisión #{commission.id} · referido #{commission.affiliateId}</p>
+                </div>
+                <CommissionStatusBadge status={commission.status} type="affiliate" />
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <p className="text-xs text-muted-foreground">Plan</p>
+                  <p className="font-medium">{commission.affiliatePlan}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Tasa</p>
+                  <p className="font-medium">{(commission.commissionRate * 100).toFixed(0)}%</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Monto Reserva</p>
+                  <p>{formatCurrency(commission.bookingAmount, commission.currency as SupportedCurrency)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Comisión</p>
+                  <p className="font-semibold text-green-600">+{formatCurrency(commission.commissionAmount, commission.currency as SupportedCurrency)}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t">
+                <p className="text-xs text-muted-foreground">
+                  Pago: {new Date(commission.scheduledPaymentDate).toLocaleDateString('es-ES')}
+                </p>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0" disabled={isActionPending}>
+                      <span className="sr-only">Abrir menú</span>
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {commission.status === 'PENDING' && (
+                      <DropdownMenuItem onClick={() => approve(commission.id)}>
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Aprobar para Pago
+                      </DropdownMenuItem>
+                    )}
+                    {commission.status === 'APPROVED' && commission.attemptCount > 0 && (
+                      <DropdownMenuItem onClick={() => retry(commission.id)}>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Reintentar Pago
+                      </DropdownMenuItem>
+                    )}
+                    {['PENDING', 'APPROVED'].includes(commission.status) && (
+                      <DropdownMenuItem
+                        onClick={() => cancel(commission.id)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <XCircle className="mr-2 h-4 w-4" />
+                        Cancelar
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center py-10 text-muted-foreground text-sm">No se encontraron comisiones</p>
+        )}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden md:block border rounded-lg">
         <Table>
           <TableHeader>
             <TableRow>
@@ -123,7 +206,7 @@ export function AffiliateCommissionsTable() {
                     <span className="font-medium">{commission.affiliatePlan}</span>
                   </TableCell>
                   <TableCell>
-                    {commission.currency} {commission.bookingAmount.toFixed(2)}
+                    {formatCurrency(commission.bookingAmount, commission.currency as SupportedCurrency)}
                   </TableCell>
                   <TableCell>
                     <span className="font-medium">
@@ -131,7 +214,7 @@ export function AffiliateCommissionsTable() {
                     </span>
                   </TableCell>
                   <TableCell className="font-semibold text-green-600">
-                    +{commission.currency} {commission.commissionAmount.toFixed(2)}
+                    +{formatCurrency(commission.commissionAmount, commission.currency as SupportedCurrency)}
                   </TableCell>
                   <TableCell>
                     {new Date(commission.scheduledPaymentDate).toLocaleDateString('es-ES')}

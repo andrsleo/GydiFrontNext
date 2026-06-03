@@ -6,6 +6,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, CheckCircle, DollarSign, TrendingUp } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/format';
+import type { SupportedCurrency } from '@/lib/constants/currency-config';
 import type { BookingStats } from '../types';
 
 interface Props {
@@ -18,7 +20,7 @@ export function BookingStatsCards({ stats }: Props) {
   const averageRevenue = totalBookings > 0 ? totalRevenue / totalBookings : 0;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {/* Total Bookings */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -51,7 +53,7 @@ export function BookingStatsCards({ stats }: Props) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {currency} {totalRevenue.toFixed(2)}
+            {formatCurrency(totalRevenue, currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground mt-1">Suma de todas las reservas</p>
         </CardContent>
@@ -65,7 +67,7 @@ export function BookingStatsCards({ stats }: Props) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {currency} {averageRevenue.toFixed(2)}
+            {formatCurrency(averageRevenue, currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground mt-1">Por reserva</p>
         </CardContent>

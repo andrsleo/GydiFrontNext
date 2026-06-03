@@ -17,9 +17,11 @@ import { AffiliateBookingsTable, HostBookingsTable } from '@/features/bookings/c
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function UserBookingsPage() {
   const user = useUser();
+  const { t } = useTranslation('bookings');
 
   // Loading state
   if (!user) {
@@ -41,10 +43,9 @@ export default function UserBookingsPage() {
       <div className="container mx-auto py-8">
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Sin permisos</AlertTitle>
+          <AlertTitle>{t('noPermissions.title')}</AlertTitle>
           <AlertDescription>
-            No tienes permisos para ver reservas. Contacta al administrador para habilitar
-            tus capacidades (canRefer o canPublish).
+            {t('noPermissions.desc')}
           </AlertDescription>
         </Alert>
       </div>
@@ -58,22 +59,17 @@ export default function UserBookingsPage() {
     <div className="container mx-auto py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Mis Reservas</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Gestiona tus reservas como{' '}
-          {canRefer && canPublish
-            ? 'referido y anfitrión'
-            : canRefer
-              ? 'referido'
-              : 'anfitrión'}
+          {t(`subtitle.${canRefer && canPublish ? 'both' : canRefer ? 'affiliateOnly' : 'hostOnly'}`)}
         </p>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue={defaultTab} className="space-y-6">
         <TabsList>
-          {canRefer && <TabsTrigger value="affiliate">Como referido</TabsTrigger>}
-          {canPublish && <TabsTrigger value="host">Como Anfitrión</TabsTrigger>}
+          {canRefer && <TabsTrigger value="affiliate">{t('tabs.affiliate')}</TabsTrigger>}
+          {canPublish && <TabsTrigger value="host">{t('tabs.host')}</TabsTrigger>}
         </TabsList>
 
         {/* Affiliate Tab */}
@@ -81,8 +77,7 @@ export default function UserBookingsPage() {
           <TabsContent value="affiliate" className="space-y-6">
             <div className="rounded-lg border bg-card p-4">
               <p className="text-sm text-muted-foreground">
-                Reservas generadas por tus enlaces de referidos. Ganas comisión cuando se
-                completan.
+                {t('affiliate.desc')}
               </p>
             </div>
             <AffiliateBookingsTable />
@@ -94,8 +89,7 @@ export default function UserBookingsPage() {
           <TabsContent value="host" className="space-y-6">
             <div className="rounded-lg border bg-card p-4">
               <p className="text-sm text-muted-foreground">
-                Reservas en tus propiedades. Pagas comisión a la plataforma cuando se
-                completan.
+                {t('host.desc')}
               </p>
             </div>
             <HostBookingsTable />

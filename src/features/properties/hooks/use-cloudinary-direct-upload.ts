@@ -36,6 +36,7 @@ import { apiClient } from '@/lib/api/client';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import { isAllowedImageType, IMAGE_FORMATS_LABEL } from '@/lib/utils/media-types';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 import type { MediaUploadResponse } from '../types';
 
 /**
@@ -99,6 +100,7 @@ interface UploadImagesVariables {
  */
 export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOptions) {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
   const [progress, setProgress] = useState<UploadProgress>({});
   const [isUploading, setIsUploading] = useState(false);
 
@@ -416,11 +418,11 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       // Show success toast
       const isCloudinaryConfigured = !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
       const uploadedCount = data.length > 0 ? data.length : variables.files.length;
-      const mediaLabel = mediaType === 'VIDEO' ? 'video(s)' : 'image(s)';
-      toast.success(mediaType === 'VIDEO' ? 'Videos uploaded successfully' : 'Images uploaded successfully', {
+      const isVideo = mediaType === 'VIDEO';
+      toast.success(isVideo ? t('toasts.videos.uploaded') : t('toasts.images.uploaded'), {
         description: isCloudinaryConfigured
-          ? `${uploadedCount} ${mediaLabel} have been uploaded to Cloudinary`
-          : `${uploadedCount} ${mediaLabel} have been uploaded`,
+          ? t(isVideo ? 'toasts.videos.uploadedCloudinaryDesc' : 'toasts.images.uploadedCloudinaryDesc', { count: uploadedCount })
+          : t(isVideo ? 'toasts.videos.uploadedDesc' : 'toasts.images.uploadedDesc', { count: uploadedCount }),
       });
     },
     onError: (error) => {
@@ -428,8 +430,8 @@ export function useCloudinaryDirectUpload(options?: UseCloudinaryDirectUploadOpt
       setProgress({});
 
       // Show error toast
-      toast.error('Failed to upload images', {
-        description: error.message || 'An unexpected error occurred',
+      toast.error(t('toasts.images.uploadError'), {
+        description: error.message || t('toasts.property.createError'),
       });
     },
   });

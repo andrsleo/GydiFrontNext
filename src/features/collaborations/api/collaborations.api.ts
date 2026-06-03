@@ -84,15 +84,27 @@ export const collaborationsApi = {
   },
 
   /**
+   * Get host collaboration settings for a property
+   * Requires authentication + HOST role
+   */
+  async getCollaborationSettings(propertyId: number): Promise<CollaborationSettings> {
+    const { data } = await apiClient.get<CollaborationSettings>(
+      `${BASE_PATH}/settings/properties/${propertyId}`
+    );
+    return data;
+  },
+
+  /**
    * Update host collaboration settings for a property
    * Requires authentication + HOST role
+   * Property must be in PUBLISHED status to enable collaborations
    */
   async updateCollaborationSettings(
     propertyId: number,
-    settings: { acceptCreatorCollaborations: boolean; acceptedCompensations: string[] }
+    settings: { acceptCollaborations: boolean; acceptedCompensations: string[] }
   ): Promise<CollaborationSettings> {
     const { data } = await apiClient.put<CollaborationSettings>(
-      `${BASE_PATH}/marketplace/${propertyId}/settings`,
+      `${BASE_PATH}/settings/properties/${propertyId}`,
       settings
     );
     return data;

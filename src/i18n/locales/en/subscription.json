@@ -2,5 +2,34 @@
   "paymentMethods": {
     "title": "Payment Methods",
     "subtitle": "Add or remove your credit or debit cards. Your active card will be used for any platform charges."
+  },
+  "paymentPage": {
+    "subtitle": "Manage your payment method for commissions and platform charges.",
+    "receivingTitle": "Receive commissions as a referral",
+    "receivingDesc": "Set up your PayPal to automatically receive your commission every time someone books using your referral link.",
+    "chargingTitle": "Payment method",
+    "chargingDesc": "Card that GYDI uses to charge the platform commission for each booking of your published properties.",
+    "addCardDesc": "Add a credit or debit card so GYDI can charge the platform commission for your bookings."
+  },
+  "planCardDetailed": {
+    "free": "Free",
+    "perMonth": "/month",
+    "asAffiliate": "As Referral",
+    "youEarn": "You earn",
+    "asHost": "As Host",
+    "youPay": "You pay",
+    "currentPlan": "Current plan",
+    "processing": "Processing..."
+  },
+  "planCard": {
+    "recommended": "Recommended",
+    "currentPlan": "Current Plan",
+    "getStarted": "Get Started",
+    "upgradeTo": "Upgrade to {{name}}",
+    "perMonth": "/month",
+    "upToProperties": "Up to {{count}} properties",
+    "unlimited": "Unlimited",
+    "referralsPerMonth": "{{count}} referrals/month",
+    "support": "{{level}} support"
   }
 }

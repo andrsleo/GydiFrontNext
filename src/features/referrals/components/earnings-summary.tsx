@@ -10,6 +10,8 @@ import { DollarSign, Calendar, TrendingUp } from 'lucide-react';
 import { useEarnings, useNextPayout, useEarningsByStatus } from '../hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getAffiliateBadgeInfo } from '@/lib/constants/plans';
+import { useTranslation } from '@/hooks/use-translation';
+import { formatCurrency } from '@/lib/utils/format';
 
 const MINIMUM_PAYOUT = 50;
 
@@ -17,6 +19,7 @@ export function EarningsSummary() {
   const { data: earnings, isLoading } = useEarnings();
   const nextPayout = useNextPayout();
   const earningsByStatus = useEarningsByStatus();
+  const { t } = useTranslation('earnings');
 
   if (isLoading) {
     return (
@@ -43,14 +46,14 @@ export function EarningsSummary() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Total Earnings</CardTitle>
-            <CardDescription>View your earnings breakdown and payout status</CardDescription>
+            <CardTitle>{t('summary.title')}</CardTitle>
+            <CardDescription>{t('summary.subtitle')}</CardDescription>
             {(() => {
               const badgeInfo = getAffiliateBadgeInfo(earnings.currentCommissionRate);
               return (
                 <div className="mt-2 space-y-1">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>Plan:</span>
+                    <span>{t('summary.planLabel')}</span>
                     <Badge variant="outline">{earnings.currentPlan}</Badge>
                     <Badge variant={badgeInfo.boosted ? 'default' : 'secondary'}>
                       {badgeInfo.rate} comisión
@@ -69,9 +72,9 @@ export function EarningsSummary() {
         {/* Total Earnings */}
         <div>
           <p className="text-4xl font-bold text-green-600">
-            ${earnings.totalEarnings.toFixed(2)}
+            {formatCurrency(earnings.totalEarnings, 'USD')}
           </p>
-          <p className="text-sm text-muted-foreground">All-time earnings</p>
+          <p className="text-sm text-muted-foreground">{t('summary.allTime')}</p>
         </div>
 
         {/* Breakdown by Status */}
@@ -85,7 +88,7 @@ export function EarningsSummary() {
                   {item.count}
                 </Badge>
               </div>
-              <span className="font-medium">${item.amount.toFixed(2)}</span>
+              <span className="font-medium">{formatCurrency(item.amount, 'USD')}</span>
             </div>
           ))}
         </div>
@@ -94,14 +97,14 @@ export function EarningsSummary() {
         {earnings.approvedAmount < MINIMUM_PAYOUT && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span>Progress to minimum payout</span>
+              <span>{t('summary.progressTitle')}</span>
               <span className="font-medium">
-                ${earnings.approvedAmount.toFixed(2)} / ${MINIMUM_PAYOUT}
+                {formatCurrency(earnings.approvedAmount, 'USD')} / {formatCurrency(MINIMUM_PAYOUT, 'USD')}
               </span>
             </div>
             <Progress value={progressToMinimum} />
             <p className="text-xs text-muted-foreground">
-              ${(MINIMUM_PAYOUT - earnings.approvedAmount).toFixed(2)} more needed for payout
+              {t('summary.progressRemaining', { amount: formatCurrency(MINIMUM_PAYOUT - earnings.approvedAmount, 'USD') })}
             </p>
           </div>
         )}
@@ -111,10 +114,10 @@ export function EarningsSummary() {
           <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg space-y-2">
             <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
               <TrendingUp className="h-4 w-4" />
-              <span className="font-medium">Next Payout</span>
+              <span className="font-medium">{t('summary.nextPayout')}</span>
             </div>
             <p className="text-2xl font-bold text-green-600">
-              ${nextPayout.amount.toFixed(2)}
+              {formatCurrency(nextPayout.amount, 'USD')}
             </p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />

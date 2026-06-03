@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { mediaApi } from '../api/media.api';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface ReorderImagesParams {
   propertyId: string;
@@ -17,6 +18,7 @@ interface ReorderImagesParams {
  */
 export function useReorderImages() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: async ({ propertyId, imageOrders, coverImageId }: ReorderImagesParams) => {
@@ -35,12 +37,12 @@ export function useReorderImages() {
         refetchType: 'active',
       });
 
-      toast.success('Imágenes reorganizadas', {
-        description: `${data.updatedCount} imágenes actualizadas`,
+      toast.success(t('toasts.images.reordered'), {
+        description: t('toasts.images.reorderedDesc', { count: data.updatedCount }),
       });
     },
     onError: (error: Error) => {
-      toast.error('Error al reorganizar imágenes', {
+      toast.error(t('toasts.images.reorderError'), {
         description: error.message,
       });
     },

@@ -41,6 +41,8 @@ import {
   HorizontalPanel,
   GYDI_SPRING,
 } from '@/lib/motion';
+import { HomeTrendingSection } from '@/components/home/home-trending-section';
+import { HomeTopCreatorsSection } from '@/components/home/home-top-creators-section';
 
 export default function HomePage() {
   const { t } = useTranslation('landing');
@@ -386,10 +388,10 @@ export default function HomePage() {
 
         {/* ── Panel 1 · Get your link ── */}
         <HorizontalPanel className="mesh-bg flex items-center">
-          <div className="container mx-auto grid h-full w-full grid-cols-1 items-center gap-8 px-6 sm:px-12 lg:grid-cols-2 lg:gap-0 lg:px-20">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 px-6 py-16 sm:px-12 sm:py-20 lg:grid-cols-2 lg:gap-0 lg:px-20 lg:py-0 lg:h-full">
             <FadeIn direction="left" delay={0.1}>
               <div className="text-white">
-                <span className="mb-2 block select-none font-display text-[6rem] font-extrabold leading-none text-white/8 sm:text-[9rem]">
+                <span className="mb-2 hidden select-none font-display text-[6rem] font-extrabold leading-none text-white/8 sm:block sm:text-[9rem]">
                   01
                 </span>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gydi-primary/35 bg-gydi-primary/12 px-4 py-1.5 text-sm font-semibold text-gydi-primary">
@@ -443,10 +445,10 @@ export default function HomePage() {
 
         {/* ── Panel 2 · Share properties ── */}
         <HorizontalPanel className="flex items-center bg-[hsl(246,30%,8%)]">
-          <div className="container mx-auto grid h-full w-full grid-cols-1 items-center gap-8 px-6 sm:px-12 lg:grid-cols-2 lg:gap-0 lg:px-20">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 px-6 py-16 sm:px-12 sm:py-20 lg:grid-cols-2 lg:gap-0 lg:px-20 lg:py-0 lg:h-full">
             <FadeIn direction="left" delay={0.1}>
               <div className="text-white">
-                <span className="mb-2 block select-none font-display text-[6rem] font-extrabold leading-none text-white/8 sm:text-[9rem]">
+                <span className="mb-2 hidden select-none font-display text-[6rem] font-extrabold leading-none text-white/8 sm:block sm:text-[9rem]">
                   02
                 </span>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gydi-teal/35 bg-gydi-teal/12 px-4 py-1.5 text-sm font-semibold text-gydi-teal">
@@ -513,10 +515,10 @@ export default function HomePage() {
 
         {/* ── Panel 3 · Earn commissions ── */}
         <HorizontalPanel className="flex items-center bg-gydi-ink">
-          <div className="container mx-auto grid h-full w-full grid-cols-1 items-center gap-8 px-6 sm:px-12 lg:grid-cols-2 lg:gap-0 lg:px-20">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 px-6 py-16 sm:px-12 sm:py-20 lg:grid-cols-2 lg:gap-0 lg:px-20 lg:py-0 lg:h-full">
             <FadeIn direction="left" delay={0.1}>
               <div className="text-white">
-                <span className="mb-2 block select-none font-display text-[6rem] font-extrabold leading-none text-white/8 sm:text-[9rem]">
+                <span className="mb-2 hidden select-none font-display text-[6rem] font-extrabold leading-none text-white/8 sm:block sm:text-[9rem]">
                   03
                 </span>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gydi-gold/35 bg-gydi-gold/12 px-4 py-1.5 text-sm font-semibold text-gydi-gold">
@@ -783,6 +785,16 @@ export default function HomePage() {
           </FadeIn>
         </div>
       </section>
+
+      {/* ══════════════════════════════════════════════════
+          TRENDING CONTENT — UGC feed preview
+      ══════════════════════════════════════════════════ */}
+      <HomeTrendingSection />
+
+      {/* ══════════════════════════════════════════════════
+          TOP CREATORS — Community carousel
+      ══════════════════════════════════════════════════ */}
+      <HomeTopCreatorsSection />
 
       {/* ══════════════════════════════════════════════════
           FEATURES — Clay cards

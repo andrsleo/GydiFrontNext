@@ -1,35 +1,67 @@
 /**
- * Middleware for Route Protection with Role-Based Access Control
+ * Proxy for Route Protection with Role-Based Access Control
+ * + Geo-Based Currency Detection
  *
  * ✅ SECURITY FIX (Feb 2026):
  * - OPTIMIZED: Local JWT verification (0ms vs 150ms HTTP call)
  * - Added role verification for /admin routes
  * - Prevents privilege escalation (USER accessing ADMIN routes)
  *
+ * ✅ CURRENCY GEO-DETECTION (May 2026):
+ * - Reads x-vercel-ip-country (Vercel) or cf-ipcountry (Cloudflare) header
+ * - Falls back to NEXT_PUBLIC_DEFAULT_COUNTRY env var (local dev)
+ * - Writes `gydi-country` cookie on every response (24h TTL)
+ * - Cookie is NOT httpOnly so CurrencyInitializer can read it client-side
+ *
  * ARCHITECTURE:
  * - Auth cookies (access_token, refresh_token) are httpOnly
  * - gydi_session cookie is a session marker
- * - Middleware verifies JWT LOCALLY using jose library (NO backend call)
+ * - Proxy verifies JWT LOCALLY using jose library (NO backend call)
  * - Extracts userId, roles, and capabilities from JWT payload
  *
  * PERFORMANCE:
  * - Before: ~150ms (HTTP call to /api/verify)
  * - After: ~0ms (local JWT verification)
+ * - Geo-detection: 0ms (Vercel edge header, no external call)
  *
  * FLOW:
- * 1. Check if route is public → allow immediately
- * 2. For protected routes:
+ * 1. Detect country from geo header → will be set on response cookie
+ * 2. Check if route is public → allow immediately (with country cookie)
+ * 3. For protected routes:
  *    a. Check gydi_session cookie (quick filter)
  *    b. Extract & verify JWT from access_token cookie (LOCAL)
  *    c. For /admin routes: Check role === 'ADMIN'
  *    d. Block if unauthorized
- * 3. If no session or invalid JWT → redirect to login
+ * 4. If no session or invalid JWT → redirect to login (with country cookie)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyJWT, hasRole, extractTokenFromCookies } from '@/lib/auth/jwt-verify';
 
-export async function middleware(request: NextRequest) {
+const COUNTRY_COOKIE_NAME = 'gydi-country';
+const COUNTRY_COOKIE_MAX_AGE = 86400; // 24 hours
+
+function detectCountry(request: NextRequest): string {
+  return (
+    request.headers.get('x-vercel-ip-country') ||
+    request.headers.get('cf-ipcountry') ||
+    process.env.NEXT_PUBLIC_DEFAULT_COUNTRY ||
+    'US'
+  );
+}
+
+function applyCountryCookie(response: NextResponse, country: string): NextResponse {
+  response.cookies.set(COUNTRY_COOKIE_NAME, country, {
+    maxAge: COUNTRY_COOKIE_MAX_AGE,
+    path: '/',
+    sameSite: 'lax',
+    httpOnly: false, // Must be readable by JS (CurrencyInitializer)
+    secure: process.env.NODE_ENV === 'production',
+  });
+  return response;
+}
+
+async function resolveAuthResponse(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
   // Public routes (allow without authentication)
@@ -79,7 +111,7 @@ export async function middleware(request: NextRequest) {
       const token = extractTokenFromCookies(cookieHeader);
 
       if (!token) {
-        console.warn('[Middleware] No access_token cookie found for admin route:', pathname);
+        console.warn('[Proxy] No access_token cookie found for admin route:', pathname);
         const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('callbackUrl', pathname);
         loginUrl.searchParams.set('error', 'SessionExpired');
@@ -91,7 +123,7 @@ export async function middleware(request: NextRequest) {
 
       if (!userInfo) {
         // Invalid or expired JWT → redirect to login
-        console.warn('[Middleware] JWT verification failed for admin route:', pathname);
+        console.warn('[Proxy] JWT verification failed for admin route:', pathname);
         const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('callbackUrl', pathname);
         loginUrl.searchParams.set('error', 'SessionExpired');
@@ -114,7 +146,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     } catch (error) {
       // Unexpected error during JWT verification
-      console.error('[Middleware] JWT verification error:', error);
+      console.error('[Proxy] JWT verification error:', error);
 
       // FAIL SECURELY: Redirect to login
       const loginUrl = new URL('/login', request.url);
@@ -124,9 +156,9 @@ export async function middleware(request: NextRequest) {
   }
 
   // ℹ️ OPTIONAL: Verify capabilities for bookings/commissions routes
-  // Note: We also check this in the page components, but middleware provides early exit
+  // Note: We also check this in the page components, but proxy provides early exit
   // Since this requires checking capabilities (not just roles), we let the page handle it
-  // to avoid duplicating complex authorization logic in middleware
+  // to avoid duplicating complex authorization logic in proxy
   //
   // The gydi_session check above ensures user is authenticated
   // Page components will handle specific capability checks (canRefer, canPublish, etc.)
@@ -135,8 +167,14 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+export async function proxy(request: NextRequest) {
+  const country = detectCountry(request);
+  const response = await resolveAuthResponse(request);
+  return applyCountryCookie(response, country);
+}
+
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|manifest.json|robots.txt|icons|images|videos|sitemap.xml).*)',
   ],
 };

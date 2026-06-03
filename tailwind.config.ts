@@ -47,6 +47,13 @@ const config: Config = {
   			debug: '9999'
   		},
   		colors: {
+  			/* ── GYDI Brand ───────────────── */
+  			'gydi-primary': 'hsl(var(--gydi-primary))',
+  			'gydi-primary-light': 'hsl(var(--gydi-primary-light))',
+  			'gydi-teal': 'hsl(var(--gydi-teal))',
+  			'gydi-gold': 'hsl(var(--gydi-gold))',
+  			'gydi-ink': 'hsl(var(--gydi-ink))',
+  			/* ── shadcn/ui tokens ─────────── */
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
@@ -166,6 +173,11 @@ const config: Config = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		fontFamily: {
+  			display: [
+  				'var(--font-display)',
+  				'system-ui',
+  				'sans-serif'
+  			],
   			sans: [
   				'var(--font-sans)',
   				'system-ui',

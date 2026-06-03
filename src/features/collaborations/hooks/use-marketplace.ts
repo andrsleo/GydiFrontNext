@@ -29,6 +29,8 @@ export const collaborationKeys = {
   agreements: () => [...collaborationKeys.all, 'agreements'] as const,
   agreementDetail: (agreementId: number) =>
     [...collaborationKeys.agreements(), agreementId] as const,
+  settings: (propertyId: number) =>
+    [...collaborationKeys.all, 'settings', propertyId] as const,
 };
 
 export function useMarketplace(filters: MarketplaceFilters = {}) {

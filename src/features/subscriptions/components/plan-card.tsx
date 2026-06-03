@@ -18,6 +18,9 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useCurrencyStore, selectCurrency } from '@/store/currency-store';
+import { formatCurrency } from '@/lib/utils/format';
+import { useTranslation } from '@/hooks/use-translation';
 import type { PlanResponse } from '../types';
 
 interface PlanCardProps {
@@ -37,6 +40,8 @@ export function PlanCard({
 }: PlanCardProps) {
   const isCurrentPlan = currentPlanCode === plan.planCode;
   const isFree = plan.monthlyPrice === 0;
+  const currency = useCurrencyStore(selectCurrency);
+  const { t } = useTranslation('subscription');
 
   // Parse features from JSON
   let features: string[] = [];
@@ -66,7 +71,7 @@ export function PlanCard({
         <div className="absolute -top-3 left-0 right-0 flex justify-center">
           <Badge className="bg-primary text-primary-foreground">
             <Star className="mr-1 h-3 w-3" />
-            Recommended
+            {t('planCard.recommended')}
           </Badge>
         </div>
       )}
@@ -76,7 +81,7 @@ export function PlanCard({
         <div className="absolute -top-3 right-4">
           <Badge className="bg-green-500 text-white">
             <Check className="mr-1 h-3 w-3" />
-            Current Plan
+            {t('planCard.currentPlan')}
           </Badge>
         </div>
       )}
@@ -91,10 +96,10 @@ export function PlanCard({
         <div className="mt-6">
           <div className="flex items-baseline justify-center gap-1">
             <span className="text-5xl font-extrabold">
-              ${plan.monthlyPrice.toFixed(0)}
+              {formatCurrency(plan.monthlyPrice, currency)}
             </span>
             {!isFree && (
-              <span className="text-muted-foreground text-sm">/month</span>
+              <span className="text-muted-foreground text-sm">{t('planCard.perMonth')}</span>
             )}
           </div>
 
@@ -113,7 +118,7 @@ export function PlanCard({
           <div className="flex items-center gap-2">
             <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
             <span className="text-sm">
-              Up to {plan.maxProperties} properties
+              {t('planCard.upToProperties', { count: String(plan.maxProperties) })}
             </span>
           </div>
 
@@ -121,15 +126,14 @@ export function PlanCard({
             <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
             <span className="text-sm">
               {plan.maxReferralsPerMonth === -1
-                ? 'Unlimited'
-                : plan.maxReferralsPerMonth}{' '}
-              referrals/month
+                ? t('planCard.unlimited')
+                : t('planCard.referralsPerMonth', { count: String(plan.maxReferralsPerMonth) })}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-            <span className="text-sm">{plan.supportLevel} support</span>
+            <span className="text-sm">{t('planCard.support', { level: plan.supportLevel })}</span>
           </div>
 
           {features.map((feature, index) => (
@@ -150,10 +154,10 @@ export function PlanCard({
           variant={recommended ? 'default' : 'outline'}
         >
           {isCurrentPlan
-            ? 'Current Plan'
+            ? t('planCard.currentPlan')
             : isFree
-            ? 'Get Started'
-            : `Upgrade to ${plan.planName}`}
+            ? t('planCard.getStarted')
+            : t('planCard.upgradeTo', { name: plan.planName })}
         </Button>
       </CardFooter>
     </Card>

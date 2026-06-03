@@ -2,5 +2,34 @@
   "paymentMethods": {
     "title": "Medios de Pago",
     "subtitle": "Agrega o elimina tus tarjetas de crédito o débito. Tu tarjeta activa se usará para cualquier cargo de la plataforma."
+  },
+  "paymentPage": {
+    "subtitle": "Gestiona tu método de pago para comisiones y cobros de plataforma.",
+    "receivingTitle": "Recibir comisiones como referido",
+    "receivingDesc": "Configura tu PayPal para recibir automáticamente tu comisión cada vez que alguien reserve usando tu enlace de referido.",
+    "chargingTitle": "Método de cobro",
+    "chargingDesc": "Tarjeta que GYDI utiliza para cobrar la comisión de plataforma por cada reserva de alguna de tus propiedades publicadas.",
+    "addCardDesc": "Agrega una tarjeta de crédito o débito para que GYDI pueda cobrar la comisión de plataforma por tus reservas."
+  },
+  "planCardDetailed": {
+    "free": "Gratis",
+    "perMonth": "/mes",
+    "asAffiliate": "Como referido",
+    "youEarn": "Ganas",
+    "asHost": "Como Anfitrión",
+    "youPay": "Pagas",
+    "currentPlan": "Plan actual",
+    "processing": "Procesando..."
+  },
+  "planCard": {
+    "recommended": "Recomendado",
+    "currentPlan": "Plan Actual",
+    "getStarted": "Comenzar",
+    "upgradeTo": "Mejorar a {{name}}",
+    "perMonth": "/mes",
+    "upToProperties": "Hasta {{count}} propiedades",
+    "unlimited": "Ilimitado",
+    "referralsPerMonth": "{{count}} referidos/mes",
+    "support": "Soporte {{level}}"
   }
 }

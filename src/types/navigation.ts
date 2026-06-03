@@ -9,7 +9,7 @@ import { LucideIcon } from 'lucide-react';
 /**
  * User roles in the system
  */
-export type Role = 'ADMIN' | 'USER';
+export type Role = 'ADMIN' | 'USER' | 'CREATOR';
 
 /**
  * Subscription plan types

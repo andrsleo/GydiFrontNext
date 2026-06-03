@@ -75,6 +75,7 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
     dashboard: t('menu.dashboard'),
     properties: t('menu.properties'),
     'properties-my': t('menu.propertiesMy'),
+    'properties-calendar': t('menu.propertiesCalendar'),
     'properties-refer': t('menu.propertiesRefer'),
     referrals: t('menu.referrals'),
     'referrals-links': t('menu.referralsLinks'),
@@ -91,11 +92,19 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
     'admin-commissions': t('menu.adminCommissions'),
     'admin-plans': t('menu.adminPlans'),
     'admin-config': t('menu.adminConfig'),
+    'admin-seasons': t('menu.adminSeasons'),
+    creator: t('menu.creator'),
+    'creator-analytics': t('menu.creatorAnalytics'),
+    'creator-earnings': t('menu.creatorEarnings'),
+    content: t('menu.content'),
+    'content-list': t('menu.contentList'),
+    'content-new': t('menu.contentNew'),
   };
 
   // Map section IDs → translated labels
   const sectionLabels: Record<string, string> = {
     admin: t('menu.adminSection'),
+    creator: t('menu.creatorSection'),
   };
 
   // Plan labels with i18n
@@ -168,19 +177,27 @@ export function Sidebar({ userRole, subscriptionPlan = 'FREE', className }: Side
         >
           {/* Icon or Expand Button */}
           {hasSubItems && !isCollapsed ? (
-            <button
-              onClick={() => toggleExpand(item.id)}
-              className="flex items-center gap-3 flex-1"
-              aria-label={`Toggle ${menuItemLabels[item.id] ?? item.label}`}
-            >
-              <item.icon className="h-5 w-5 shrink-0" />
-              <span className="flex-1 text-left truncate">{menuItemLabels[item.id] ?? item.label}</span>
-              {isExpanded ? (
-                <ChevronDown className="h-4 w-4 shrink-0" />
-              ) : (
-                <ChevronRight className="h-4 w-4 shrink-0" />
-              )}
-            </button>
+            <>
+              <Link
+                href={item.href as any}
+                className="flex items-center gap-3 flex-1 min-w-0"
+                onClick={() => closeMobileMenu()}
+              >
+                <item.icon className="h-5 w-5 shrink-0" />
+                <span className="flex-1 truncate">{menuItemLabels[item.id] ?? item.label}</span>
+              </Link>
+              <button
+                onClick={() => toggleExpand(item.id)}
+                className="shrink-0 p-1 rounded hover:bg-muted-foreground/10"
+                aria-label={`Toggle ${menuItemLabels[item.id] ?? item.label}`}
+              >
+                {isExpanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </button>
+            </>
           ) : (
             <Link
               href={item.href as any}

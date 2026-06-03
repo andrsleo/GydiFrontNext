@@ -8,7 +8,6 @@
  */
 export enum PropertyStatus {
   DRAFT = 'DRAFT',
-  SEND_GYDI_COHOST = 'SEND_GYDI_COHOST',
   PENDING_APPROVAL = 'PENDING_APPROVAL',
   PUBLISHED = 'PUBLISHED',
   INACTIVE = 'INACTIVE',
@@ -21,7 +20,6 @@ export enum PropertyStatus {
  */
 export const PROPERTY_STATUS_LABELS: Record<PropertyStatus, string> = {
   [PropertyStatus.DRAFT]: 'Borrador',
-  [PropertyStatus.SEND_GYDI_COHOST]: 'Agregar Co-host',
   [PropertyStatus.PENDING_APPROVAL]: 'En Revisión',
   [PropertyStatus.PUBLISHED]: 'Publicada',
   [PropertyStatus.INACTIVE]: 'Inactiva',
@@ -182,6 +180,7 @@ export interface PropertyResponse {
   approvedAt?: string;
   denialReason?: string;
   icalUrlAirbnb?: string;
+  acceptCreatorCollaborations?: boolean;
 }
 
 /**
@@ -201,6 +200,8 @@ export interface PropertyDetailResponse extends PropertyResponse {
   airbnbListingId?: string;
   icalUrlAirbnb?: string;
   updatedAt: string;
+  acceptCreatorCollaborations?: boolean;
+  acceptedCompensations?: string[];
 }
 
 /**
@@ -263,8 +264,8 @@ export interface PropertyFilters {
   minBedrooms?: number;
   minBathrooms?: number;
   minGuests?: number;
-  amenities?: string[];  // Agregado - búsqueda por amenidades
-  searchText?: string;   // Agregado - búsqueda por texto (título o descripción)
+  amenities?: string[];
+  searchText?: string;
   page?: number;
   size?: number;
   sortBy?: string;
@@ -339,4 +340,35 @@ export interface ImportPropertyFromAirbnbRequest {
   titleOverride?: string;
   descriptionOverride?: string;
   additionalAmenities?: string[];
+}
+
+// ─── Phase 4: Social Commerce ─────────────────────────────────────────────
+
+export interface CreatorSummary {
+  id: number;
+  username: string;
+  avatarUrl?: string;
+}
+
+/**
+ * Social proof aggregated stats for a property.
+ * Matches backend PropertySocialProofDto.
+ */
+export interface PropertySocialProof {
+  propertyId: number;
+  contentCount: number;
+  totalViews: number;
+  totalBookings: number;
+  topCreators: CreatorSummary[];
+}
+
+/**
+ * Booking attribution stats for a content post.
+ * Matches backend ContentBookingStatsDto.
+ */
+export interface ContentBookingStats {
+  contentPostId: number;
+  bookingCount: number;
+  totalRevenue: number | null;
+  conversionRate: number;
 }

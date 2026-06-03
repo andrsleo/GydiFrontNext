@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { mediaApi } from '../api/media.api';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface ReorderVideosParams {
   propertyId: string;
@@ -16,6 +17,7 @@ interface ReorderVideosParams {
  */
 export function useReorderVideos() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation('properties');
 
   return useMutation({
     mutationFn: async ({ propertyId, videoOrders }: ReorderVideosParams) => {
@@ -30,12 +32,12 @@ export function useReorderVideos() {
         queryKey: propertyKeys.all,
         refetchType: 'active',
       });
-      toast.success('Videos reorganizados', {
-        description: `${data.updatedCount} videos actualizados`,
+      toast.success(t('toasts.videos.reordered'), {
+        description: t('toasts.videos.reorderedDesc', { count: data.updatedCount }),
       });
     },
     onError: (error: Error) => {
-      toast.error('Error al reorganizar videos', {
+      toast.error(t('toasts.videos.reorderError'), {
         description: error.message,
       });
     },

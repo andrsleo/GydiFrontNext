@@ -1,0 +1,101 @@
+{
+  "page": {
+    "title": "Calendario de Propiedades",
+    "subtitle": "Gestiona la disponibilidad y precios de temporada de tus propiedades",
+    "searchPlaceholder": "Buscar propiedad...",
+    "searchLabel": "Buscar propiedad",
+    "selectPropertyLabel": "Seleccionar propiedad",
+    "emptyTitle": "Selecciona una propiedad",
+    "emptySubtitle": "Elige una propiedad de la lista para ver y gestionar su calendario de disponibilidad",
+    "noPropertiesTitle": "No tienes propiedades aún",
+    "noPropertiesSubtitle": "Crea tu primera propiedad para empezar",
+    "createProperty": "Crear propiedad",
+    "seasonPricingTitle": "Precios por Temporada",
+    "perNight": "/noche"
+  },
+  "status": {
+    "PUBLISHED": "Publicada",
+    "PENDING_APPROVAL": "En Revisión",
+    "DRAFT": "Borrador",
+    "DENY": "Rechazada",
+    "INACTIVE": "Inactiva",
+    "DELETED": "Eliminada"
+  },
+  "calendar": {
+    "prevMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "selectYear": "Seleccionar año",
+    "errorLoading": "Error cargando calendario",
+    "seasonHigh": "Alta",
+    "seasonMedium": "Media",
+    "seasonLow": "Baja"
+  },
+  "mode": {
+    "range": "Rango",
+    "individual": "Días sueltos"
+  },
+  "hint": {
+    "rangeStart": "Clic en un día para iniciar el rango",
+    "rangeHover": "Mueve el cursor y clic para definir el fin del rango",
+    "rangeConfirmOne": "{{count}} día — clic para confirmar rango",
+    "rangeConfirmMany": "{{count}} días — clic para confirmar rango",
+    "individual": "Clic en cada día para seleccionarlo o deseleccionarlo"
+  },
+  "days": {
+    "sun": "Dom",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fri": "Vie",
+    "sat": "Sáb"
+  },
+  "actions": {
+    "selectedOne": "{{count}} fecha seleccionada",
+    "selectedMany": "{{count}} fechas seleccionadas",
+    "clear": "Limpiar",
+    "block": "Bloquear",
+    "blocking": "Bloqueando...",
+    "unblock": "Desbloquear",
+    "unblocking": "Desbloqueando...",
+    "price": "Precio",
+    "priceApply": "Aplicar",
+    "priceApplying": "Aplicando...",
+    "priceHint": "Aplica un precio personalizado a las {{count}} fechas seleccionadas",
+    "priceError": "Ingresa un precio válido mayor a 0",
+    "priceLabel": "Precio personalizado"
+  },
+  "legend": {
+    "available": "Disponible",
+    "blocked": "Bloqueado",
+    "reserved": "Reservado",
+    "selected": "Seleccionado"
+  },
+  "cell": {
+    "blocked": "Bloq.",
+    "reserved": "Reserv.",
+    "maintenance": "Mant.",
+    "rangeStart": "Inicio"
+  },
+  "season": {
+    "title": "Multiplicadores de temporada",
+    "subtitle": "El precio base se multiplica según la temporada detectada.",
+    "noSeasonDefs": "No hay períodos de temporada configurados para {{country}}. Los precios usarán el multiplicador base.",
+    "annual": "Anual",
+    "once": "Único",
+    "showLess": "Mostrar menos",
+    "showMore": "Ver {{count}} más",
+    "noPeriodsForType": "Sin períodos definidos para este tipo",
+    "validationError": "Debe estar entre 0.10 y 10.00",
+    "saveError": "Error al guardar. Intenta nuevamente.",
+    "saveSuccess": "✓ Guardado correctamente",
+    "saving": "Guardando...",
+    "save": "Guardar multiplicadores",
+    "highLabel": "Alta temporada",
+    "highDesc": "Feriados, vacaciones, alta demanda",
+    "mediumLabel": "Temporada media",
+    "mediumDesc": "Demanda moderada",
+    "lowLabel": "Temporada baja",
+    "lowDesc": "Demanda baja, atraer reservas"
+  }
+}

@@ -13,6 +13,7 @@ import { HostPaymentOnboardingModal } from './host-payment-onboarding-modal';
 import { StripeProvider } from '@/lib/stripe/stripe-provider';
 import { usePaymentMethods } from '../hooks/use-payment-methods';
 import { useSubscription } from '../hooks/use-subscription';
+import type { SubscriptionPlan } from '@/types/user';
 
 /**
  * Example 1: Trigger modal when HOST tries to publish a property
@@ -49,15 +50,15 @@ export function PropertyPublishButton() {
             console.log('Payment method verified! Can now publish property.');
             // Proceed with publishing after modal closes
           }}
-          userPlan={subscription?.planCode || 'FREE'}
+          userPlan={(subscription?.planCode || 'FREE') as SubscriptionPlan}
           hasSubscriptionPaymentMethod={paymentMethods?.some(
             (pm) => pm.purpose === 'SUBSCRIPTION' || pm.purpose === 'BOTH'
           )}
           subscriptionCardLast4={
-            paymentMethods?.find((pm) => pm.isDefault && pm.cardLastFour)?.cardLastFour
+            paymentMethods?.find((pm) => pm.isDefault && pm.cardLastFour)?.cardLastFour ?? undefined
           }
           subscriptionCardBrand={
-            paymentMethods?.find((pm) => pm.isDefault && pm.cardBrand)?.cardBrand
+            paymentMethods?.find((pm) => pm.isDefault && pm.cardBrand)?.cardBrand ?? undefined
           }
           subscriptionPaymentMethodId={
             paymentMethods?.find((pm) => pm.isDefault)?.id
@@ -92,15 +93,15 @@ export function AddHostPaymentMethodSettings() {
           onSuccess={() => {
             console.log('Host payment method added successfully!');
           }}
-          userPlan={subscription?.planCode || 'FREE'}
+          userPlan={(subscription?.planCode || 'FREE') as SubscriptionPlan}
           hasSubscriptionPaymentMethod={paymentMethods?.some(
             (pm) => pm.purpose === 'SUBSCRIPTION' || pm.purpose === 'BOTH'
           )}
           subscriptionCardLast4={
-            paymentMethods?.find((pm) => pm.isDefault && pm.cardLastFour)?.cardLastFour
+            paymentMethods?.find((pm) => pm.isDefault && pm.cardLastFour)?.cardLastFour ?? undefined
           }
           subscriptionCardBrand={
-            paymentMethods?.find((pm) => pm.isDefault && pm.cardBrand)?.cardBrand
+            paymentMethods?.find((pm) => pm.isDefault && pm.cardBrand)?.cardBrand ?? undefined
           }
           subscriptionPaymentMethodId={
             paymentMethods?.find((pm) => pm.isDefault)?.id
@@ -154,15 +155,15 @@ export function HostPaymentWarningBanner() {
           onSuccess={() => {
             console.log('Payment method added! Banner will disappear.');
           }}
-          userPlan={subscription.planCode}
+          userPlan={subscription.planCode as SubscriptionPlan}
           hasSubscriptionPaymentMethod={paymentMethods?.some(
             (pm) => pm.purpose === 'SUBSCRIPTION' || pm.purpose === 'BOTH'
           )}
           subscriptionCardLast4={
-            paymentMethods?.find((pm) => pm.isDefault && pm.cardLastFour)?.cardLastFour
+            paymentMethods?.find((pm) => pm.isDefault && pm.cardLastFour)?.cardLastFour ?? undefined
           }
           subscriptionCardBrand={
-            paymentMethods?.find((pm) => pm.isDefault && pm.cardBrand)?.cardBrand
+            paymentMethods?.find((pm) => pm.isDefault && pm.cardBrand)?.cardBrand ?? undefined
           }
           subscriptionPaymentMethodId={
             paymentMethods?.find((pm) => pm.isDefault)?.id

@@ -48,6 +48,7 @@
     "properties": "Properties",
     "propertiesMy": "My Properties",
     "propertiesRefer": "Refer Properties",
+    "propertiesCalendar": "Calendar",
     "referrals": "Referrals",
     "referralsLinks": "My Links",
     "referralsStats": "Statistics",
@@ -63,12 +64,33 @@
     "adminBookings": "Booking Management",
     "adminCommissions": "Commission Management",
     "adminPlans": "Plans & Pricing",
-    "adminConfig": "System Settings"
+    "adminConfig": "System Settings",
+    "adminSeasons": "Seasons",
+    "creatorSection": "Creator",
+    "creator": "Creator Dashboard",
+    "creatorAnalytics": "Analytics",
+    "creatorEarnings": "Earnings",
+    "content": "My Content",
+    "contentList": "My Posts",
+    "contentNew": "New Post"
   },
   "plan": {
     "free": "Free",
     "pro": "Pro",
     "elite": "Elite"
+  },
+  "location": {
+    "country": "Country",
+    "city": "City",
+    "searchCountry": "Search country...",
+    "selectCountry": "Select country",
+    "allCountries": "All countries",
+    "noCountriesFound": "No countries found",
+    "selectCity": "Select a city",
+    "selectCountryFirst": "Select a country first",
+    "allCities": "All cities",
+    "noCitiesAvailable": "No cities available",
+    "enterCity": "Enter city"
   },
   "footer": {
     "tagline": "The Airbnb complement that turns your network into real commissions from vacation bookings.",
@@ -84,5 +106,9 @@
     "terms": "Terms and Conditions",
     "cookies": "Cookie Policy",
     "rights": "All rights reserved."
+  },
+  "preferences": {
+    "currency": "Currency",
+    "language": "Language"
   }
 }

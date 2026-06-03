@@ -22,8 +22,9 @@ vi.mock('framer-motion', () => ({
           require('react').createElement(key as any, props, children),
     }
   ),
-  useScroll: () => ({ scrollYProgress: { get: () => 0 } }),
+  useScroll: () => ({ scrollYProgress: { get: () => 0, on: () => () => {} }, scrollY: { get: () => 0, on: () => () => {} } }),
   useTransform: (_v: unknown, _from: unknown, to: number[] | string[]) => ({ get: () => to[0] }),
+  useMotionValue: (initial: unknown) => ({ get: () => initial, set: () => {}, on: () => () => {} }),
   useReducedMotion: () => false,
   AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
 }));

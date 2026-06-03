@@ -187,7 +187,7 @@ export default function NewPropertyPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ImageUploader maxFiles={20} onFilesSelected={setImages} />
+            <ImageUploader maxFiles={20} minFiles={4} onFilesSelected={setImages} />
             <div className="flex gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep('details')}>
                 {t('page.buttons.back')}

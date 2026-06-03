@@ -94,7 +94,7 @@ export function HostBookingsTable() {
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-medium">
-                          {booking.guestFirstName} {booking.guestLastName}
+                          {booking.guestName}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {booking.guestEmail}

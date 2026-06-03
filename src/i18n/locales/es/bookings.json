@@ -1,0 +1,22 @@
+{
+  "title": "Mis Reservas",
+  "subtitle": {
+    "both": "Gestiona tus reservas como referido y anfitrión",
+    "affiliateOnly": "Gestiona tus reservas como referido",
+    "hostOnly": "Gestiona tus reservas como anfitrión"
+  },
+  "noPermissions": {
+    "title": "Sin permisos",
+    "desc": "No tienes permisos para ver reservas. Contacta al administrador para habilitar tus capacidades (canRefer o canPublish)."
+  },
+  "tabs": {
+    "affiliate": "Como referido",
+    "host": "Como Anfitrión"
+  },
+  "affiliate": {
+    "desc": "Reservas generadas por tus enlaces de referidos. Ganas comisión cuando se completan."
+  },
+  "host": {
+    "desc": "Reservas en tus propiedades. Pagas comisión a la plataforma cuando se completan."
+  }
+}

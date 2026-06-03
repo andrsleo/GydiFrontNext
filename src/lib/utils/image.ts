@@ -69,3 +69,34 @@ export function isValidImageUrl(url: string | undefined | null): boolean {
     return url.startsWith('/');
   }
 }
+
+/**
+ * Resolves a media URL from the backend.
+ *
+ * Handles three cases:
+ *  - Absolute URL (http/https) → returned as-is (with Cloudinary optimization if applicable)
+ *  - Root-relative URL (/uploads/...) → returned as-is
+ *  - Bare filename (uuid.ext) → prepended with backend uploads base URL
+ *
+ * @param url - Raw URL from backend (may be absolute, root-relative, or bare filename)
+ * @param folder - Storage folder used when URL is a bare filename (default: "content")
+ * @returns Fully qualified URL ready for display, or undefined if empty
+ */
+export function resolveMediaUrl(
+  url: string | undefined | null,
+  folder = 'content'
+): string | undefined {
+  if (!url) return undefined;
+
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return optimizeCloudinaryUrl(url);
+  }
+
+  if (url.startsWith('/')) {
+    return url;
+  }
+
+  // Bare filename — prepend backend base URL
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
+  return `${apiUrl}/uploads/${folder}/${url}`;
+}

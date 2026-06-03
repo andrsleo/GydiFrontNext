@@ -2,18 +2,20 @@
  * PropertyCard Component
  * Displays property information in a card format for property lists
  */
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Bed, Bath, Users, AlertCircle, ExternalLink } from 'lucide-react';
+import { MapPin, Bed, Bath, Users, AlertCircle, ExternalLink, Sparkles } from 'lucide-react';
 import type { PropertyResponse } from '../types';
 import { LISTING_TYPE_LABELS, PropertyListingType, PropertyStatus } from '../types';
 import { getImagePath, getBlurDataURL } from '@/lib/utils/image';
 import { PropertyActionsMenu } from './property-actions-menu';
 import { PropertyStatusBadge } from './property-status-badge';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface PropertyCardProps {
   property: PropertyResponse;
@@ -34,6 +36,7 @@ interface PropertyCardProps {
  * ```
  */
 export function PropertyCard({ property, href, showActions = false }: PropertyCardProps) {
+  const { t } = useTranslation('properties');
   const {
     id,
     slug,
@@ -102,17 +105,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
             <div className="absolute inset-0 bg-destructive/10 flex items-end justify-start p-2">
               <div className="flex items-center gap-1 text-xs text-destructive font-medium bg-background/90 rounded px-2 py-1">
                 <AlertCircle className="h-3 w-3 flex-shrink-0" />
-                <span>Requiere correcciones</span>
-              </div>
-            </div>
-          )}
-
-          {/* Cohost required indicator for SEND_GYDI_COHOST status */}
-          {status === PropertyStatus.SEND_GYDI_COHOST && (
-            <div className="absolute inset-0 bg-amber-500/10 flex items-end justify-start p-2">
-              <div className="flex items-center gap-1 text-xs text-amber-800 font-medium bg-background/90 rounded px-2 py-1">
-                <AlertCircle className="h-3 w-3 flex-shrink-0" />
-                <span>Agregar co-host requerido</span>
+                <span>{t('card.requiresCorrections')}</span>
               </div>
             </div>
           )}
@@ -123,7 +116,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
               {propertyType}
             </Badge>
             <Badge variant={listingConfig.variant} className={listingConfig.className}>
-              {LISTING_TYPE_LABELS[listingType]}
+              {t(`card.listingType.${listingType}`)}
             </Badge>
           </div>
         </div>
@@ -178,7 +171,7 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
       </Link>
 
       {/* Validar precio button - outside Link to avoid nested interactive elements */}
-      <CardFooter className="pt-0 pb-4">
+      <CardFooter className="pt-0 pb-4 flex flex-col gap-2">
         {airbnbUrl ? (
           <Button
             variant="outline"
@@ -187,12 +180,25 @@ export function PropertyCard({ property, href, showActions = false }: PropertyCa
             onClick={() => window.open(airbnbUrl, '_blank', 'noopener,noreferrer')}
           >
             <ExternalLink className="h-4 w-4" />
-            Validar precio
+            {t('card.validatePrice')}
           </Button>
         ) : (
           <Button variant="outline" size="sm" className="w-full" disabled>
-            Validar precio
+            {t('card.validatePrice')}
           </Button>
+        )}
+
+        {/* Collaboration CTA — only for host view, PUBLISHED, collaborations OFF */}
+        {showActions && status === PropertyStatus.PUBLISHED && !property.acceptCreatorCollaborations && (
+          <Link href={`/dashboard/propiedades/${id}/editar?tab=collaborations`} className="w-full">
+            <Button
+              size="sm"
+              className="w-full gap-2 min-h-9 bg-gradient-to-r from-[hsl(252,100%,64%)] to-[hsl(177,100%,42%)] text-white hover:opacity-90"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Activar colaboraciones con creadores
+            </Button>
+          </Link>
         )}
       </CardFooter>
     </Card>

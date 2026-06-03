@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { DollarSign, CheckCircle, Clock, XCircle, Download } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/format';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -75,7 +76,7 @@ export default function AdminCommissionsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${stats.totalPaid.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(stats.totalPaid, 'USD')}
             </div>
           </CardContent>
         </Card>
@@ -89,7 +90,7 @@ export default function AdminCommissionsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
-              ${stats.pending.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(stats.pending, 'USD')}
             </div>
           </CardContent>
         </Card>
@@ -100,7 +101,7 @@ export default function AdminCommissionsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              ${stats.thisMonth.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(stats.thisMonth, 'USD')}
             </div>
           </CardContent>
         </Card>
@@ -114,7 +115,7 @@ export default function AdminCommissionsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              ${stats.rejected.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(stats.rejected, 'USD')}
             </div>
           </CardContent>
         </Card>
@@ -144,7 +145,7 @@ export default function AdminCommissionsPage() {
                   <TableRow key={commission.id}>
                     <TableCell className="font-medium">{commission.user}</TableCell>
                     <TableCell className="font-semibold text-green-600">
-                      ${commission.amount.toFixed(2)}
+                      {formatCurrency(commission.amount, 'USD')}
                     </TableCell>
                     <TableCell className="text-sm">{commission.referral}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">

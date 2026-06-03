@@ -48,6 +48,7 @@
     "properties": "Propiedades",
     "propertiesMy": "Mis Propiedades",
     "propertiesRefer": "Referir Propiedades",
+    "propertiesCalendar": "Calendario",
     "referrals": "Referidos",
     "referralsLinks": "Mis Enlaces",
     "referralsStats": "Estadísticas",
@@ -63,12 +64,33 @@
     "adminBookings": "Gestión de Reservas",
     "adminCommissions": "Gestión de Comisiones",
     "adminPlans": "Planes y Precios",
-    "adminConfig": "Configuración del Sistema"
+    "adminConfig": "Configuración del Sistema",
+    "adminSeasons": "Temporadas",
+    "creatorSection": "Creator",
+    "creator": "Panel Creator",
+    "creatorAnalytics": "Analíticas",
+    "creatorEarnings": "Ganancias",
+    "content": "Mi Contenido",
+    "contentList": "Mis Posts",
+    "contentNew": "Nuevo Post"
   },
   "plan": {
     "free": "Gratis",
     "pro": "Pro",
     "elite": "Elite"
+  },
+  "location": {
+    "country": "País",
+    "city": "Ciudad",
+    "searchCountry": "Buscar país...",
+    "selectCountry": "Seleccionar país",
+    "allCountries": "Todos los países",
+    "noCountriesFound": "No se encontraron países",
+    "selectCity": "Selecciona una ciudad",
+    "selectCountryFirst": "Primero selecciona un país",
+    "allCities": "Todas las ciudades",
+    "noCitiesAvailable": "No hay ciudades disponibles",
+    "enterCity": "Ingresa la ciudad"
   },
   "footer": {
     "tagline": "El complemento de Airbnb que convierte tu red en comisiones reales por reservas vacacionales.",
@@ -84,5 +106,9 @@
     "terms": "Términos y Condiciones",
     "cookies": "Política de Cookies",
     "rights": "Todos los derechos reservados."
+  },
+  "preferences": {
+    "currency": "Moneda",
+    "language": "Idioma"
   }
 }

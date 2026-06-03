@@ -41,5 +41,19 @@
     "PAID": "Pagado",
     "WITHHELD": "Retenido",
     "FAILED": "Fallido"
+  },
+  "paypalBanner": {
+    "title": "Configura tu método de pago",
+    "desc": "Para recibir tus comisiones necesitas registrar tu email de PayPal en Medios de Pago.",
+    "button": "Configurar PayPal"
+  },
+  "summary": {
+    "title": "Ganancias Totales",
+    "subtitle": "Ve tu desglose de ganancias y estado de pago",
+    "planLabel": "Plan:",
+    "allTime": "Ganancias históricas",
+    "progressTitle": "Progreso al mínimo de pago",
+    "progressRemaining": "Faltan {{amount}} para el próximo pago",
+    "nextPayout": "Próximo Pago"
   }
 }

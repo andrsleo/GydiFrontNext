@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { Crown, DollarSign, Percent, Settings } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/format';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -92,7 +93,7 @@ export default function AdminPlansPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              ${(plans[1].revenue + plans[2].revenue).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(plans[1].revenue + plans[2].revenue, 'USD')}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {plans[1].subscribers + plans[2].subscribers} suscriptores pagos
@@ -223,7 +224,7 @@ export default function AdminPlansPage() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Ingresos mensuales</span>
                     <span className="font-semibold text-green-600">
-                      ${plan.revenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      {formatCurrency(plan.revenue, 'USD')}
                     </span>
                   </div>
                 </div>

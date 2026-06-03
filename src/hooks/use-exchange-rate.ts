@@ -2,10 +2,12 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { exchangeRateKeys } from '@/lib/constants/query-keys';
+import type { SupportedCurrency } from '@/lib/constants/currency-config';
 
+/** All rates: 1 USD = N units of currency */
 export interface ExchangeRates {
-  USD_to_EUR: number;
-  EUR_to_USD: number;
+  base: 'USD';
+  rates: Record<SupportedCurrency, number>;
   updatedAt: string;
   isFallback?: boolean;
 }

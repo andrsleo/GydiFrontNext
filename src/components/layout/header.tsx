@@ -7,9 +7,9 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@/features/auth/hooks/use-auth';
 import { useAuthStore } from '@/store/auth-store';
 import { UserMenu } from './user-menu';
-import { CurrencySelector } from '@/components/shared/currency-selector';
-import { LanguageSelector } from '@/components/shared/language-selector';
+import { PreferencesSelector } from '@/components/shared/preferences-selector';
 import { useTranslation } from '@/hooks/use-translation';
+import { NotificationBell } from '@/features/notifications/components/notification-bell';
 
 export function Header() {
   const { t } = useTranslation('common');
@@ -90,8 +90,7 @@ export function Header() {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden items-center space-x-3 md:flex">
-          {/* <CurrencySelector /> */}
-          <LanguageSelector />
+          <PreferencesSelector />
           {showLoading ? (
             /* Loading skeleton while verifying session */
             <>
@@ -107,6 +106,8 @@ export function Header() {
                   <div className="absolute inset-0 -z-0 bg-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </Link>
               </Button>
+              {/* Notification Bell — Phase 4 Social Commerce */}
+              <NotificationBell />
               {/* User Menu Dropdown */}
               <UserMenu />
             </>
@@ -165,8 +166,7 @@ export function Header() {
             </Link>
 
             <div className="flex items-center gap-2 py-2">
-              {/* <CurrencySelector /> */}
-              <LanguageSelector />
+              <PreferencesSelector />
             </div>
             <div className="space-y-3 border-t border-border/40 pt-4">
               {showLoading ? (

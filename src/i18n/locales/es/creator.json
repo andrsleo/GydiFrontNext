@@ -1,0 +1,92 @@
+{
+  "dashboard": {
+    "title": "Creator Dashboard",
+    "subtitle": "{{count}} posts · {{followers}} seguidores",
+    "newPost": "Nuevo Post",
+    "becomeCreator": "Convertirse en Creator",
+    "becomeCreatorDesc": "Activa tu cuenta de Creator para publicar contenido, conseguir seguidores y monetizar tus posts.",
+    "kpi": {
+      "totalViews": "Total de Vistas",
+      "posts": "Posts",
+      "bookings": "Reservas",
+      "earnings": "Ganancias"
+    },
+    "profileStats": "Estadísticas del Perfil",
+    "sections": {
+      "myContent": "Mi Contenido",
+      "myContentDesc": "Gestiona tus posts publicados.",
+      "analytics": "Analytics",
+      "analyticsDesc": "Performance de cada post.",
+      "analyticsLink": "Ver detalle →",
+      "earnings": "Ganancias",
+      "earningsDesc": "Comisiones por contenido."
+    }
+  },
+  "upgrade": {
+    "title": "Convertirse en Creator",
+    "description": "Activa tu cuenta de Creator y empieza a monetizar tu contenido.",
+    "perks": {
+      "publish": "Publica fotos y videos de propiedades",
+      "audience": "Construye tu audiencia y consigue seguidores",
+      "earn": "Gana comisiones extra por contenido viral",
+      "analytics": "Acceso al panel de Creator Analytics"
+    },
+    "cancel": "Cancelar",
+    "activate": "Activar Cuenta Creator",
+    "activating": "Activando…"
+  },
+  "stats": {
+    "posts": "Posts",
+    "followers": "Seguidores",
+    "following": "Siguiendo",
+    "views": "Vistas",
+    "engagement": "Engagement"
+  },
+  "browse": {
+    "title": "Creators",
+    "subtitle": "Descubre los mejores creadores de contenido inmobiliario.",
+    "empty": "No se encontraron creators.",
+    "loadMore": "Cargar más",
+    "previous": "Anterior"
+  },
+  "profile": {
+    "notFound": "Creator no encontrado.",
+    "posts": "Posts",
+    "noPostsYet": "Aún no hay posts."
+  },
+  "analytics": {
+    "title": "Analytics de Contenido",
+    "subtitle": "Performance de tus posts",
+    "topPerforming": "Top Performers",
+    "allPosts": "Todos los Posts",
+    "noPosts": "Aún no tienes posts publicados.",
+    "noPostsAll": "No hay posts para mostrar.",
+    "draft": "Borrador",
+    "noCaption": "Sin caption",
+    "stat": {
+      "views": "Vistas",
+      "likes": "Likes",
+      "saves": "Guardados",
+      "bookings": "Reservas"
+    },
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "earnings": {
+    "title": "Ganancias por Contenido",
+    "subtitle": "Comisiones generadas por tus posts",
+    "totalAccumulated": "Total acumulado",
+    "attributions": "{{count}} atribuciones registradas",
+    "breakdown": "Desglose por Post",
+    "viewAnalytics": "Ver analytics",
+    "noEarnings": "Aún no tienes ganancias registradas. Publica contenido y etiqueta propiedades para empezar a ganar comisiones.",
+    "createContent": "Crear contenido",
+    "pending": "Pendiente",
+    "attribution": {
+      "DIRECT_VIEW": "Vista directa",
+      "SHARED_LINK": "Link compartido",
+      "CREATOR_LINK": "Link creator"
+    },
+    "booking": "Reserva #{{id}}"
+  }
+}

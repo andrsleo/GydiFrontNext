@@ -22,6 +22,15 @@ function getFriendlyErrorKey(error: string | null): string {
 
   const errorLower = error.toLowerCase();
 
+  // Sesión expirada — distinto a credenciales incorrectas
+  if (
+    errorLower === 'sessionexpired' ||
+    errorLower.includes('session expired') ||
+    errorLower.includes('authenticationrequired')
+  ) {
+    return 'login.errors.sessionExpired';
+  }
+
   // Rate limiting - demasiados intentos
   if (
     errorLower.includes('too many') ||
@@ -36,7 +45,6 @@ function getFriendlyErrorKey(error: string | null): string {
   if (
     errorLower.includes('credential') ||
     errorLower === 'credentialssignin' ||
-    errorLower === 'sessionexpired' ||
     errorLower.includes('invalid') ||
     errorLower.includes('incorrect') ||
     errorLower.includes('wrong') ||
@@ -96,20 +104,25 @@ function LoginContent() {
     resolver: zodResolver(loginSchema),
   });
 
-  // Handle error from URL query parameter (NextAuth redirects with error)
+  // Handle error from URL query parameter
   useEffect(() => {
     const urlError = searchParams?.get('error');
     if (urlError) {
       const errorKey = getFriendlyErrorKey(urlError);
       const friendlyMessage = t(errorKey);
       const isRateLimited = errorKey === 'login.errors.rateLimit';
+      const isSessionExpired = errorKey === 'login.errors.sessionExpired';
 
       toast.error(t('login.errorTitle'), {
         description: friendlyMessage,
         duration: isRateLimited ? 10000 : 8000,
         closeButton: true,
       });
-      setErrorMessage(friendlyMessage);
+
+      // Session-expired: toast only — user hasn't attempted login yet, no inline form error
+      if (!isSessionExpired) {
+        setErrorMessage(friendlyMessage);
+      }
 
       // Clear the error from URL without page reload
       router.replace('/login', { scroll: false });

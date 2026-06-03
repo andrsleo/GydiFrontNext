@@ -20,9 +20,11 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function UserCommissionsPage() {
   const user = useUser();
+  const { t } = useTranslation('commissions');
 
   // Loading state
   if (!user) {
@@ -44,10 +46,9 @@ export default function UserCommissionsPage() {
       <div className="container mx-auto py-8">
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Sin permisos</AlertTitle>
+          <AlertTitle>{t('noPermissions.title')}</AlertTitle>
           <AlertDescription>
-            No tienes permisos para ver comisiones. Contacta al administrador para habilitar
-            tus capacidades (canRefer o canPublish).
+            {t('noPermissions.desc')}
           </AlertDescription>
         </Alert>
       </div>
@@ -61,14 +62,9 @@ export default function UserCommissionsPage() {
     <div className="container mx-auto py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Mis Comisiones</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Gestiona tus comisiones como{' '}
-          {canRefer && canPublish
-            ? 'referido y anfitrión'
-            : canRefer
-              ? 'referido'
-              : 'anfitrión'}
+          {t(`subtitle.${canRefer && canPublish ? 'both' : canRefer ? 'affiliateOnly' : 'hostOnly'}`)}
         </p>
       </div>
 
@@ -76,10 +72,10 @@ export default function UserCommissionsPage() {
       <Tabs defaultValue={defaultTab} className="space-y-6">
         <TabsList>
           {canRefer && (
-            <TabsTrigger value="earned">Comisiones Ganadas</TabsTrigger>
+            <TabsTrigger value="earned">{t('tabs.earned')}</TabsTrigger>
           )}
           {canPublish && (
-            <TabsTrigger value="paid">Comisiones Pagadas</TabsTrigger>
+            <TabsTrigger value="paid">{t('tabs.paid')}</TabsTrigger>
           )}
         </TabsList>
 
@@ -87,10 +83,9 @@ export default function UserCommissionsPage() {
         {canRefer && (
           <TabsContent value="earned" className="space-y-6">
             <div className="rounded-lg border bg-card p-4">
-              <h3 className="font-semibold mb-2">💰 Comisiones que Recibes</h3>
+              <h3 className="font-semibold mb-2">{t('earned.title')}</h3>
               <p className="text-sm text-muted-foreground">
-                Estas comisiones te las <strong>paga la plataforma</strong> cuando alguien
-                reserva a través de tus enlaces de referido.
+                {t('earned.desc')}
               </p>
             </div>
             <AffiliateCommissionsTable />
@@ -101,10 +96,9 @@ export default function UserCommissionsPage() {
         {canPublish && (
           <TabsContent value="paid" className="space-y-6">
             <div className="rounded-lg border bg-card p-4">
-              <h3 className="font-semibold mb-2">💸 Comisiones que Pagas</h3>
+              <h3 className="font-semibold mb-2">{t('paid.title')}</h3>
               <p className="text-sm text-muted-foreground">
-                Estas comisiones las <strong>pagas tú a la plataforma</strong> cuando se
-                reserva una de tus propiedades a través de un referido.
+                {t('paid.desc')}
               </p>
             </div>
             <HostCommissionsTable />

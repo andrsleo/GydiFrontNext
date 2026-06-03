@@ -1,0 +1,24 @@
+{
+  "title": "Mis Comisiones",
+  "subtitle": {
+    "both": "Gestiona tus comisiones como referido y anfitrión",
+    "affiliateOnly": "Gestiona tus comisiones como referido",
+    "hostOnly": "Gestiona tus comisiones como anfitrión"
+  },
+  "noPermissions": {
+    "title": "Sin permisos",
+    "desc": "No tienes permisos para ver comisiones. Contacta al administrador para habilitar tus capacidades (canRefer o canPublish)."
+  },
+  "tabs": {
+    "earned": "Comisiones Ganadas",
+    "paid": "Comisiones Pagadas"
+  },
+  "earned": {
+    "title": "💰 Comisiones que Recibes",
+    "desc": "Estas comisiones te las paga la plataforma cuando alguien reserva a través de tus enlaces de referido."
+  },
+  "paid": {
+    "title": "💸 Comisiones que Pagas",
+    "desc": "Estas comisiones las pagas tú a la plataforma cuando se reserva una de tus propiedades a través de un referido."
+  }
+}

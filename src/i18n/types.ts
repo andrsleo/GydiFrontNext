@@ -17,7 +17,13 @@ export type TranslationNamespace =
   | 'contact'
   | 'privacy'
   | 'terms'
-  | 'cookies';
+  | 'cookies'
+  | 'calendar'
+  | 'seasons'
+  | 'bookings'
+  | 'commissions'
+  | 'creator'
+  | 'content';
 
 export type TranslationDict = {
   [key: string]: string | TranslationDict;

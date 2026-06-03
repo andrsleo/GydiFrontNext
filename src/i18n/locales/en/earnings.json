@@ -41,5 +41,19 @@
     "PAID": "Paid",
     "WITHHELD": "Withheld",
     "FAILED": "Failed"
+  },
+  "paypalBanner": {
+    "title": "Set up your payment method",
+    "desc": "To receive your commissions you need to register your PayPal email in Payment Methods.",
+    "button": "Set up PayPal"
+  },
+  "summary": {
+    "title": "Total Earnings",
+    "subtitle": "View your earnings breakdown and payout status",
+    "planLabel": "Plan:",
+    "allTime": "All-time earnings",
+    "progressTitle": "Progress to minimum payout",
+    "progressRemaining": "{{amount}} more needed for payout",
+    "nextPayout": "Next Payout"
   }
 }

@@ -53,7 +53,7 @@ export default function SubscriptionPage() {
             {t('paymentMethods.title')}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-            Gestiona tu metodo de pago para comisiones y cobros de plataforma.
+            {t('paymentPage.subtitle')}
           </p>
         </div>
       </div>
@@ -61,9 +61,9 @@ export default function SubscriptionPage() {
       {/* ── Comisiones como referido (PayPal) ── */}
       <div className="space-y-3">
         <div>
-          <h2 className="text-base font-semibold">Recibir comisiones como referido</h2>
+          <h2 className="text-base font-semibold">{t('paymentPage.receivingTitle')}</h2>
           <p className="text-sm text-muted-foreground">
-            Configura tu PayPal para recibir automáticamente tu comisión cada vez que alguien reserve usando tu enlace de referido.
+            {t('paymentPage.receivingDesc')}
           </p>
         </div>
         <PayPalEmailSetup />
@@ -74,9 +74,9 @@ export default function SubscriptionPage() {
       {/* ── Método de cobro (anfitriones) ── */}
       <div className="space-y-3">
         <div>
-          <h2 className="text-base font-semibold">Metodo de cobro</h2>
+          <h2 className="text-base font-semibold">{t('paymentPage.chargingTitle')}</h2>
           <p className="text-sm text-muted-foreground">
-            Tarjeta que GYDI utiliza para cobrar la comisión de plataforma por cada reserva de alguna de tus propiedades publicadas.
+            {t('paymentPage.chargingDesc')}
           </p>
         </div>
         <PaymentMethodsSection
@@ -101,7 +101,7 @@ export default function SubscriptionPage() {
       <AddPaymentMethodDialog
         open={isAddCardOpen}
         onOpenChange={setIsAddCardOpen}
-        description="Agrega una tarjeta de credito o debito para que GYDI pueda cobrar la comision de plataforma por tus reservas."
+        description={t('paymentPage.addCardDesc')}
       />
     </div>
   );

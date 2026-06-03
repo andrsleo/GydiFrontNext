@@ -8,7 +8,7 @@ export interface TestUser {
   email: string;
   password: string;
   name: string;
-  role: 'ADMIN' | 'HOST' | 'AFFILIATE';
+  role: 'USER' | 'ADMIN';
 }
 
 /**
@@ -19,7 +19,7 @@ export const TEST_USERS = {
     email: 'affiliate@test.com',
     password: 'Test123!',
     name: 'Test Affiliate',
-    role: 'AFFILIATE' as const,
+    role: 'USER' as const,
   },
   admin: {
     email: 'admin@test.com',
@@ -31,7 +31,7 @@ export const TEST_USERS = {
     email: 'host@test.com',
     password: 'Host123!',
     name: 'Test Host',
-    role: 'HOST' as const,
+    role: 'USER' as const,
   },
 };
 

@@ -25,7 +25,7 @@ export function useTranslation(namespace: TranslationNamespace) {
   }, [locale, namespace]);
 
   const t = useCallback(
-    (key: string, params?: Record<string, string>) => get(dict, key, params),
+    (key: string, params?: Record<string, string | number>) => get(dict, key, params),
     [dict]
   );
 

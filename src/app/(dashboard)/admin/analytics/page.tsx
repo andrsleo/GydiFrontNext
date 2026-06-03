@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { TrendingUp, Users, Building2, DollarSign, Download, Calendar } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/format';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -57,7 +58,7 @@ export default function AdminAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${metrics.revenue.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(metrics.revenue.total, 'USD')}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               <span className="text-green-600 font-medium">+{metrics.revenue.growth}%</span> vs. mes anterior
@@ -71,7 +72,7 @@ export default function AdminAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              ${metrics.revenue.thisMonth.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(metrics.revenue.thisMonth, 'USD')}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
@@ -134,7 +135,7 @@ export default function AdminAnalyticsPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold text-green-600">
-                        ${affiliate.commissions.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        {formatCurrency(affiliate.commissions, 'USD')}
                       </p>
                       <p className="text-xs text-muted-foreground">comisiones totales</p>
                     </div>

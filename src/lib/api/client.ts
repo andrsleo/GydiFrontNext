@@ -137,8 +137,8 @@ export async function fetchCsrfToken(): Promise<void> {
     if (data.token) {
       csrfToken = data.token;
     }
-  } catch (error) {
-    console.error('[API Client] Failed to fetch CSRF token:', error);
+  } catch {
+    // Expected when backend is offline — CSRF will be fetched on first authenticated request
   }
 }
 
@@ -235,27 +235,31 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // Handle other errors
-    if (error.response) {
-      const status = error.response.status;
+    // Handle other errors — skip logging for CSRF endpoint (handled by fetchCsrfToken itself)
+    const isCsrfRequest = error.config?.url?.includes('/api/v1/auth/csrf') ||
+                          error.config?.url?.includes('/api/csrf');
+    if (!isCsrfRequest) {
+      if (error.response) {
+        const status = error.response.status;
 
-      switch (status) {
-        case 403:
-          console.error('Permission denied:', error.response.data);
-          break;
-        case 404:
-          console.error('Resource not found:', error.response.data);
-          break;
-        case 500:
-          console.error('Server error:', error.response.data);
-          break;
-        default:
-          console.error('API error:', error.response.data);
+        switch (status) {
+          case 403:
+            console.error('Permission denied:', error.response.data);
+            break;
+          case 404:
+            console.error('Resource not found:', error.response.data);
+            break;
+          case 500:
+            console.error('Server error:', error.response.data);
+            break;
+          default:
+            console.error('API error:', error.response.data);
+        }
+      } else if (error.request) {
+        console.error('Network error:', error.message);
+      } else {
+        console.error('Request error:', error.message);
       }
-    } else if (error.request) {
-      console.error('Network error:', error.message);
-    } else {
-      console.error('Request error:', error.message);
     }
 
     return Promise.reject(error);

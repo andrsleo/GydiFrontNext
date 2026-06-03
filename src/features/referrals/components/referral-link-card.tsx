@@ -10,6 +10,7 @@ import { Copy, ExternalLink, QrCode, TrendingUp, RefreshCw, AlertTriangle, XCirc
 import type { ReferralLink } from '../types';
 import { useCopyReferralLink, useRenewReferralLink } from '../hooks';
 import { formatDate } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils/format';
 import { differenceInDays } from 'date-fns';
 
 interface ReferralLinkCardProps {
@@ -104,7 +105,7 @@ export function ReferralLinkCard({ link, onViewQR }: ReferralLinkCardProps) {
             <span className="text-sm font-medium">Total Earned</span>
           </div>
           <span className="text-lg font-bold text-green-600">
-            ${link.totalCommission?.toFixed(2)}
+            {formatCurrency(link.totalCommission ?? 0, 'USD')}
           </span>
         </div>
 

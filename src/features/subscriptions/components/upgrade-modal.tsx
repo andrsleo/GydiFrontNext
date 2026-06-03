@@ -18,6 +18,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { PLAN_FEATURES } from '@/lib/constants/plans';
+import { useCurrencyStore, selectCurrency } from '@/store/currency-store';
+import { formatCurrency } from '@/lib/utils/format';
 import type { PlanCode } from '@/lib/utils/plan-selection';
 
 interface UpgradeModalProps {
@@ -52,10 +54,11 @@ export function UpgradeModal({
 
   const commissionIncrease = (targetPlan.affiliate.commission - currentPlan.affiliate.commission) * 100;
   const priceDifference = targetPlan.price - currentPlan.price;
+  const currency = useCurrencyStore(selectCurrency);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto max-sm:left-0 max-sm:right-0 max-sm:top-auto max-sm:bottom-0 max-sm:w-full max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-b-none max-sm:rounded-t-xl">
         {/* Close Button */}
         <button
           onClick={() => onOpenChange(false)}
@@ -134,7 +137,7 @@ export function UpgradeModal({
               <div>
                 <p className="font-semibold text-blue-900">Costo adicional</p>
                 <p className="text-sm text-blue-700">
-                  Solo ${priceDifference.toFixed(2)} más al mes
+                  Solo {formatCurrency(priceDifference, currency)} más al mes
                 </p>
               </div>
               <div className="text-right">

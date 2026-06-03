@@ -74,3 +74,18 @@ export const exchangeRateKeys = {
   all: ['exchange-rate'] as const,
   current: () => [...exchangeRateKeys.all, 'current'] as const,
 };
+
+/**
+ * Calendar Query Keys
+ */
+export const calendarKeys = {
+  all: ['calendar'] as const,
+  month: (propertyId: number, year: number, month: number) =>
+    [...calendarKeys.all, 'month', propertyId, year, month] as const,
+  priceRange: (propertyId: number, checkIn: string, checkOut: string) =>
+    [...calendarKeys.all, 'price-range', propertyId, checkIn, checkOut] as const,
+  seasonPricing: (propertyId: number) =>
+    [...calendarKeys.all, 'season-pricing', propertyId] as const,
+  seasons: (country: string) =>
+    [...calendarKeys.all, 'seasons', country] as const,
+};

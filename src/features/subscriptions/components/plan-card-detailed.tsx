@@ -15,6 +15,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PLAN_FEATURES } from '@/lib/constants/plans';
+import { useCurrencyStore, selectCurrency } from '@/store/currency-store';
+import { formatCurrency } from '@/lib/utils/format';
+import { useTranslation } from '@/hooks/use-translation';
 import type { SubscriptionPlan } from '@/types/user';
 
 interface PlanCardDetailedProps {
@@ -35,6 +38,8 @@ export function PlanCardDetailed({
   const planDetails = PLAN_FEATURES[plan];
   const isCurrentPlan = currentPlan === plan;
   const isPopular = planDetails.popular;
+  const currency = useCurrencyStore(selectCurrency);
+  const { t } = useTranslation('subscription');
 
   return (
     <Card
@@ -66,11 +71,11 @@ export function PlanCardDetailed({
         <div className="mt-4">
           <div className="text-4xl font-bold">
             {plan === 'FREE' ? (
-              'Gratis'
+              t('planCardDetailed.free')
             ) : (
               <>
-                <span className="text-4xl">${planDetails.price}</span>
-                <span className="text-base font-normal text-muted-foreground">/mes</span>
+                <span className="text-4xl">{formatCurrency(planDetails.price, currency)}</span>
+                <span className="text-base font-normal text-muted-foreground">{t('planCardDetailed.perMonth')}</span>
               </>
             )}
           </div>
@@ -87,11 +92,11 @@ export function PlanCardDetailed({
                 <TrendingUp className="h-4 w-4 text-emerald-600" />
               </div>
               <h4 className="font-semibold text-sm uppercase tracking-wide text-emerald-700">
-                Como referido
+                {t('planCardDetailed.asAffiliate')}
               </h4>
             </div>
             <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-              Ganas {planDetails.affiliate.commissionDisplay}
+              {t('planCardDetailed.youEarn')} {planDetails.affiliate.commissionDisplay}
             </Badge>
           </div>
 
@@ -116,11 +121,11 @@ export function PlanCardDetailed({
                 <CreditCard className="h-4 w-4 text-orange-600" />
               </div>
               <h4 className="font-semibold text-sm uppercase tracking-wide text-orange-700">
-                Como Anfitrión
+                {t('planCardDetailed.asHost')}
               </h4>
             </div>
             <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-              Pagas {planDetails.host.platformFeeDisplay}
+              {t('planCardDetailed.youPay')} {planDetails.host.platformFeeDisplay}
             </Badge>
           </div>
 
@@ -150,7 +155,7 @@ export function PlanCardDetailed({
             variant="outline"
             disabled
           >
-            Plan actual
+            {t('planCardDetailed.currentPlan')}
           </Button>
         ) : (
           <Button
@@ -161,7 +166,7 @@ export function PlanCardDetailed({
             onClick={() => onSelect?.(plan)}
             disabled={isLoading}
           >
-            {isLoading ? 'Procesando...' : planDetails.cta}
+            {isLoading ? t('planCardDetailed.processing') : planDetails.cta}
           </Button>
         )}
       </CardFooter>

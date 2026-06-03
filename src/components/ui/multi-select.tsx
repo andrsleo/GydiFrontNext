@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, ChevronDown, Check } from 'lucide-react';
 import { Badge } from './badge';
 import { Button } from './button';
@@ -48,6 +48,19 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close on click outside — no backdrop overlay so page scroll is never blocked
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open]);
 
   const handleToggle = (optionValue: string) => {
     if (value.includes(optionValue)) {
@@ -79,7 +92,7 @@ export function MultiSelect({
   const selectedOptions = options.filter((opt) => value.includes(opt.value));
 
   return (
-    <div className={cn('relative w-full', className)}>
+    <div ref={containerRef} className={cn('relative w-full', className)}>
       {/* Selected Items (Chips/Badges) */}
       {selectedOptions.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-2">
@@ -221,12 +234,6 @@ export function MultiSelect({
             </div>
           </div>
 
-          {/* Backdrop to close dropdown */}
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
         </>
       )}
     </div>

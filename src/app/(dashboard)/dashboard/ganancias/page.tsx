@@ -21,7 +21,7 @@ import {
 } from '@/features/commissions/hooks/use-affiliate-commissions';
 import { usePayoutStatus } from '@/features/commissions/hooks/use-payout-status';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
-import type { CommissionStatus } from '@/features/commissions/types';
+import type { AffiliateCommissionStatus } from '@/features/commissions/types';
 import { useTranslation } from '@/hooks/use-translation';
 
 // Calculate next payout date (1st or 15th of month)
@@ -64,41 +64,23 @@ function getDaysUntilNextPayout(): number {
 }
 
 export default function GananciasPage() {
-  const [statusFilter, setStatusFilter] = useState<CommissionStatus | 'ALL'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<AffiliateCommissionStatus | 'ALL'>('ALL');
   const { t } = useTranslation('earnings');
 
   const { data: payoutStatus } = usePayoutStatus();
 
   // Status configuration
-  const statusConfig: Record<
-    CommissionStatus,
+  const statusConfig: Partial<Record<
+    AffiliateCommissionStatus,
     { label: string; variant: 'default' | 'secondary' | 'success' | 'warning'; icon: any }
-  > = {
-    PENDING: {
-      label: t('status.PENDING'),
-      variant: 'warning',
-      icon: Clock,
-    },
-    APPROVED: {
-      label: t('status.APPROVED'),
-      variant: 'secondary',
-      icon: CheckCircle,
-    },
-    PAID: {
-      label: t('status.PAID'),
-      variant: 'success',
-      icon: CheckCircle,
-    },
-    WITHHELD: {
-      label: t('status.WITHHELD'),
-      variant: 'default',
-      icon: AlertCircle,
-    },
-    FAILED: {
-      label: t('status.FAILED'),
-      variant: 'default',
-      icon: AlertCircle,
-    },
+  >> = {
+    WAITING_HOST_CHARGE: { label: t('status.WAITING_HOST_CHARGE'), variant: 'warning', icon: Clock },
+    PENDING: { label: t('status.PENDING'), variant: 'warning', icon: Clock },
+    APPROVED: { label: t('status.APPROVED'), variant: 'secondary', icon: CheckCircle },
+    PAID: { label: t('status.PAID'), variant: 'success', icon: CheckCircle },
+    CANCELLED: { label: t('status.CANCELLED'), variant: 'default', icon: AlertCircle },
+    WITHHELD: { label: t('status.WITHHELD'), variant: 'default', icon: AlertCircle },
+    DISPUTED: { label: t('status.DISPUTED'), variant: 'default', icon: AlertCircle },
   };
 
   // Fetch data from API
@@ -140,8 +122,8 @@ export default function GananciasPage() {
   }
 
   // Calculate stats
-  const pendingAmount = stats?.pendingAmount || 0;
-  const approvedAmount = stats?.approvedAmount || 0;
+  const pendingAmount = stats?.pending || 0;
+  const approvedAmount = stats?.totalEarned || 0;
   const paidAmount = stats?.totalEarned || 0;
   const isEligibleForPayout = approvedAmount >= 50; // $50 minimum
   const nextPayoutDate = getNextPayoutDate();
@@ -163,17 +145,17 @@ export default function GananciasPage() {
       {payoutStatus && !payoutStatus.onboardingCompleted && (
         <Alert className="border-orange-200 bg-orange-50">
           <CreditCard className="h-4 w-4 text-orange-600" />
-          <AlertTitle className="text-orange-800">Configura tu metodo de pago</AlertTitle>
+          <AlertTitle className="text-orange-800">{t('paypalBanner.title')}</AlertTitle>
           <AlertDescription className="flex items-center justify-between gap-4">
             <span className="text-orange-700">
-              Para recibir tus comisiones necesitas registrar tu email de PayPal en Medios de Pago.
+              {t('paypalBanner.desc')}
             </span>
             <Button
               size="sm"
               asChild
               className="shrink-0"
             >
-              <a href="/dashboard/subscription">Configurar PayPal</a>
+              <a href="/dashboard/subscription">{t('paypalBanner.button')}</a>
             </Button>
           </AlertDescription>
         </Alert>
@@ -269,7 +251,7 @@ export default function GananciasPage() {
             size="sm"
             onClick={() => setStatusFilter(status)}
           >
-            {status === 'ALL' ? t('filter.all') : statusConfig[status].label}
+            {status === 'ALL' ? t('filter.all') : (statusConfig[status]?.label ?? status)}
           </Button>
         ))}
       </div>
@@ -321,7 +303,7 @@ export default function GananciasPage() {
                 <tbody className="divide-y">
                   {commissions.map((commission) => {
                     const config = statusConfig[commission.status];
-                    const StatusIcon = config.icon;
+                    const StatusIcon = config?.icon ?? AlertCircle;
 
                     return (
                       <tr key={commission.id} className="hover:bg-muted/50">
@@ -332,10 +314,7 @@ export default function GananciasPage() {
                         </td>
                         <td className="px-4 py-4">
                           <div>
-                            <p className="font-medium">{commission.referredUserName}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {commission.referredUserEmail}
-                            </p>
+                            <p className="font-medium">{commission.guestName ?? `Booking #${commission.bookingId}`}</p>
                           </div>
                         </td>
                         <td className="px-4 py-4 text-right">
@@ -350,13 +329,13 @@ export default function GananciasPage() {
                         </td>
                         <td className="px-4 py-4 text-right">
                           <span className="text-lg font-bold text-green-600">
-                            {formatCurrency(commission.amount)}
+                            {formatCurrency(commission.commissionAmount)}
                           </span>
                         </td>
                         <td className="px-4 py-4 text-center">
-                          <Badge variant={config.variant}>
+                          <Badge variant={config?.variant ?? 'outline'}>
                             <StatusIcon className="mr-1 h-3 w-3" />
-                            {config.label}
+                            {config?.label ?? commission.status}
                           </Badge>
                         </td>
                         <td className="px-4 py-4">

@@ -15,7 +15,7 @@ export function useCreateBooking() {
     mutationFn: (request: CreateBookingRequest) => bookingsApi.create(request),
     onSuccess: (data) => {
       toast.success('¡Reserva creada exitosamente!', {
-        description: `Tu reserva #${data.bookingId} ha sido confirmada.`,
+        description: `Tu reserva #${data.id} ha sido confirmada.`,
       });
 
       // Invalidate related queries

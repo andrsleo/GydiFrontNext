@@ -20,6 +20,11 @@ import {
   User,
   LogOut,
   Calendar,
+  CalendarDays,
+  CalendarRange,
+  Sparkles,
+  Film,
+  Rss,
 } from 'lucide-react';
 import type { MenuItem, MenuSection, Role, SubscriptionPlan } from '@/types/navigation';
 
@@ -33,7 +38,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard',
     icon: LayoutDashboard,
     description: 'Vista general con estadísticas clave (comisiones, referidos, clicks)',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
   {
     id: 'properties',
@@ -41,7 +46,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/propiedades',
     icon: Building2,
     description: 'Gestión completa del catálogo de propiedades vacacionales',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
     subItems: [
       {
         id: 'properties-my',
@@ -49,7 +54,15 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
         href: '/dashboard/propiedades/mis-propiedades',
         icon: Building2,
         description: 'Gestiona tus propiedades en renta',
-        roles: ['ADMIN', 'USER'],
+        roles: ['ADMIN', 'USER', 'CREATOR'],
+      },
+      {
+        id: 'properties-calendar',
+        label: 'Calendario',
+        href: '/dashboard/propiedades/calendario',
+        icon: CalendarDays,
+        description: 'Gestiona el calendario y precios de tus propiedades',
+        roles: ['ADMIN', 'USER', 'CREATOR'],
       },
       {
         id: 'properties-refer',
@@ -57,7 +70,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
         href: '/dashboard/propiedades/referir',
         icon: Share2,
         description: 'Refiere propiedades y gana comisiones',
-        roles: ['ADMIN', 'USER'],
+        roles: ['ADMIN', 'USER', 'CREATOR'],
       },
     ],
   },
@@ -67,7 +80,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/referidos',
     icon: Share2,
     description: 'Sistema de referidos y generación de enlaces de referido',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
     subItems: [
       {
         id: 'referrals-links',
@@ -75,7 +88,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
         href: '/dashboard/referidos',
         icon: Share2,
         description: 'Lista de enlaces de referido generados',
-        roles: ['ADMIN', 'USER'],
+        roles: ['ADMIN', 'USER', 'CREATOR'],
       },
       {
         id: 'referrals-stats',
@@ -83,7 +96,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
         href: '/dashboard/referrals',
         icon: BarChart3,
         description: 'Análisis de clicks, conversiones y tasa de conversión',
-        roles: ['ADMIN', 'USER'],
+        roles: ['ADMIN', 'USER', 'CREATOR'],
       },
     ],
   },
@@ -93,7 +106,7 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/bookings',
     icon: Calendar,
     description: 'Gestión de reservas (como referido y/o anfitrión)',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
   {
     id: 'earnings',
@@ -101,7 +114,65 @@ export const MAIN_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/commissions',
     icon: DollarSign,
     description: 'Comisiones ganadas y pagadas',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
+  },
+];
+
+/**
+ * Creator Section Menu Items (CREATOR + ADMIN)
+ */
+export const CREATOR_MENU_ITEMS: MenuItem[] = [
+  {
+    id: 'creator',
+    label: 'Creator Dashboard',
+    href: '/dashboard/creator',
+    icon: Sparkles,
+    description: 'Panel de creator: stats, tier, engagement',
+    roles: ['ADMIN', 'USER', 'CREATOR'],
+    subItems: [
+      {
+        id: 'creator-analytics',
+        label: 'Analytics',
+        href: '/dashboard/creator/analytics',
+        icon: BarChart3,
+        description: 'Performance de tus posts',
+        roles: ['ADMIN', 'USER', 'CREATOR'],
+      },
+      {
+        id: 'creator-earnings',
+        label: 'Ganancias',
+        href: '/dashboard/creator/earnings',
+        icon: DollarSign,
+        description: 'Comisiones por contenido',
+        roles: ['ADMIN', 'USER', 'CREATOR'],
+      },
+    ],
+  },
+  {
+    id: 'content',
+    label: 'Mi Contenido',
+    href: '/dashboard/content',
+    icon: Film,
+    description: 'Gestiona tus posts y sube contenido nuevo',
+    roles: ['ADMIN', 'USER', 'CREATOR'],
+    subItems: [
+      {
+        id: 'content-list',
+        label: 'Mis Posts',
+        href: '/dashboard/content',
+        icon: Film,
+        description: 'Ver y gestionar posts publicados',
+        roles: ['ADMIN', 'USER', 'CREATOR'],
+      },
+      {
+        id: 'content-new',
+        label: 'Nuevo Post',
+        href: '/dashboard/content/new',
+        icon: Film,
+        description: 'Publicar foto o video',
+        roles: ['ADMIN', 'USER', 'CREATOR'],
+      },
+    ],
   },
 ];
 
@@ -115,7 +186,7 @@ export const MANAGEMENT_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/subscription',
     icon: CreditCard,
     description: 'Administra tus tarjetas de crédito y débito',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
     /* PRO_ELITE_DISABLED — remove highlighted when memberships are re-enabled */
     // highlighted: true,
   },
@@ -125,7 +196,7 @@ export const MANAGEMENT_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/configuracion',
     icon: Settings,
     description: 'Ajustes de cuenta, perfil, seguridad y notificaciones',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
 ];
 
@@ -197,6 +268,14 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
         description: 'Variables del sistema, webhooks, integraciones',
         roles: ['ADMIN'],
       },
+      {
+        id: 'admin-seasons',
+        label: 'Temporadas',
+        href: '/admin/temporadas',
+        icon: CalendarRange,
+        description: 'Configura temporadas alta, media y baja por alcance geográfico',
+        roles: ['ADMIN'],
+      },
     ],
   },
 ];
@@ -211,7 +290,7 @@ export const USER_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/configuracion',
     icon: User,
     description: 'Ver y editar perfil público',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
   /* MEMBERSHIPS_DISABLED — re-enable when subscription management is launched
   {
@@ -220,7 +299,7 @@ export const USER_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/subscription',
     icon: Crown,
     description: 'Detalles del plan de suscripción',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
   */
   {
@@ -229,7 +308,7 @@ export const USER_MENU_ITEMS: MenuItem[] = [
     href: '/dashboard/configuracion',
     icon: Settings,
     description: 'Ajustes de cuenta',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
   {
     id: 'logout',
@@ -237,7 +316,7 @@ export const USER_MENU_ITEMS: MenuItem[] = [
     href: '/logout', // Special route handled by auth
     icon: LogOut,
     description: 'Terminar sesión',
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
 ];
 
@@ -247,19 +326,25 @@ export const USER_MENU_ITEMS: MenuItem[] = [
 export const MENU_SECTIONS: MenuSection[] = [
   {
     id: 'main',
-    label: undefined, // No label for main section
+    label: undefined,
     items: MAIN_MENU_ITEMS,
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
+  },
+  {
+    id: 'creator',
+    label: 'Creator',
+    items: CREATOR_MENU_ITEMS,
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
   {
     id: 'management',
-    label: undefined, // No label, just visual separator
+    label: undefined,
     items: MANAGEMENT_MENU_ITEMS,
-    roles: ['ADMIN', 'USER'],
+    roles: ['ADMIN', 'USER', 'CREATOR'],
   },
   {
     id: 'admin',
-    label: 'Administración', // Labeled section for admin
+    label: 'Administración',
     items: ADMIN_MENU_ITEMS,
     roles: ['ADMIN'],
   },

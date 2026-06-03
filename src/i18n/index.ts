@@ -32,7 +32,7 @@ export async function loadTranslations(
 export function get(
   dict: TranslationDict,
   key: string,
-  params?: Record<string, string>
+  params?: Record<string, string | number>
 ): string {
   const parts = key.split('.');
   let current: string | TranslationDict = dict;
@@ -46,7 +46,7 @@ export function get(
 
   if (params) {
     return Object.entries(params).reduce(
-      (str, [k, v]) => str.replace(`{{${k}}}`, v),
+      (str, [k, v]) => str.replace(`{{${k}}}`, String(v)),
       current
     );
   }

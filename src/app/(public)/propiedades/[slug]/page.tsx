@@ -6,22 +6,30 @@ import Link from 'next/link';
 import { usePropertyDetail } from '@/features/properties';
 import { PropertyGallery } from '@/features/properties/components';
 import { BookingModal } from '@/features/bookings';
+import { PropertyCalendar } from '@/features/calendar';
+import { StripeProvider } from '@/lib/stripe/stripe-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { MapPin, Bed, Bath, Users, Calendar, DollarSign } from 'lucide-react';
+import { MapPin, Bed, Bath, Users, Calendar, DollarSign, Film } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils/format';
 import { PropertyListingType, LISTING_TYPE_LABELS } from '@/features/properties/types';
 import { apiClient } from '@/lib/api/client';
 import { useAuthStore } from '@/store/auth-store';
 import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
+import { usePropertyContent } from '@/features/content/hooks/use-property-content';
+import { ContentCard } from '@/features/content/components/content-card';
+import { usePropertySocialProof } from '@/features/properties/hooks/use-property-social-proof';
 
 function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const searchParams = useSearchParams();
   const router = useRouter();
   const refParam = searchParams.get('ref');
+  // Phase 4 — Social Commerce: content post that originated this visit
+  const contentIdParam = searchParams.get('contentId');
+  const contentPostId = contentIdParam ? Number(contentIdParam) : undefined;
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
@@ -33,6 +41,9 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
   const [referralLinkId, setReferralLinkId] = useState<string>(isNumericRef ? refParam : '');
 
   const { data: property, isLoading, error } = usePropertyDetail({ slug });
+  const propertyId = property?.id ? Number(property.id) : 0;
+  const { data: contentPage, isLoading: isLoadingContent } = usePropertyContent(propertyId);
+  const { data: socialProof } = usePropertySocialProof(propertyId || undefined);
 
   // Resolve referralLinkId based on the ref parameter type
   useEffect(() => {
@@ -207,6 +218,18 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
             </div>
           )}
 
+          {/* Calendar — availability + pricing */}
+          {property.listingType !== 'SALE' && (
+            <div>
+              <h2 className="text-lg sm:text-xl font-semibold mb-3">Disponibilidad</h2>
+              <PropertyCalendar
+                propertyId={Number(property.id)}
+                currency={property.currency ?? 'USD'}
+                isHost={false}
+              />
+            </div>
+          )}
+
           {/* Location Details */}
           <div>
             <h2 className="text-lg sm:text-xl font-semibold mb-3">Ubicación</h2>
@@ -276,19 +299,75 @@ function PropertyDetailContent({ params }: { params: Promise<{ slug: string }> }
         </div>
       </div>
 
-      {/* Booking Modal */}
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        property={{
-          id: property.id,
-          title: property.title,
-          pricePerNight: property.pricePerNight,
-          currency: property.currency,
-          airbnbUrl: property.airbnbUrl,
-        }}
-        referralLinkId={referralLinkId}
-      />
+      {/* Phase 4: Social Proof banner — only shown when there's social data */}
+      {socialProof && (socialProof.contentCount > 0 || socialProof.totalBookings > 0) && (
+        <div className="mt-6 rounded-2xl border border-border/60 bg-muted/40 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+            {socialProof.contentCount > 0 && (
+              <span>
+                <span className="font-semibold text-foreground">{socialProof.contentCount}</span>{' '}
+                {socialProof.contentCount === 1 ? 'reel de creador' : 'reels de creadores'}
+              </span>
+            )}
+            {socialProof.totalViews > 0 && (
+              <span>
+                <span className="font-semibold text-foreground">
+                  {socialProof.totalViews >= 1000
+                    ? `${(socialProof.totalViews / 1000).toFixed(1)}K`
+                    : socialProof.totalViews}
+                </span>{' '}
+                vistas totales
+              </span>
+            )}
+            {socialProof.totalBookings > 0 && (
+              <span>
+                <span className="font-semibold text-foreground">{socialProof.totalBookings}</span>{' '}
+                {socialProof.totalBookings === 1 ? 'reserva via contenido' : 'reservas via contenido'}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* UGC Content Section — content tagged to this property */}
+      {(isLoadingContent || (contentPage?.content && contentPage.content.length > 0)) && (
+        <div className="mt-8 sm:mt-12">
+          <div className="mb-4 flex items-center gap-2">
+            <Film className="h-5 w-5 text-[hsl(var(--gydi-primary))]" />
+            <h2 className="text-lg font-semibold sm:text-xl">Contenido de esta propiedad</h2>
+          </div>
+          {isLoadingContent ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="aspect-square rounded-2xl" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+              {contentPage!.content.map((post) => (
+                <ContentCard key={post.id} post={post} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Booking Modal — wrapped in StripeProvider for Fase 2 payment */}
+      <StripeProvider>
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          property={{
+            id: property.id,
+            title: property.title,
+            pricePerNight: property.pricePerNight,
+            currency: property.currency,
+            airbnbUrl: property.airbnbUrl,
+          }}
+          referralLinkId={referralLinkId}
+          contentPostId={contentPostId}
+        />
+      </StripeProvider>
     </div>
   );
 }

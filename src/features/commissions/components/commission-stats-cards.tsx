@@ -6,6 +6,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, TrendingUp, Clock } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/format';
+import type { SupportedCurrency } from '@/lib/constants/currency-config';
 import type { CommissionStats } from '../types';
 
 interface Props {
@@ -33,7 +35,7 @@ export function CommissionStatsCards({ stats, type }: Props) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {currency} {mainAmount.toFixed(2)}
+            {formatCurrency(mainAmount, currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground mt-1">{mainDescription}</p>
         </CardContent>
@@ -47,7 +49,7 @@ export function CommissionStatsCards({ stats, type }: Props) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {currency} {pending.toFixed(2)}
+            {formatCurrency(pending, currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             {type === 'affiliate' ? 'Por recibir' : 'Por pagar'}
@@ -65,7 +67,7 @@ export function CommissionStatsCards({ stats, type }: Props) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {currency} {mainAmount.toFixed(2)}
+            {formatCurrency(mainAmount, currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             {type === 'affiliate' ? 'De comisiones' : 'De plataforma'}

@@ -101,7 +101,7 @@ export function BookingDetailClient({ bookingId }: Props) {
             <div>
               <p className="text-sm text-muted-foreground">Nombre</p>
               <p className="font-medium">
-                {booking.guestFirstName} {booking.guestLastName}
+                {booking.guestName}
               </p>
             </div>
             <div>

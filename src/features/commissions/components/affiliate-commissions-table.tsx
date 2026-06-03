@@ -24,6 +24,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { formatCurrency } from '@/lib/utils/format';
+import type { SupportedCurrency } from '@/lib/constants/currency-config';
 import type { CommissionFiltersInput as Filters } from '../types';
 import { getCommissionStatusVariant, getCommissionStatusLabel } from '../types';
 
@@ -66,8 +68,50 @@ export function AffiliateCommissionsTable() {
       {/* Filters */}
       <CommissionFilters filters={filters} onChange={setFilters} />
 
-      {/* Table */}
-      <Card>
+      {/* Mobile cards (< md) */}
+      <div className="md:hidden space-y-3">
+        {commissions && commissions.length > 0 ? (
+          commissions.map((commission) => (
+            <Card key={commission.id} className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-muted-foreground">
+                  #{commission.id} · Reserva #{commission.bookingId}
+                </span>
+                <Badge variant={getCommissionStatusVariant(commission.status)}>
+                  {getCommissionStatusLabel(commission.status)}
+                </Badge>
+              </div>
+              <p className="text-sm font-medium">
+                {commission.propertyTitle || `Propiedad #${commission.bookingId}`}
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Monto Reserva</p>
+                  <p className="text-sm">{formatCurrency(commission.bookingAmount, commission.currency as SupportedCurrency)}</p>
+                </div>
+                <div className="space-y-0.5 text-right">
+                  <p className="text-xs text-muted-foreground">Comisión ({(commission.commissionRate * 100).toFixed(0)}%)</p>
+                  <p className="text-sm font-bold text-green-600">
+                    +{formatCurrency(commission.commissionAmount, commission.currency as SupportedCurrency)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <Badge variant="outline" className="text-xs">{commission.plan}</Badge>
+                <span>{new Date(commission.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+              </div>
+            </Card>
+          ))
+        ) : (
+          <div className="flex flex-col items-center gap-2 py-12">
+            <AlertCircle className="h-12 w-12 text-muted-foreground" />
+            <p className="text-muted-foreground text-center">No tienes comisiones ganadas aún.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop table (≥ md) */}
+      <Card className="hidden md:block">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -96,10 +140,10 @@ export function AffiliateCommissionsTable() {
                       <Badge variant="outline">{commission.plan}</Badge>
                     </TableCell>
                     <TableCell>
-                      {commission.currency} {commission.bookingAmount.toFixed(2)}
+                      {formatCurrency(commission.bookingAmount, commission.currency as SupportedCurrency)}
                     </TableCell>
                     <TableCell className="text-right font-bold text-green-600">
-                      + {commission.currency} {commission.commissionAmount.toFixed(2)}
+                      +{formatCurrency(commission.commissionAmount, commission.currency as SupportedCurrency)}
                     </TableCell>
                     <TableCell>
                       {(commission.commissionRate * 100).toFixed(0)}%

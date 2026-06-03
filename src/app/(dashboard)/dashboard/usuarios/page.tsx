@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { formatCurrency } from '@/lib/utils/format';
 
 // Mock data - replace with real API calls
 const users = [
@@ -284,7 +285,7 @@ export default function UsuariosPage() {
                       {user.role === 'AFFILIATE' ? (
                         <>
                           <p className="font-semibold text-green-600">
-                            ${user.totalCommissions?.toLocaleString()}
+                            {formatCurrency(user.totalCommissions ?? 0, 'USD')}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {user.referrals} referidos

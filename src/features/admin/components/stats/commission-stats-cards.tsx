@@ -16,6 +16,8 @@ import {
   AlertCircle,
   Clock,
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/format';
+import type { SupportedCurrency } from '@/lib/constants/currency-config';
 
 export function CommissionStatsCards() {
   const { data: stats, isLoading, error } = useCommissionStats();
@@ -64,7 +66,7 @@ export function CommissionStatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-red-600">
-            {stats.currency} {stats.totalHostCommissions.toFixed(2)}
+            {formatCurrency(stats.totalHostCommissions, stats.currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground">Total cobrado a hosts</p>
         </CardContent>
@@ -78,7 +80,7 @@ export function CommissionStatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">
-            {stats.currency} {stats.totalAffiliateCommissions.toFixed(2)}
+            {formatCurrency(stats.totalAffiliateCommissions, stats.currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground">Total pagado a referidos</p>
         </CardContent>
@@ -92,7 +94,7 @@ export function CommissionStatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-blue-600">
-            {stats.currency} {stats.platformProfit.toFixed(2)}
+            {formatCurrency(stats.platformProfit, stats.currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground">
             Profit (cobrado - pagado)
@@ -108,7 +110,7 @@ export function CommissionStatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-orange-600">
-            {stats.currency} {stats.pendingHostCharges.toFixed(2)}
+            {formatCurrency(stats.pendingHostCharges, stats.currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground">Por cobrar a hosts</p>
         </CardContent>
@@ -122,7 +124,7 @@ export function CommissionStatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-orange-600">
-            {stats.currency} {stats.pendingAffiliatePayments.toFixed(2)}
+            {formatCurrency(stats.pendingAffiliatePayments, stats.currency as SupportedCurrency)}
           </div>
           <p className="text-xs text-muted-foreground">Por pagar a referidos</p>
         </CardContent>

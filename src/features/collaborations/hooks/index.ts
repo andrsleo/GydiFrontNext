@@ -3,6 +3,11 @@
  */
 
 export { useMarketplace, collaborationKeys } from './use-marketplace';
+export {
+  useGetCollaborationSettings,
+  useUpdateCollaborationSettings,
+} from './use-collaboration-settings';
+export type { UpdateCollaborationSettingsInput } from './use-collaboration-settings';
 export { useMarketplaceProperty } from './use-marketplace-property';
 export { usePitchDetail } from './use-pitch-detail';
 export { useMyPitches } from './use-my-pitches';

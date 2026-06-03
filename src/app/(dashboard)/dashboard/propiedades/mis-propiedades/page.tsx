@@ -13,11 +13,13 @@ import { PropertyStatus } from '@/features/properties/types';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import { usePaymentMethods } from '@/features/subscriptions/hooks/use-payment-methods';
 import { AddPaymentMethodDialog } from '@/features/subscriptions/components/add-payment-method-dialog';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function MyPropertiesPage() {
   const [statusTab, setStatusTab] = useState<PropertyStatus | 'all'>('all');
   const [isAddCardOpen, setIsAddCardOpen] = useState(false);
   const { data: paymentMethods, isLoading: isLoadingMethods } = usePaymentMethods();
+  const { t } = useTranslation('properties');
 
   const filters = statusTab === 'all' ? {} : { status: statusTab };
   const { data, isLoading } = useQuery({
@@ -42,12 +44,12 @@ export default function MyPropertiesPage() {
       return (
         <div className="text-center py-12 border-2 border-dashed rounded-lg">
           <p className="text-muted-foreground mb-4">
-            No tienes propiedades {statusTab !== 'all' && `en estado ${statusTab}`}
+            {t('myProperties.emptyState')}{statusTab !== 'all' && t('myProperties.emptyStateStatus', { status: statusTab })}
           </p>
           <Link href="/dashboard/propiedades/nueva">
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Crear Primera Propiedad
+              {t('myProperties.createFirst')}
             </Button>
           </Link>
         </div>
@@ -72,40 +74,19 @@ export default function MyPropertiesPage() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Mis Propiedades</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t('myProperties.title')}</h1>
           <p className="text-muted-foreground">
-            Gestiona tus propiedades en renta
+            {t('myProperties.subtitle')}
           </p>
         </div>
         <Link href="/dashboard/propiedades/nueva">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Nueva Propiedad
+            {t('myProperties.newProperty')}
           </Button>
         </Link>
       </div>
 
-      {/* Banner: tarjeta de crédito requerida para publicar propiedades */}
-      {!isLoadingMethods && (!paymentMethods || paymentMethods.length === 0) && (
-        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
-          <CreditCard className="mt-0.5 h-5 w-5 flex-shrink-0" />
-          <div className="flex-1 text-sm">
-            <p className="font-medium">Agrega una tarjeta para publicar tus propiedades</p>
-            <p className="mt-1 text-xs leading-relaxed">
-              Para que tus propiedades puedan recibir reservas, GYDI necesita una tarjeta de crédito o débito.
-              Se cobra una comisión del 15% por cada reserva exitosa generada por referidos.
-            </p>
-          </div>
-          <Button
-            size="sm"
-            variant="outline"
-            className="flex-shrink-0 border-amber-400 text-amber-800 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-200 dark:hover:bg-amber-900"
-            onClick={() => setIsAddCardOpen(true)}
-          >
-            Agregar tarjeta
-          </Button>
-        </div>
-      )}
 
       <AddPaymentMethodDialog
         open={isAddCardOpen}
@@ -117,13 +98,12 @@ export default function MyPropertiesPage() {
       <Tabs value={statusTab} onValueChange={(v) => setStatusTab(v as PropertyStatus | 'all')}>
         <div className="overflow-x-auto pb-0.5">
           <TabsList className="min-w-max">
-            <TabsTrigger value="all">Todas</TabsTrigger>
-            <TabsTrigger value={PropertyStatus.DRAFT}>Borradores</TabsTrigger>
-            <TabsTrigger value={PropertyStatus.SEND_GYDI_COHOST}>Agregar Co-host</TabsTrigger>
-            <TabsTrigger value={PropertyStatus.PENDING_APPROVAL}>En Revisión</TabsTrigger>
-            <TabsTrigger value={PropertyStatus.PUBLISHED}>Publicadas</TabsTrigger>
-            <TabsTrigger value={PropertyStatus.INACTIVE}>Inactivas</TabsTrigger>
-            <TabsTrigger value={PropertyStatus.DENY}>Rechazadas</TabsTrigger>
+            <TabsTrigger value="all">{t('myProperties.tabs.all')}</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.DRAFT}>{t('myProperties.tabs.draft')}</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.PENDING_APPROVAL}>{t('myProperties.tabs.pending')}</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.PUBLISHED}>{t('myProperties.tabs.published')}</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.INACTIVE}>{t('myProperties.tabs.inactive')}</TabsTrigger>
+            <TabsTrigger value={PropertyStatus.DENY}>{t('myProperties.tabs.denied')}</TabsTrigger>
           </TabsList>
         </div>
 
@@ -132,10 +112,6 @@ export default function MyPropertiesPage() {
         </TabsContent>
 
         <TabsContent value={PropertyStatus.DRAFT} className="mt-6">
-          {renderContent()}
-        </TabsContent>
-
-        <TabsContent value={PropertyStatus.SEND_GYDI_COHOST} className="mt-6">
           {renderContent()}
         </TabsContent>
 

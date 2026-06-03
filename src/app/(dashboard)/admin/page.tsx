@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { formatCurrency } from '@/lib/utils/format';
 
 export const metadata: Metadata = {
   title: 'Dashboard Admin | GYDI',
@@ -103,11 +104,11 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${metrics.totalCommissions.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(metrics.totalCommissions, 'USD')}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               <span className="text-yellow-600 font-medium">
-                ${metrics.pendingCommissions.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                {formatCurrency(metrics.pendingCommissions, 'USD')}
               </span>{' '}
               pendientes
             </p>

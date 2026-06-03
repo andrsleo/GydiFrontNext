@@ -9,6 +9,7 @@ import { useMutation, useQueryClient, type UseMutationOptions } from '@tanstack/
 import { propertiesApi } from '../api/properties.api';
 import { propertyKeys } from '@/lib/constants/query-keys';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/use-translation';
 import type { UpdatePropertyRequest, PropertyResponse } from '../types';
 import { PropertyStatus } from '../types';
 
@@ -17,117 +18,90 @@ interface UpdatePropertyVariables {
   data: UpdatePropertyRequest;
 }
 
-interface UseUpdatePropertyCallbacks {
-  onCohostRequired?: (propertyId: string) => void;
-}
-
 type UseUpdatePropertyOptions = Omit<
   UseMutationOptions<PropertyResponse, Error, UpdatePropertyVariables>,
   'mutationFn'
-> & UseUpdatePropertyCallbacks;
+>;
 
 /**
- * Hook to update an existing property
- * Automatically invalidates relevant queries on success
+ * Hook to update an existing property.
+ * Automatically invalidates relevant queries on success.
  *
- * @example
- * ```tsx
- * const { mutate, isPending } = useUpdateProperty({
- *   onSuccess: (data) => {
- *   }
- * });
- *
- * mutate({
- *   id: 'property-123',
- *   data: {
- *     title: 'Updated Title',
- *     pricePerNight: 200,
- *   }
- * });
- * ```
+ * When the backend auto-transitions the property from DRAFT to PENDING_APPROVAL
+ * (all minimums met), a toast informs the host their property is now under review.
  */
 export function useUpdateProperty(options?: UseUpdatePropertyOptions) {
   const queryClient = useQueryClient();
-  const { onCohostRequired, ...mutationOptions } = options ?? {};
+  const { t } = useTranslation('properties');
 
   return useMutation<PropertyResponse, Error, UpdatePropertyVariables>({
     mutationFn: ({ id, data }) => propertiesApi.update(id, data),
-    ...mutationOptions,
+    ...options,
     onSuccess: (data, variables, context) => {
-      // Invalidate and refetch specific property detail
       queryClient.invalidateQueries({
         queryKey: propertyKeys.detail(variables.id),
         refetchType: 'active',
       });
-
-      // Invalidate ALL property lists (including filtered queries)
       queryClient.invalidateQueries({
         queryKey: propertyKeys.all,
         refetchType: 'active',
       });
 
-      // Show success toast
-      toast.success('Propiedad actualizada', {
-        description: `${data.title} se ha actualizado correctamente`,
-      });
-
-      // Detect SEND_GYDI_COHOST transition and trigger callback
-      if (data.status === PropertyStatus.SEND_GYDI_COHOST) {
-        onCohostRequired?.(data.id);
+      if (data.status === PropertyStatus.PENDING_APPROVAL) {
+        toast.success(t('toasts.property.pendingApprovalTitle'), {
+          description: t('toasts.property.pendingApprovalDesc'),
+          duration: 6000,
+        });
+      } else {
+        toast.success(t('toasts.property.updated'), {
+          description: t('toasts.property.updatedDesc', { title: data.title }),
+        });
       }
 
+      (options as any)?.onSuccess?.(data, variables, context);
     },
     onError: (error: any, variables, context) => {
       console.error('Update property error:', error);
 
-      // Extract error message from backend
-      let errorMessage = 'Error al actualizar propiedad';
-      let errorDescription = 'Ocurrió un error inesperado';
+      let errorMessage = t('toasts.property.updateError');
+      let errorDescription = t('toasts.property.createError');
 
       if (error.response?.data) {
         const backendError = error.response.data;
 
-        // Handle validation errors (400)
         if (error.response.status === 400 && backendError.errors) {
-          errorMessage = 'Error de validación';
+          errorMessage = t('toasts.property.validationError');
           errorDescription = backendError.errors.map((err: any) => `${err.field}: ${err.message}`).join(', ');
-        }
-        // Handle iCal URL validation errors and other IllegalArgumentException
-        else if (backendError.message) {
-          // Check if it's an iCal URL error
+        } else if (backendError.message) {
           if (backendError.message.includes('Invalid iCal URL')) {
-            errorMessage = 'Problema con el enlace del calendario';
-
+            errorMessage = t('toasts.property.icalError');
             const backendMsg = backendError.message;
 
             if (backendMsg.includes('HTTPS protocol')) {
-              errorDescription = 'El enlace debe ser seguro (comenzar con https://)';
+              errorDescription = t('toasts.property.icalHttps');
             } else if (backendMsg.includes('HTTP 404') || backendMsg.includes('Unable to access')) {
-              errorDescription = 'No pudimos acceder al enlace. Verifica que sea correcto y público.';
+              errorDescription = t('toasts.property.icalNotFound');
             } else if (backendMsg.includes('missing BEGIN:VCALENDAR') || backendMsg.includes('does not contain valid iCal')) {
-              errorDescription = 'El enlace no parece ser un calendario válido de Airbnb/iCal.';
+              errorDescription = t('toasts.property.icalInvalid');
             } else if (backendMsg.includes('Timeout') || backendMsg.includes('time out')) {
-              errorDescription = 'Tardó demasiado en responder. Inténtalo de nuevo más tarde.';
+              errorDescription = t('toasts.property.icalTimeout');
             } else if (backendMsg.includes('too large')) {
-              errorDescription = 'El archivo del calendario es demasiado grande.';
+              errorDescription = t('toasts.property.icalTooLarge');
             } else {
-              // Fallback for other iCal errors
-              errorDescription = 'El enlace proporcionado no es válido. Por favor verifícalo.';
+              errorDescription = t('toasts.property.icalGeneric');
             }
           } else {
-            errorMessage = backendError.error || 'Algo salió mal';
-            errorDescription = 'No pudimos guardar los cambios. Inténtalo de nuevo.';
+            errorMessage = backendError.error || t('toasts.property.genericError');
+            errorDescription = t('toasts.property.genericSaveError');
           }
         }
       } else if (error.message) {
         errorDescription = error.message;
       }
 
-      // Show error toast with details
-      toast.error(errorMessage, {
-        description: errorDescription,
-        duration: 5000, // Show for 5 seconds
-      });
+      toast.error(errorMessage, { description: errorDescription, duration: 5000 });
+
+      (options as any)?.onError?.(error, variables, context);
     },
   });
 }

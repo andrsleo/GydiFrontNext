@@ -28,6 +28,8 @@ import {
   formatHostFeeRate,
   SUBSCRIPTION_PLANS,
 } from '@/lib/constants/plans';
+import { useCurrencyStore, selectCurrency } from '@/store/currency-store';
+import { formatCurrency } from '@/lib/utils/format';
 import type { SubscriptionPlan } from '@/types/user';
 
 export function CommissionCalculator() {
@@ -35,6 +37,7 @@ export function CommissionCalculator() {
   // PRO_ELITE_DISABLED: Cambiar default a 'PRO' cuando se reactiven planes pagos
   const [hostPlan, setHostPlan] = useState<SubscriptionPlan>('FREE');
   const [affiliatePlan, setAffiliatePlan] = useState<SubscriptionPlan>('FREE');
+  const currency = useCurrencyStore(selectCurrency);
 
   // Parse booking amount safely
   const amount = parseFloat(bookingAmount) || 0;
@@ -44,16 +47,6 @@ export function CommissionCalculator() {
   const affiliateEarnings = calculateAffiliateEarnings(affiliatePlan, amount);
   const hostNetIncome = calculateHostNetIncome(hostPlan, amount);
   const platformProfit = calculatePlatformProfit(hostPlan, affiliatePlan, amount);
-
-  // Format currency
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('es-MX', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -175,10 +168,10 @@ export function CommissionCalculator() {
                   </Badge>
                 </div>
                 <p className="text-3xl font-bold text-orange-700">
-                  {formatCurrency(hostNetIncome)}
+                  {formatCurrency(hostNetIncome, currency)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  = {formatCurrency(amount)} - {formatCurrency(platformFee)} (comisión)
+                  = {formatCurrency(amount, currency)} - {formatCurrency(platformFee, currency)} (comisión)
                 </p>
               </CardContent>
             </Card>
@@ -201,10 +194,10 @@ export function CommissionCalculator() {
                   </Badge>
                 </div>
                 <p className="text-3xl font-bold text-emerald-700">
-                  {formatCurrency(affiliateEarnings)}
+                  {formatCurrency(affiliateEarnings, currency)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  = {formatCurrency(amount)} × {formatAffiliateRate(affiliatePlan)}
+                  = {formatCurrency(amount, currency)} × {formatAffiliateRate(affiliatePlan)}
                 </p>
               </CardContent>
             </Card>
@@ -227,10 +220,10 @@ export function CommissionCalculator() {
                   </Badge>
                 </div>
                 <p className="text-3xl font-bold text-blue-700">
-                  {formatCurrency(platformFee)}
+                  {formatCurrency(platformFee, currency)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  = {formatCurrency(amount)} × {formatHostFeeRate(hostPlan)}
+                  = {formatCurrency(amount, currency)} × {formatHostFeeRate(hostPlan)}
                 </p>
               </CardContent>
             </Card>
@@ -250,10 +243,10 @@ export function CommissionCalculator() {
                   </div>
                 </div>
                 <p className="text-3xl font-bold text-purple-700">
-                  {formatCurrency(platformProfit)}
+                  {formatCurrency(platformProfit, currency)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  = {formatCurrency(platformFee)} - {formatCurrency(affiliateEarnings)} (pago a referido)
+                  = {formatCurrency(platformFee, currency)} - {formatCurrency(affiliateEarnings, currency)} (pago a referido)
                 </p>
               </CardContent>
             </Card>
@@ -268,19 +261,19 @@ export function CommissionCalculator() {
           <div className="space-y-2 text-sm text-muted-foreground">
             <div className="flex items-center justify-between">
               <span>💰 Reserva Total:</span>
-              <span className="font-semibold text-foreground">{formatCurrency(amount)}</span>
+              <span className="font-semibold text-foreground">{formatCurrency(amount, currency)}</span>
             </div>
             <div className="flex items-center justify-between">
               <span>🏠 Anfitrión ({hostPlan}) recibe:</span>
-              <span className="font-semibold text-orange-700">{formatCurrency(hostNetIncome)}</span>
+              <span className="font-semibold text-orange-700">{formatCurrency(hostNetIncome, currency)}</span>
             </div>
             <div className="flex items-center justify-between">
               <span>📈 referido ({affiliatePlan}) recibe:</span>
-              <span className="font-semibold text-emerald-700">{formatCurrency(affiliateEarnings)}</span>
+              <span className="font-semibold text-emerald-700">{formatCurrency(affiliateEarnings, currency)}</span>
             </div>
             <div className="flex items-center justify-between">
               <span>🏢 Plataforma GYDI gana:</span>
-              <span className="font-semibold text-purple-700">{formatCurrency(platformProfit)}</span>
+              <span className="font-semibold text-purple-700">{formatCurrency(platformProfit, currency)}</span>
             </div>
           </div>
           <div className="pt-3 border-t border-gray-200/50">

@@ -1,12 +1,24 @@
 'use client';
 
-import { useCurrencyStore } from '@/store/currency-store';
+import { useCurrencyStore, selectCurrency, selectAvailableCurrencies } from '@/store/currency-store';
+import { CURRENCY_META } from '@/lib/constants/currency-config';
 import { Button } from '@/components/ui/button';
 import { useHasHydrated } from '@/hooks/use-has-hydrated';
 import { cn } from '@/lib/utils';
 
+/**
+ * CurrencySelector
+ *
+ * Always-visible pill button group. Options are driven by the geo-detected
+ * country (via CurrencyInitializer + currency store). Possible configurations:
+ *   - 2 options: [USD, EUR] or [EUR, USD]       → dollarized / eurozone countries
+ *   - 3 options: [local, USD, EUR]               → LATAM countries with own currency
+ *
+ * The selector skeletons during Zustand hydration to prevent CLS.
+ */
 export function CurrencySelector({ className }: { className?: string }) {
-  const currency = useCurrencyStore((state) => state.currency);
+  const currency = useCurrencyStore(selectCurrency);
+  const availableCurrencies = useCurrencyStore(selectAvailableCurrencies);
   const setCurrency = useCurrencyStore((state) => state.setCurrency);
   const hasHydrated = useHasHydrated();
 
@@ -28,24 +40,24 @@ export function CurrencySelector({ className }: { className?: string }) {
       role="group"
       aria-label="Seleccionar moneda"
     >
-      <Button
-        variant={currency === 'USD' ? 'default' : 'ghost'}
-        size="sm"
-        className="h-7 rounded-sm px-2.5 text-xs font-semibold transition-all duration-200"
-        onClick={() => setCurrency('USD')}
-        aria-pressed={currency === 'USD'}
-      >
-        $ USD
-      </Button>
-      <Button
-        variant={currency === 'EUR' ? 'default' : 'ghost'}
-        size="sm"
-        className="h-7 rounded-sm px-2.5 text-xs font-semibold transition-all duration-200"
-        onClick={() => setCurrency('EUR')}
-        aria-pressed={currency === 'EUR'}
-      >
-        € EUR
-      </Button>
+      {availableCurrencies.map((code) => {
+        const meta = CURRENCY_META[code];
+        const isActive = currency === code;
+
+        return (
+          <Button
+            key={code}
+            variant={isActive ? 'default' : 'ghost'}
+            size="sm"
+            className="h-7 rounded-sm px-2.5 text-xs font-semibold transition-all duration-200"
+            onClick={() => setCurrency(code)}
+            aria-pressed={isActive}
+            title={meta.name}
+          >
+            {meta.symbol} {code}
+          </Button>
+        );
+      })}
     </div>
   );
 }

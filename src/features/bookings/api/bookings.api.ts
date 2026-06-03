@@ -1,11 +1,11 @@
 import { apiClient } from '@/lib/api/client';
 import type {
   CreateBookingRequest,
-  CreateBookingResponse,
   BookingQuote,
   BookingDto,
   BookingFilters,
   BookingStats,
+  CaptureDamageDepositRequest,
 } from '../types';
 
 /**
@@ -20,7 +20,7 @@ export const bookingsApi = {
    * Create a new booking (public)
    * Converts string IDs to numbers to match backend DTO (Long types)
    */
-  async create(request: CreateBookingRequest): Promise<CreateBookingResponse> {
+  async create(request: CreateBookingRequest): Promise<BookingDto> {
     // Transform string IDs to numbers for backend compatibility
     // Backend CreateBookingRequest expects Long for referralLinkId and propertyId
     const referralLinkId = Number(request.referralLinkId);
@@ -40,7 +40,7 @@ export const bookingsApi = {
       propertyId,
     };
 
-    const { data } = await apiClient.post<CreateBookingResponse>(
+    const { data } = await apiClient.post<BookingDto>(
       '/api/public/bookings',
       payload
     );
@@ -141,6 +141,49 @@ export const bookingsApi = {
   async getBookingById(id: number): Promise<BookingDto> {
     const { data } = await apiClient.get<BookingDto>(`/api/v1/bookings/${id}`);
     return data;
+  },
+
+  // ==========================================
+  // HOST ACTION ENDPOINTS
+  // ==========================================
+
+  /**
+   * Confirm a booking request (HOST only)
+   */
+  async confirm(bookingId: number): Promise<BookingDto> {
+    const { data } = await apiClient.put<BookingDto>(`/api/v1/bookings/${bookingId}/confirm`);
+    return data;
+  },
+
+  /**
+   * Reject a booking request with a reason (HOST only)
+   */
+  async reject(bookingId: number, reason: string): Promise<BookingDto> {
+    const { data } = await apiClient.put<BookingDto>(`/api/v1/bookings/${bookingId}/reject`, {
+      reason,
+    });
+    return data;
+  },
+
+  // ==========================================
+  // PAYMENT ENDPOINTS (Fase 2)
+  // ==========================================
+
+  /**
+   * Create payment intent + auth hold in backend
+   */
+  async createPayment(bookingId: number, stripePaymentMethodId: string): Promise<void> {
+    await apiClient.post(`/api/v1/bookings/${bookingId}/payment`, { stripePaymentMethodId });
+  },
+
+  /**
+   * Capture damage deposit (HOST only, post checkout)
+   */
+  async captureDeposit(
+    bookingId: number,
+    request: CaptureDamageDepositRequest
+  ): Promise<void> {
+    await apiClient.post(`/api/v1/bookings/${bookingId}/deposit/capture`, request);
   },
 
   // ==========================================

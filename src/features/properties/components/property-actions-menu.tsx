@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MoreVertical, Edit, Trash2, Eye, EyeOff, SendHorizonal, AlertCircle, UserPlus } from 'lucide-react';
+import { MoreVertical, Edit, Trash2, Eye, EyeOff, SendHorizonal, AlertCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,7 +42,6 @@ import {
 } from '../hooks';
 import { useRouter } from 'next/navigation';
 import { useHostHasPaymentMethod } from '@/features/subscriptions/hooks/use-host-payment-method';
-import { CohostInstructionsDialog } from './cohost-instructions-dialog';
 import { AddPaymentMethodDialog } from '@/features/subscriptions/components/add-payment-method-dialog';
 
 interface PropertyActionsMenuProps {
@@ -57,7 +56,6 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showDenialReasonDialog, setShowDenialReasonDialog] = useState(false);
-  const [showCohostDialog, setShowCohostDialog] = useState(false);
   const [showAddCardDialog, setShowAddCardDialog] = useState(false);
 
   const submitForApproval = useSubmitForApproval();
@@ -98,8 +96,8 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
     deactivateProperty.isPending ||
     deleteProperty.isPending;
 
+  // Re-submission from DENY requires explicit host action + payment method
   const canSubmitForApproval = status === PropertyStatus.DENY;
-  const isCohostPending = status === PropertyStatus.SEND_GYDI_COHOST;
 
   return (
     <>
@@ -123,26 +121,12 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
 
           <DropdownMenuSeparator />
 
-          {/* Ver instrucciones de co-host - para SEND_GYDI_COHOST */}
-          {isCohostPending && (
-            <DropdownMenuItem onClick={() => {
-              if (hasHostPaymentMethod) {
-                setShowCohostDialog(true);
-              } else {
-                setShowAddCardDialog(true);
-              }
-            }}>
-              <UserPlus className="h-4 w-4 mr-2" />
-              Ver instrucciones de co-host
-            </DropdownMenuItem>
-          )}
-
-          {/* Enviar a Revisión - para DRAFT y DENY */}
+          {/* Re-enviar a Revisión - solo para DENY */}
           {canSubmitForApproval && (
             hasHostPaymentMethod ? (
               <DropdownMenuItem onClick={() => setShowSubmitDialog(true)}>
                 <SendHorizonal className="h-4 w-4 mr-2" />
-                {status === PropertyStatus.DENY ? 'Re-enviar a Revisión' : 'Enviar a Revisión'}
+                Re-enviar a Revisión
               </DropdownMenuItem>
             ) : (
               <TooltipProvider>
@@ -155,7 +139,7 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
                         className="cursor-not-allowed opacity-50"
                       >
                         <SendHorizonal className="h-4 w-4 mr-2" />
-                        {status === PropertyStatus.DENY ? 'Re-enviar a Revisión' : 'Enviar a Revisión'}
+                        Re-enviar a Revisión
                       </DropdownMenuItem>
                     </span>
                   </TooltipTrigger>
@@ -216,8 +200,8 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
 
           <DropdownMenuSeparator />
 
-          {/* Eliminar - disponible para todos excepto PENDING_APPROVAL y SEND_GYDI_COHOST */}
-          {status !== PropertyStatus.PENDING_APPROVAL && status !== PropertyStatus.SEND_GYDI_COHOST && (
+          {/* Eliminar - disponible excepto en PENDING_APPROVAL */}
+          {status !== PropertyStatus.PENDING_APPROVAL && (
             <DropdownMenuItem
               onClick={() => setShowDeleteDialog(true)}
               className="text-destructive focus:text-destructive"
@@ -229,33 +213,18 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Diálogo de agregar tarjeta (requerida antes de ver instrucciones de co-host) */}
+      {/* Diálogo de agregar tarjeta (requerida antes de re-enviar a revisión) */}
       <AddPaymentMethodDialog
         open={showAddCardDialog}
         onOpenChange={setShowAddCardDialog}
-        onSuccess={() => setShowCohostDialog(true)}
         description="Para enviar tu propiedad a revisión necesitas agregar una tarjeta. La plataforma cobra comisiones cuando se realizan reservas en tu propiedad."
       />
 
-      {/* Diálogo de instrucciones de co-host */}
-      <CohostInstructionsDialog
-        open={showCohostDialog}
-        onClose={() => setShowCohostDialog(false)}
-        onConfirm={() => {
-          submitForApproval.mutate(propertyId, {
-            onSuccess: () => setShowCohostDialog(false),
-          });
-        }}
-        isConfirming={submitForApproval.isPending}
-      />
-
-      {/* Diálogo de confirmación para enviar a revisión */}
+      {/* Diálogo de confirmación para re-enviar a revisión */}
       <AlertDialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {status === PropertyStatus.DENY ? '¿Re-enviar propiedad a revisión?' : '¿Enviar propiedad a revisión?'}
-            </AlertDialogTitle>
+            <AlertDialogTitle>Re-enviar propiedad a revisión</AlertDialogTitle>
             <AlertDialogDescription>
               El equipo de GYDI revisará tu propiedad y te notificará cuando esté aprobada o si requiere cambios.
             </AlertDialogDescription>
@@ -289,7 +258,7 @@ export function PropertyActionsMenu({ propertyId, status, denialReason, onEdit }
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar propiedad?</AlertDialogTitle>
+            <AlertDialogTitle>Eliminar propiedad</AlertDialogTitle>
             <AlertDialogDescription>
               Esta acción no se puede deshacer. La propiedad será eliminada permanentemente.
             </AlertDialogDescription>

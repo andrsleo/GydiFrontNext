@@ -1,0 +1,101 @@
+{
+  "page": {
+    "title": "Property Calendar",
+    "subtitle": "Manage availability and seasonal pricing for your properties",
+    "searchPlaceholder": "Search property...",
+    "searchLabel": "Search property",
+    "selectPropertyLabel": "Select property",
+    "emptyTitle": "Select a property",
+    "emptySubtitle": "Choose a property from the list to view and manage its availability calendar",
+    "noPropertiesTitle": "No properties yet",
+    "noPropertiesSubtitle": "Create your first property to get started",
+    "createProperty": "Create property",
+    "seasonPricingTitle": "Seasonal Pricing",
+    "perNight": "/night"
+  },
+  "status": {
+    "PUBLISHED": "Published",
+    "PENDING_APPROVAL": "Under Review",
+    "DRAFT": "Draft",
+    "DENY": "Rejected",
+    "INACTIVE": "Inactive",
+    "DELETED": "Deleted"
+  },
+  "calendar": {
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "selectYear": "Select year",
+    "errorLoading": "Error loading calendar",
+    "seasonHigh": "High",
+    "seasonMedium": "Med",
+    "seasonLow": "Low"
+  },
+  "mode": {
+    "range": "Range",
+    "individual": "Individual"
+  },
+  "hint": {
+    "rangeStart": "Click a day to start the range",
+    "rangeHover": "Hover and click to set the range end",
+    "rangeConfirmOne": "{{count}} day — click to confirm range",
+    "rangeConfirmMany": "{{count}} days — click to confirm range",
+    "individual": "Click each day to select or deselect it"
+  },
+  "days": {
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat"
+  },
+  "actions": {
+    "selectedOne": "{{count}} date selected",
+    "selectedMany": "{{count}} dates selected",
+    "clear": "Clear",
+    "block": "Block",
+    "blocking": "Blocking...",
+    "unblock": "Unblock",
+    "unblocking": "Unblocking...",
+    "price": "Price",
+    "priceApply": "Apply",
+    "priceApplying": "Applying...",
+    "priceHint": "Apply a custom price to the {{count}} selected dates",
+    "priceError": "Enter a valid price greater than 0",
+    "priceLabel": "Custom price"
+  },
+  "legend": {
+    "available": "Available",
+    "blocked": "Blocked",
+    "reserved": "Reserved",
+    "selected": "Selected"
+  },
+  "cell": {
+    "blocked": "Blkd.",
+    "reserved": "Rsvd.",
+    "maintenance": "Maint.",
+    "rangeStart": "Start"
+  },
+  "season": {
+    "title": "Season multipliers",
+    "subtitle": "The base price is multiplied based on the detected season.",
+    "noSeasonDefs": "No season periods configured for {{country}}. Prices will use the base multiplier.",
+    "annual": "Annual",
+    "once": "Once",
+    "showLess": "Show less",
+    "showMore": "See {{count}} more",
+    "noPeriodsForType": "No periods defined for this type",
+    "validationError": "Must be between 0.10 and 10.00",
+    "saveError": "Error saving. Please try again.",
+    "saveSuccess": "✓ Saved successfully",
+    "saving": "Saving...",
+    "save": "Save multipliers",
+    "highLabel": "High season",
+    "highDesc": "Holidays, vacations, high demand",
+    "mediumLabel": "Mid season",
+    "mediumDesc": "Moderate demand",
+    "lowLabel": "Low season",
+    "lowDesc": "Low demand, attract bookings"
+  }
+}

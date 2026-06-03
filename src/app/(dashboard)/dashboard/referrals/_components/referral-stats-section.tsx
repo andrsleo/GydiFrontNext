@@ -6,10 +6,13 @@
 import { Link, MousePointerClick, TrendingUp, DollarSign } from 'lucide-react';
 import { ReferralStatsCard } from '@/features/referrals/components';
 import { useReferralStats, useClicksGrowth } from '@/features/referrals/hooks';
+import { useCurrencyStore, selectCurrency } from '@/store/currency-store';
+import { formatCurrency } from '@/lib/utils/format';
 
 export function ReferralStatsSection() {
   const { data: stats, isLoading } = useReferralStats();
   const clicksGrowth = useClicksGrowth();
+  const currency = useCurrencyStore(selectCurrency);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -47,8 +50,8 @@ export function ReferralStatsSection() {
 
       <ReferralStatsCard
         title="Total Earnings"
-        value={`$${stats?.totalEarnings.toFixed(2) || '0.00'}`}
-        description={`$${stats?.pendingCommissions.toFixed(2) || '0.00'} pending`}
+        value={formatCurrency(stats?.totalEarnings ?? 0, currency)}
+        description={`${formatCurrency(stats?.pendingCommissions ?? 0, currency)} pending`}
         icon={DollarSign}
         isLoading={isLoading}
       />

@@ -874,6 +874,68 @@ npm run build
 - Verify no `useEffect` causing immediate state changes
 - Use Suspense boundaries for async data
 
+### Debugging Frontend con Metodología Sistemática
+
+Ante cualquier bug, el skill `systematic-debugging` se activa automáticamente. Protocolo:
+
+```bash
+# 1. Leer el error completo
+npm run type-check 2>&1 | head -50
+
+# 2. Reproducir consistentemente
+npm run dev   # Reproducir en dev
+
+# 3. Revisar cambios recientes
+git diff HEAD~3 -- src/
+
+# 4. Recopilar evidencia (agregar logging temporal)
+# En el apiClient — no en el componente
+# En el hook — antes de retornar
+
+# 5. Formar UNA hipótesis y probarla minimalmente
+```
+
+**Nunca:** Proponer múltiples fixes a la vez o "cambiar X a ver si funciona".
+
+---
+
+## Cómo Usar Claude Code (Skills)
+
+Los Agent Skills se activan **automáticamente** — no requieren invocación manual con `/nombre`. Basta con describir lo que necesitas en lenguaje natural.
+
+| Skill | Se activa cuando... |
+|-------|---------------------|
+| `superpowers` | Feature compleja, multi-archivo — propone plan antes de tocar código |
+| `test-driven-development` | Implementar hook, componente, o cualquier lógica nueva |
+| `systematic-debugging` | Bug, error de hidratación, test fallido, "no funciona" |
+| `software-architecture` | Nueva estructura de feature, decisión de patrón o rendering |
+| `new-feature` | Crear nueva feature frontend (types, api, hooks, components) |
+| `test-feature` | Generar tests para feature existente sin cobertura |
+| `shadcn` | Agregar componente que no existe en src/components/ui/ |
+| `arch-check` | Antes de PR, revisar violaciones de separación de concerns |
+| `find-skills` | "¿hay un skill para X?", descubrir capacidades disponibles |
+
+### TDD para Hooks y Componentes
+
+Siempre: test que falla → implementación mínima → refactor. El skill `test-driven-development` se activa automáticamente al pedir implementar algo.
+
+```bash
+# 1. Crear el test (debe FALLAR)
+# src/features/{nombre}/hooks/__tests__/use-{nombre}.test.ts
+
+# 2. Verificar que falla
+npm test -- --run src/features/{nombre}/
+
+# 3. Implementar (mínimo para pasar)
+# src/features/{nombre}/hooks/use-{nombre}.ts
+
+# 4. Verificar que pasa
+npm test -- --run src/features/{nombre}/
+
+# 5. Refactorizar manteniendo verde
+npm test -- --run
+```
+
 ---
 
 ## Resources

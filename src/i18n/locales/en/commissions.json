@@ -1,0 +1,24 @@
+{
+  "title": "My Commissions",
+  "subtitle": {
+    "both": "Manage your commissions as referral and host",
+    "affiliateOnly": "Manage your commissions as referral",
+    "hostOnly": "Manage your commissions as host"
+  },
+  "noPermissions": {
+    "title": "No permissions",
+    "desc": "You don't have permission to view commissions. Contact the administrator to enable your capabilities (canRefer or canPublish)."
+  },
+  "tabs": {
+    "earned": "Earned Commissions",
+    "paid": "Paid Commissions"
+  },
+  "earned": {
+    "title": "💰 Commissions You Receive",
+    "desc": "These commissions are paid to you by the platform when someone books through your referral links."
+  },
+  "paid": {
+    "title": "💸 Commissions You Pay",
+    "desc": "These commissions are paid by you to the platform when one of your properties is booked through a referral."
+  }
+}

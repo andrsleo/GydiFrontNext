@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { AlertCircle, ChevronDown, Check } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,8 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { COUNTRIES_CITIES, getCitiesByCountry } from '@/lib/data/countries-cities';
+import { useTranslation } from '@/hooks/use-translation';
+import { useLocaleStore } from '@/store/locale-store';
 
 interface CountryCitySelectorProps {
   countryValue: string;
@@ -62,6 +64,21 @@ export function CountryCitySelector({
   showLabels = true,
   className = '',
 }: CountryCitySelectorProps) {
+  const { t } = useTranslation('common');
+  const locale = useLocaleStore((state) => state.locale);
+
+  // Intl.DisplayNames for country name translation
+  const displayNames = useMemo(() => {
+    try {
+      return new Intl.DisplayNames([locale], { type: 'region' });
+    } catch {
+      return null;
+    }
+  }, [locale]);
+
+  const getDisplayName = (code: string, fallback: string): string =>
+    displayNames?.of(code) ?? fallback;
+
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [internalCountry, setInternalCountry] = useState(countryValue);
   const [internalCity, setInternalCity] = useState(cityValue);
@@ -146,10 +163,12 @@ export function CountryCitySelector({
     handleCountryChange('ALL');
   };
 
-  // Filtered countries based on search
-  const filteredCountries = COUNTRIES_CITIES.filter((c) =>
-    c.name.toLowerCase().includes(countrySearch.toLowerCase())
-  );
+  // Filtered countries based on search (matches translated name or English name)
+  const filteredCountries = COUNTRIES_CITIES.filter((c) => {
+    const translated = getDisplayName(c.code, c.name).toLowerCase();
+    const query = countrySearch.toLowerCase();
+    return translated.includes(query) || c.name.toLowerCase().includes(query);
+  });
 
   // Whether city should use free-text Input (country selected but has no predefined cities)
   const useCityFreeText =
@@ -161,7 +180,7 @@ export function CountryCitySelector({
       <div className="space-y-2">
         {showLabels && (
           <Label htmlFor="country">
-            Country{' '}
+            {t('location.country')}{' '}
             {required && (
               <span className="text-red-600" style={{ color: '#dc2626' }}>
                 *
@@ -173,6 +192,7 @@ export function CountryCitySelector({
         <div className="relative">
           {/* Trigger button */}
           <button
+            id="country"
             type="button"
             disabled={disabled}
             onClick={() => !disabled && setIsCountryOpen((prev) => !prev)}
@@ -186,7 +206,12 @@ export function CountryCitySelector({
             )}
           >
             <span className="truncate">
-              {internalCountry || 'Seleccionar país'}
+              {internalCountry
+                ? getDisplayName(
+                    COUNTRIES_CITIES.find((c) => c.name === internalCountry)?.code ?? '',
+                    internalCountry
+                  )
+                : t('location.selectCountry')}
             </span>
             <ChevronDown
               className={cn(
@@ -204,7 +229,7 @@ export function CountryCitySelector({
                 <div className="p-2 border-b">
                   <Input
                     ref={searchInputRef}
-                    placeholder="Buscar país..."
+                    placeholder={t('location.searchCountry')}
                     value={countrySearch}
                     onChange={(e) => setCountrySearch(e.target.value)}
                     className="h-8 text-sm"
@@ -228,7 +253,7 @@ export function CountryCitySelector({
                           internalCountry === '' && 'bg-accent'
                         )}
                       >
-                        <span className="flex-1">Todos los países</span>
+                        <span className="flex-1">{t('location.allCountries')}</span>
                         {internalCountry === '' && (
                           <Check className="h-4 w-4 shrink-0" />
                         )}
@@ -238,7 +263,7 @@ export function CountryCitySelector({
 
                   {filteredCountries.length === 0 ? (
                     <li className="px-3 py-6 text-center text-sm text-muted-foreground">
-                      No se encontraron países
+                      {t('location.noCountriesFound')}
                     </li>
                   ) : (
                     filteredCountries.map((country) => (
@@ -253,7 +278,7 @@ export function CountryCitySelector({
                             internalCountry === country.name && 'bg-accent'
                           )}
                         >
-                          <span className="flex-1">{country.name}</span>
+                          <span className="flex-1">{getDisplayName(country.code, country.name)}</span>
                           {internalCountry === country.name && (
                             <Check className="h-4 w-4 shrink-0" />
                           )}
@@ -292,7 +317,7 @@ export function CountryCitySelector({
       <div className="space-y-2">
         {showLabels && (
           <Label htmlFor="city">
-            City{' '}
+            {t('location.city')}{' '}
             {required && (
               <span className="text-red-600" style={{ color: '#dc2626' }}>
                 *
@@ -307,7 +332,7 @@ export function CountryCitySelector({
             id="city"
             value={internalCity}
             onChange={handleCityTextChange}
-            placeholder="Ingresa la ciudad"
+            placeholder={t('location.enterCity')}
             disabled={disabled}
             className={cityError ? 'border-red-600' : ''}
           />
@@ -322,13 +347,13 @@ export function CountryCitySelector({
               <SelectValue
                 placeholder={
                   internalCountry
-                    ? 'Selecciona una ciudad'
-                    : 'Primero selecciona un país'
+                    ? t('location.selectCity')
+                    : t('location.selectCountryFirst')
                 }
               />
             </SelectTrigger>
             <SelectContent>
-              {!required && <SelectItem value="ALL">Todas las ciudades</SelectItem>}
+              {!required && <SelectItem value="ALL">{t('location.allCities')}</SelectItem>}
               {availableCities.length > 0 ? (
                 availableCities.map((city) => (
                   <SelectItem key={city} value={city}>
@@ -338,7 +363,7 @@ export function CountryCitySelector({
               ) : (
                 internalCountry && (
                   <SelectItem value="no-cities" disabled>
-                    No hay ciudades disponibles
+                    {t('location.noCitiesAvailable')}
                   </SelectItem>
                 )
               )}

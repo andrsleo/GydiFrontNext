@@ -1,0 +1,84 @@
+{
+  "newPost": {
+    "title": "New Post",
+    "subtitle": "Share photos or videos of properties with your audience."
+  },
+  "myContent": {
+    "title": "My Content",
+    "subtitle": "Manage your published content.",
+    "newPost": "New Post",
+    "noPosts": "No posts yet.",
+    "createFirst": "Create your first post",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "form": {
+    "type": {
+      "label": "Content type",
+      "placeholder": "Select type",
+      "photo": "Photo",
+      "video": "Video",
+      "carousel": "Carousel"
+    },
+    "caption": {
+      "label": "Description",
+      "placeholder": "Describe your content..."
+    },
+    "property": {
+      "label": "Property"
+    },
+    "file": {
+      "label": "File",
+      "labelCarousel": "Images ({{count}}/{{max}})",
+      "addMore": "Add more",
+      "dragHere": "Drag your file here",
+      "dragHereCarousel": "Add more images to the carousel",
+      "selectFile": "Select file",
+      "selectImages": "Select images",
+      "hintPhoto": "JPG, PNG, WebP image — max. 10 MB",
+      "hintVideo": "MP4, MOV video — max. 100 MB",
+      "hintCarousel": "Images and videos — max. {{max}} files (images 10 MB, videos 100 MB)",
+      "fileAlt": "File {{number}}"
+    },
+    "submit": {
+      "publishing": "Publishing...",
+      "publish": "Publish content",
+      "publishCarousel": "Publish carousel ({{count}} {{unit}})",
+      "imageOne": "image",
+      "imageMany": "images",
+      "carouselMinHint": "Add at least 1 more image to publish the carousel"
+    },
+    "progress": {
+      "uploading": "Uploading... {{percent}}%",
+      "uploadingCarousel": "Uploading... {{percent}}% ({{current}}/{{total}} files)",
+      "error": "Error uploading file"
+    }
+  },
+  "toast": {
+    "selectVideo": "Select a video file",
+    "videoTooLarge": "Video cannot exceed 100 MB",
+    "carouselMediaOnly": "Only images and videos in the carousel",
+    "videoMaxCarousel": "Video max. 100 MB",
+    "imageMaxCarousel": "Image max. 10 MB",
+    "selectImage": "Select an image",
+    "imageTooLarge": "Image cannot exceed 10 MB",
+    "carouselMaxFiles": "Maximum {{max}} files in a carousel",
+    "carouselLimitReached": "Only {{added}} files added (limit: {{max}})",
+    "selectFile": "Select at least one file",
+    "carouselMinFiles": "A carousel needs at least 2 images",
+    "published": "Content published successfully",
+    "publishError": "Error publishing content"
+  },
+  "picker": {
+    "title": "Select a property",
+    "placeholder": "Select a property",
+    "clearAriaLabel": "Remove property",
+    "searchPlaceholder": "Search by name...",
+    "countryPlaceholder": "Country",
+    "cityPlaceholder": "City",
+    "noProperties": "No properties found",
+    "clearFilters": "Clear filters",
+    "allCountries": "All countries",
+    "allCities": "All cities"
+  }
+}

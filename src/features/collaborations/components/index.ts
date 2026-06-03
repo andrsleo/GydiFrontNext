@@ -17,3 +17,6 @@ export { HostInbox } from './inbox/host-inbox';
 
 // Agreement
 export { AgreementDetail } from './agreement/agreement-detail';
+
+// Settings
+export { CollaborationSettingsPanel } from './settings/CollaborationSettingsPanel';

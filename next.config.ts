@@ -7,22 +7,24 @@ const nextConfig: NextConfig = {
   // Optimizaciones
   compress: true,
 
-  // ESLint - Ignore during build (warnings won't fail the build)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
   // TypeScript - Ignore errors during build
   typescript: {
     ignoreBuildErrors: true,
   },
 
+  // Typed routes (moved from experimental in Next.js 16)
+  typedRoutes: true,
+
   // Experimental features
   experimental: {
-    typedRoutes: true,
     serverActions: {
       bodySizeLimit: '2mb',
     },
+  },
+
+  // Turbopack root — fixes workspace lockfile detection warning
+  turbopack: {
+    root: __dirname,
   },
 
   // Imágenes
@@ -54,6 +56,8 @@ const nextConfig: NextConfig = {
         port: '8080',
       },
     ],
+    // In development, skip optimization to allow localhost:8080 images (private IP)
+    unoptimized: process.env.NODE_ENV === 'development',
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
