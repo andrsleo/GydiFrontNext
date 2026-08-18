@@ -13,12 +13,12 @@ Frontend moderno para GYDI 2.0, plataforma de afiliados para propiedades vacacio
   - Zustand (client state)
 - **Forms:** React Hook Form + Zod
 - **Auth:** NextAuth.js v5
+- **Payments:** Stripe (@stripe/react-stripe-js)
+- **Drag & Drop:** @dnd-kit (sortable referrals/commissions management)
 - **Testing:**
   - Vitest (unit tests)
   - Playwright (E2E tests)
   - React Testing Library
-
-Esto es un ejemplo de claude code en acción en github actions
 
 ## 📁 Estructura del Proyecto
 
